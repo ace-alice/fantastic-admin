@@ -1,0 +1,196 @@
+.tooltip-hover {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #00000020;
+  backdrop-filter: blur(10px);
+  position: fixed;
+  color: #f2f2f6;
+  border-radius: 5px;
+  font-size: 14px;
+  animation: inout 0.3s linear;
+  z-index: 10000;
+}
+
+@keyframes inout {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+html {
+  //background-color: var(--color-bg-second);
+}
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+  font-family: PingFangSC-Regular, PingFangSC-Medium, monospace;
+  //line-height: 1;
+}
+
+* {
+  -webkit-user-select: none;
+
+  -moz-user-select: none;
+
+  -ms-user-select: none;
+
+  user-select: none;
+
+  box-sizing: border-box;
+}
+
+.bigger {
+  background-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(42, 94, 72, 0.5) 99%
+  ) !important;
+
+  .point {
+    color: #18fa9b !important;
+    position: relative;
+
+    &:before {
+      content: "";
+      position: absolute;
+      height: 16px;
+      width: 16px;
+      background-image: url("~@/assets/icons/home_odds_up.png");
+      background-size: 100% 100%;
+      top: 2px;
+      animation: point-change 1s ease-in-out infinite;
+    }
+  }
+
+  .box-right {
+    &:before {
+      right: -20px;
+    }
+  }
+
+  .box-normal {
+    &:before {
+      left: -20px;
+    }
+  }
+}
+
+.bigger-border {
+  //box-shadow: 0 0 3px rgba(53, 143, 105, 1) inset;
+  border: 1px solid rgba(53, 143, 105, 1) !important;
+}
+
+.smaller {
+  background-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 30%,
+    rgba(112, 43, 30, 0.5) 99%
+  ) !important;
+
+  .point {
+    color: #fd3029 !important;
+    position: relative;
+
+    &:before {
+      content: "";
+      position: absolute;
+      height: 16px;
+      width: 16px;
+      background-image: url("~@/assets/icons/home_odds_down.png");
+      background-size: 100% 100%;
+      top: 2px;
+      animation: point-change 1s ease-in-out infinite;
+    }
+  }
+
+  .box-right {
+    &:before {
+      right: -20px;
+    }
+  }
+
+  .box-normal {
+    padding-right: 14px;
+    &:before {
+      left: -20px;
+    }
+  }
+}
+.box-right {
+  padding-left: 14px;
+}
+.box-normal {
+  padding-right: 14px;
+}
+.box-column {
+  padding: 0;
+}
+
+.smaller-border {
+  //box-shadow: 0 0 3px #fe3c03 inset;
+  border: 1px solid #fe3c03 !important;
+}
+
+.btn-hover-active {
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px var(--color-theme-primary);
+  }
+  &:active {
+    transform: translateY(-0.5px);
+    box-shadow: 0 0.5px var(--color-theme-primary);
+  }
+}
+
+@keyframes point-change {
+  0% {
+    transform: translateY(2px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(2px);
+  }
+}
+
+.input-no-data {
+  opacity: 0.3;
+}
+
+#not-login-message {
+  background: #3b4045;
+  border-radius: 8px;
+  height: 220px;
+  width: 300px;
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: calc(50% - 110px);
+  left: calc(50% + 20px);
+  z-index: 9000;
+  .not-login-message {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    img {
+      height: 120px;
+      width: 140px;
+    }
+    div {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}

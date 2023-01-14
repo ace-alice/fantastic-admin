@@ -1,99 +1,98 @@
-<script lang="ts" setup>
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
-import hotkeys from 'hotkeys-js'
-import eventBus from './utils/eventBus'
-import useSettingsStore from '@/store/modules/settings'
-import useMenuStore from '@/store/modules/menu'
-
-const settingsStore = useSettingsStore()
-
-const buttonConfig = ref({
-  autoInsertSpace: true,
-})
-
-// 侧边栏主导航当前实际宽度
-const mainSidebarActualWidth = computed(() => {
-  let actualWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--g-main-sidebar-width'))
-  if (['head', 'single'].includes(settingsStore.menu.menuMode)) {
-    actualWidth = 0
-  }
-  return `${actualWidth}px`
-})
-
-// 侧边栏次导航当前实际宽度
-const subSidebarActualWidth = computed(() => {
-  let actualWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--g-sub-sidebar-width'))
-  if (settingsStore.menu.subMenuCollapse) {
-    actualWidth = 64
-  }
-  return `${actualWidth}px`
-})
-
-watch(() => settingsStore.app.colorScheme, () => {
-  if (settingsStore.app.colorScheme === 'dark') {
-    document.documentElement.classList.add('dark')
-  }
-  else {
-    document.documentElement.classList.remove('dark')
-  }
-}, {
-  immediate: true,
-})
-
-watch(() => settingsStore.mode, () => {
-  if (settingsStore.mode === 'pc') {
-    settingsStore.$patch((state) => {
-      state.menu.subMenuCollapse = settingsStore.subMenuCollapseLastStatus
-    })
-  }
-  else if (settingsStore.mode === 'mobile') {
-    settingsStore.$patch((state) => {
-      state.menu.subMenuCollapse = true
-    })
-  }
-  document.body.setAttribute('data-mode', settingsStore.mode)
-}, {
-  immediate: true,
-})
-
-watch(() => settingsStore.menu.menuMode, () => {
-  document.body.setAttribute('data-menu-mode', settingsStore.menu.menuMode)
-}, {
-  immediate: true,
-})
-
-watch([
-  () => settingsStore.app.enableDynamicTitle,
-  () => settingsStore.title,
-], () => {
-  if (settingsStore.app.enableDynamicTitle && settingsStore.title) {
-    const title = typeof settingsStore.title === 'function' ? settingsStore.title() : settingsStore.title
-    document.title = `${title} - ${import.meta.env.VITE_APP_TITLE}`
-  }
-  else {
-    document.title = import.meta.env.VITE_APP_TITLE
-  }
-})
-
-onMounted(() => {
-  settingsStore.setMode(document.documentElement.clientWidth)
-  window.onresize = () => {
-    settingsStore.setMode(document.documentElement.clientWidth)
-  }
-  hotkeys('alt+i', () => {
-    eventBus.emit('global-system-info-toggle')
-  })
-})
-</script>
-
 <template>
-  <el-config-provider :locale="zhCn" :size="settingsStore.app.elementSize" :button="buttonConfig">
-    <RouterView
-      :style="{
-        '--g-main-sidebar-actual-width': mainSidebarActualWidth,
-        '--g-sub-sidebar-actual-width': subSidebarActualWidth,
-      }"
-    />
-    <system-info />
-  </el-config-provider>
+  <router-view />
 </template>
+
+<script lang="ts">
+import {
+  defineComponent,
+  getCurrentInstance,
+  onMounted,
+  onUnmounted,
+  watch,
+} from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { socketServiceHook } from "@/service/webSocket";
+import { globalApiConfigStore } from "@/store/globalApiConfig";
+import { userInfoStore } from "@/store/userInfo";
+import { GetParam } from "@/utils/getCommonInfo";
+import { socketCacheStore } from "@/store/socketCache";
+
+export default defineComponent({
+  name: "App",
+  setup() {
+    const { openTimer, closeTimer } = globalApiConfigStore();
+
+    const { initLangAction } = userInfoStore();
+
+    const { initOddRoom } = socketCacheStore();
+
+    const router = useRouter();
+
+    const route = useRoute();
+
+    const { proxy } = getCurrentInstance() as any;
+
+    const { leaveRoom, joinRoom } = socketServiceHook(proxy);
+
+    let gameId: any = null;
+
+    function roomConfig(to: any) {
+      if (to.name === "MatchDetail") {
+        gameId = to.query?.game_id;
+        joinRoom("room_type_handicap_push", Number(gameId));
+        return;
+      }
+      if (route.name !== "MatchDetail" && gameId) {
+        leaveRoom("room_type_handicap_push", Number(gameId));
+        gameId = null;
+        return;
+      }
+    }
+
+    watch(
+      () => route,
+      (to) => {
+        roomConfig(to);
+        initOddRoom();
+      },
+      { deep: true }
+    );
+
+    // 是否跳转
+    function isJump() {
+      const game_id =
+        GetParam(window.location.href, "id") ||
+        GetParam(window.location.href, "game_id");
+      const category_id = GetParam(window.location.href, "category_id");
+      const teamPointIds = GetParam(window.location.href, "teamPointIds");
+      if (game_id && category_id) {
+        if (teamPointIds) {
+          router.push({
+            name: "MatchDetail",
+            query: { game_id, category_id, teamPointIds, betType: "simple" },
+          });
+        } else {
+          router.push({
+            name: "MatchDetail",
+            query: { game_id, category_id, betType: "simple" },
+          });
+        }
+      }
+    }
+
+    onMounted(() => {
+      // 开启全局计时器获取当前时间
+      openTimer();
+      // 初始化语言
+      initLangAction();
+      // 尝试跳转
+      isJump();
+    });
+
+    onUnmounted(() => {
+      closeTimer();
+      leaveRoom("room_type_index_content_push");
+    });
+  },
+});
+</script>

@@ -1,19 +1,23 @@
 declare interface Window {
-  webkitDevicePixelRatio: any
-  mozDevicePixelRatio: any
+  webkitDevicePixelRatio: any;
+  mozDevicePixelRatio: any;
 }
 
-declare module '*.vue' {
-  import { type DefineComponent } from 'vue'
-  const component: DefineComponent<{}, {}, any>
-  export default component
+declare module "*.vue" {
+  import { type DefineComponent } from "vue";
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
 }
+
+declare module "xgplayer-hls.js";
+
+declare module "xgplayer-flv";
 
 declare const __SYSTEM_INFO__: {
   pkg: {
-    version: string
-    dependencies: Recordable<string>
-    devDependencies: Recordable<string>
-  }
-  lastBuildTime: string
-}
+    version: string;
+    dependencies: Recordable<string>;
+    devDependencies: Recordable<string>;
+  };
+  lastBuildTime: string;
+};

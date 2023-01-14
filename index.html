@@ -1,40 +1,32 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--suppress HtmlUnknownTarget -->
     <link rel="icon" href="/favicon.ico" />
-    <link rel="stylesheet" href="/browser_upgrade/index.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
-    <%- copyrightScript %>
+    <script src="https://pv.sohu.com/cityjson?ie=utf-8"></script>
   </head>
   <body>
-    <div id="app">
-      <div class="fantastic-admin-home">
-        <div class="loading">
-          <div class="square"></div>
-          <div class="square"></div>
-          <div class="square"></div>
-          <div class="square"></div>
-        </div>
-        <div class="text"><%= title %>载入中…</div>
-      </div>
-      <div id="browser-upgrade">
-        <div class="title">为了您的体验，推荐使用以下浏览器</div>
-        <div class="browsers">
-          <a href="https://www.microsoft.com/edge" target="_blank" class="browser">
-            <img class="browser-icon" src="/browser_upgrade/edge.png" />
-            <div class="browser-name">Mircosoft Edge</div>
-          </a>
-          <a href="https://www.google.cn/chrome/" target="_blank" class="browser">
-            <img class="browser-icon" src="/browser_upgrade/chrome.png" />
-            <div class="browser-name">Google Chrome</div>
-          </a>
-        </div>
-      </div>
-    </div>
-    <%- loadingScript %>
+    <!--suppress JSUnresolvedVariable -->
+    <script>
+      // eslint-disable-next-line no-undef
+      const Ip = returnCitySN.cip
+// eslint-disable-next-line no-undef
+const cityname = returnCitySN.cname
+localStorage.setItem('Ip', Ip)
+localStorage.setItem('cityname', cityname)
+    </script>
+    <noscript>
+      <strong
+        >We're sorry but doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong
+      >
+    </noscript>
+    <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
-    <%- devtoolScript %>
   </body>
 </html>

@@ -1,26 +1,40 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
+import mitt from 'mitt'
 import App from './App.vue'
-import pinia from './store'
 import router from './router'
-import useSettingsStore from './store/modules/settings'
+import Tooltip from './directives/tooltip'
+import { i18n } from '@/locale'
+import '@/utils/flexible'
 
-// 自定义指令
-import directive from '@/utils/directive'
-// 加载 svg 图标
-import 'virtual:svg-icons-register'
-// 全局样式
-import '@/assets/styles/globals.scss'
-// 加载 iconify 图标（element plus）
-import { downloadAndInstall } from '@/iconify-ep'
+import 'normalize.css/normalize.css'
+
+import './assets/fonts/index.scss'
+
+import './guard'
+
+// 引入event-bus方法
+
+import LazyImage from '@/components/lazyImage/index.vue'
+
+// 引入全局样式
+import '@/theme/index.scss'
+
+import 'default-passive-events'
+
+// 引入你需要的组件
+import 'element-plus/dist/index.css'
 
 const app = createApp(App)
-app.use(ElementPlus)
-app.use(pinia)
-app.use(router)
-directive(app)
-if (useSettingsStore().app.iconifyOfflineUse) {
-  downloadAndInstall()
-}
 
-app.mount('#app')
+// 引入数据管理工具
+const pinia = createPinia()
+// 注册全局 event mitt方法
+app.config.globalProperties.mittBus = mitt()
+
+app.directive('tooltip', Tooltip)
+
+app.component('LazyImage', LazyImage)
+
+app.use(pinia).use(router).use(ElementPlus).use(i18n).mount('#app')
