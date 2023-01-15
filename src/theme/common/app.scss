@@ -60,7 +60,7 @@ body,
       position: absolute;
       height: 16px;
       width: 16px;
-      background-image: url("~@/assets/icons/home_odds_up.png");
+      background-image: url("@/assets/icons/home_odds_up.png");
       background-size: 100% 100%;
       top: 2px;
       animation: point-change 1s ease-in-out infinite;
@@ -101,7 +101,7 @@ body,
       position: absolute;
       height: 16px;
       width: 16px;
-      background-image: url("~@/assets/icons/home_odds_down.png");
+      background-image: url("@/assets/icons/home_odds_down.png");
       background-size: 100% 100%;
       top: 2px;
       animation: point-change 1s ease-in-out infinite;

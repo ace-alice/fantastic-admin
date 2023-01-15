@@ -2,20 +2,20 @@
 import { computed, defineAsyncComponent, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import videoAndAnimationHook from '@/hooks/videoAndAnimationHook'
-const TeamBox = defineAsyncComponent(() => import('./components/TeamBox.vue'))
-const BaseInfoBox = defineAsyncComponent(
+const HotTeamBox = defineAsyncComponent(() => import('./components/TeamBox.vue'))
+const HotBaseInfoBox = defineAsyncComponent(
   () => import('./components/BaseInfoBox.vue'),
 )
-const FavoriteAndPointBox = defineAsyncComponent(
+const HotFavoriteAndPointBox = defineAsyncComponent(
   () => import('./components/FavoriteAndPointBox.vue'),
 )
 
-const PlayNameBox = defineAsyncComponent(
+const HotPlayNameBox = defineAsyncComponent(
   () => import('./components/PlayNameBox.vue'),
 )
 export default defineComponent({
   name: 'HotBoxItem',
-  components: { TeamBox, FavoriteAndPointBox, PlayNameBox, BaseInfoBox },
+  components: { HotTeamBox, HotFavoriteAndPointBox, HotPlayNameBox, HotBaseInfoBox },
   props: {
     matchInfo: {
       type: Object,
@@ -82,13 +82,13 @@ export default defineComponent({
       <LazyImage v-if="animationHas" :img-url="animateIcon" />
     </div>
     <div class="top">
-      <TeamBox
+      <HotTeamBox
         :key="hasPlayInfo ? `${matchInfo.recommend_play.id}0` : 0"
         :item-info="matchInfo"
         :index="0"
       />
-      <PlayNameBox :item-info="matchInfo" />
-      <TeamBox
+      <HotPlayNameBox :item-info="matchInfo" />
+      <HotTeamBox
         :key="hasPlayInfo ? `${matchInfo.recommend_play.id}1` : 1"
         :item-info="matchInfo"
         :index="1"
@@ -96,18 +96,18 @@ export default defineComponent({
     </div>
     <div class="bottom">
       <!-- suppress JSUnresolvedVariable -->
-      <BaseInfoBox
+      <HotBaseInfoBox
         :base-info="{
-          bo: matchInfo.bo,
+          bo: matchInfo.matches,
           eventName: matchInfo.event_name || 'IA ESPORT',
           isLive: +matchInfo.category_id === 3,
           logo: matchInfo.game_logo,
         }"
       />
-      <FavoriteAndPointBox
+      <HotFavoriteAndPointBox
         :info="{
           id: matchInfo.id,
-          pointsCount: matchInfo.team_count,
+          pointsCount: matchInfo.play_count,
           isKeep: matchInfo.is_favorite,
         }"
       />

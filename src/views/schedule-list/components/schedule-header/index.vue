@@ -77,7 +77,7 @@ export default defineComponent({
       }
     }
     .zone-tab {
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       .zone-tag {
         height: 24px;
         padding: 0 24px;
@@ -100,7 +100,7 @@ export default defineComponent({
     top: 12px;
     left: 16px;
     transition: all 0.25s ease-in-out;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   .schedule-title-1 {
     position: absolute;

@@ -102,7 +102,7 @@ export default defineComponent({
   overflow: hidden;
   width: 304px;
   flex-shrink: 0;
-  cursor: url("~@/assets/icons/home_mouse.png"), auto;
+  cursor: url("@/assets/icons/home_mouse.png"), auto;
   .game-banner {
     height: 0;
     transition: all 0.2s ease-in-out;

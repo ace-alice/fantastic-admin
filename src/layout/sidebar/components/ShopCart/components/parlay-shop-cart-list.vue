@@ -197,7 +197,7 @@ export default defineComponent({
   .close-img {
     height: 16px;
     width: 16px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
 }
 .no-data {
@@ -267,7 +267,7 @@ export default defineComponent({
           color: #ffffff;
           font-weight: 500;
           text-align: center;
-          cursor: url("~@/assets/icons/home_mouse.png"), auto;
+          cursor: url("@/assets/icons/home_mouse.png"), auto;
         }
       }
       & + div {
@@ -322,7 +322,7 @@ export default defineComponent({
       flex-shrink: 0;
     }
     .control-icon {
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       width: 24px;
       height: 24px;
       flex-shrink: 0;

@@ -5,7 +5,7 @@ import teamPointHook from '@/hooks/teamPointHook'
 import type { BetType } from '@/interface/shopCart'
 import useImageResource from '@/hooks/useImageResource'
 export default {
-  name: 'TeamBox',
+  name: 'TeamBoxHot',
   components: { LazyImage: lazyImage },
   props: {
     itemInfo: {
@@ -61,7 +61,7 @@ export default {
 
 <template>
   <div
-    class="team-box" :class="{
+    class="third-team-box-hot" :class="{
       [animateType]: true,
       [`${animateType}-border`]: !hasAdd,
       'not-allowed': isNotAllowAdd,
@@ -100,7 +100,7 @@ export default {
     text-align: right;
   }
 }
-.team-box {
+.third-team-box-hot {
   &:hover {
     transform: scale(1.02);
   }
@@ -120,7 +120,7 @@ export default {
   );
   border: 1px solid rgba(104, 104, 104, 1);
   border-radius: 6px;
-  cursor: url("~@/assets/icons/home_mouse_32.png"), auto;
+  cursor: url("@/assets/icons/home_mouse_32.png"), auto;
   .team-logo {
     width: 58px;
     flex-shrink: 0;

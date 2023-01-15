@@ -176,7 +176,7 @@ export default defineComponent({
         text-align: center;
         font-size: 16px;
         color: rgba(255, 255, 255, 0.6);
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
       }
     }
     .clear {
@@ -187,7 +187,7 @@ export default defineComponent({
       justify-content: center;
       background-color: rgba(255, 255, 255, 0.1);
       border-radius: 50%;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       transition: all 0.3s ease-in-out;
       .lazy-image {
         width: 24px;

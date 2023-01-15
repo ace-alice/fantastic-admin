@@ -1,39 +1,39 @@
 // import fs from "node:fs";
-import path from "node:path";
-import { defineConfig, loadEnv } from "vite";
-import dayjs from "dayjs";
-import pkg from "./package.json";
-import createVitePlugins from "./vite/plugins";
+import path from 'node:path'
+import { defineConfig, loadEnv } from 'vite'
+import dayjs from 'dayjs'
+import pkg from './package.json'
+import createVitePlugins from './vite/plugins'
 
 // https://vitejs.dev/config/
 export default ({ mode, command }) => {
-  const env = loadEnv(mode, process.cwd());
+  const env = loadEnv(mode, process.cwd())
   // 全局 scss 资源
-  const scssResources = [];
+  const scssResources = []
 
   return defineConfig({
-    base: "/",
+    base: '/',
     // 开发服务器选项 https://cn.vitejs.dev/config/#server-options
     server: {
       open: true,
       port: 9000,
       proxy: {
-        "/proxy": {
+        '/proxy': {
           target: env.VITE_APP_API_BASEURL,
-          changeOrigin: command === "serve" && env.VITE_OPEN_PROXY === "true",
-          rewrite: (path) => path.replace(/\/proxy/, ""),
+          changeOrigin: command === 'serve' && env.VITE_OPEN_PROXY === 'true',
+          rewrite: path => path.replace(/\/proxy/, ''),
         },
-        "/api": {
+        '/api': {
           target: env.VITE_APP_API_BASEURL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/\/api/, ""),
+          rewrite: path => path.replace(/\/api/, ''),
         },
       },
     },
     // 构建选项 https://cn.vitejs.dev/config/#server-fsserve-root
     build: {
-      outDir: mode === "production" ? "dist" : `dist-${mode}`,
-      sourcemap: env.VITE_BUILD_SOURCEMAP === "true",
+      outDir: mode === 'production' ? 'IA-ESPORT-WEB-DIST' : `IA-ESPORT-WEB-DIST-${mode}`,
+      sourcemap: env.VITE_BUILD_SOURCEMAP === 'true',
     },
     define: {
       __SYSTEM_INFO__: JSON.stringify({
@@ -42,22 +42,22 @@ export default ({ mode, command }) => {
           dependencies: pkg.dependencies,
           devDependencies: pkg.devDependencies,
         },
-        lastBuildTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        lastBuildTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       }),
     },
-    plugins: createVitePlugins(env, command === "build"),
+    plugins: createVitePlugins(env, command === 'build'),
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "src"),
-        "#": path.resolve(__dirname, "src/types"),
+        '@': path.resolve(__dirname, 'src'),
+        '#': path.resolve(__dirname, 'src/types'),
       },
     },
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: scssResources.join(""),
+          additionalData: scssResources.join(''),
         },
       },
     },
-  });
-};
+  })
+}

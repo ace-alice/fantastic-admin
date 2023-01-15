@@ -82,14 +82,14 @@ export default defineComponent({
   margin-bottom: 8px;
   padding: 12px 54px;
   font-family: PingFangSC-Regular, PingFangSC-Medium, monospace;
-  cursor: url("~@/assets/icons/home_mouse.png"), auto;
+  cursor: url("@/assets/icons/home_mouse.png"), auto;
   .more-and_more {
     margin-top: 8px;
     display: flex;
     justify-content: flex-end;
     font-size: 14px;
     color: #fe5e00;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   .bulletin-header {
     display: flex;

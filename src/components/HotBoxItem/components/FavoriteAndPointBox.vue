@@ -57,7 +57,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="FavoriteAndPointBox">
+  <div class="FavoriteAndPointBoxHot">
     <div class="points-count">
       +{{ info.pointsCount }}
     </div>
@@ -65,7 +65,7 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-.FavoriteAndPointBox {
+.FavoriteAndPointBoxHot {
   height: 18px;
   width: 48px;
   border: 1px solid rgba(255, 255, 255, 0.1);

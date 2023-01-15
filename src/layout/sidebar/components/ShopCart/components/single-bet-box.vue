@@ -120,7 +120,7 @@ export default defineComponent({
     color: #ffffff;
     font-weight: 500;
     text-align: center;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   .disabled {
     background-image: linear-gradient(
@@ -134,7 +134,7 @@ export default defineComponent({
   .has-change {
     background-image: linear-gradient(90deg, #d53720 0%, #f2691e 98%);
     color: #ffffff;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   .warn-box {
     background-image: linear-gradient(

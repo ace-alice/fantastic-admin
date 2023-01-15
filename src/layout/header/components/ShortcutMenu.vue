@@ -67,7 +67,7 @@ export default defineComponent({
   flex-shrink: 0;
   .item {
     margin-left: 14px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     .lazy-image {
       width: 32px;
       height: 32px;

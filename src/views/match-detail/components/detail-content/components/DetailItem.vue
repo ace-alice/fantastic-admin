@@ -1,9 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import TeamBox from './TeamBox.vue'
+import DetailTeamBox from './TeamBox.vue'
 export default defineComponent({
   name: 'IaDetailItem',
-  components: { TeamBox },
+  components: { DetailTeamBox },
   props: {
     playInfo: {
       type: Object,
@@ -21,11 +21,11 @@ export default defineComponent({
 <template>
   <div class="detail-item">
     <div class="play-name">
-      {{ playInfo.play_name }}
+      {{ playInfo.name }}
     </div>
     <div class="bottom">
       <template v-for="(team, index) in playInfo.team_points" :key="team.id">
-        <TeamBox :play-info="playInfo" :index="index" />
+        <DetailTeamBox :play-info="playInfo" :index="index" />
       </template>
     </div>
   </div>

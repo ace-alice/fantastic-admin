@@ -33,7 +33,7 @@ export default defineComponent({
   .lazy-image {
     width: 124px;
     height: 28px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     margin-left: 24px;
   }
 }

@@ -168,7 +168,7 @@ export default defineComponent({
       color: rgba(255, 255, 255, 0.6);
       .schedule-ch-tab {
         padding: 10px;
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
       }
       .active-ch-tab {
         color: #ffffff;
@@ -188,7 +188,7 @@ export default defineComponent({
         line-height: 54px;
         text-align: center;
         background: #1a1f26;
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
         color: rgba(255, 255, 255, 0.6);
       }
     }
@@ -201,7 +201,7 @@ export default defineComponent({
     font-family: PingFangSC-Regular, PingFangSC-Medium, monospace;
     font-size: 16px;
     color: #ffffff;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     .switch-close {
       transform: rotate(90deg) !important;
     }

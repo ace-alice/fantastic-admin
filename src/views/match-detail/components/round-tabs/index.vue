@@ -154,7 +154,7 @@ export default defineComponent({
         transition: all 0.25s ease-in-out;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 50%;
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
         .lazy-image {
           height: 24px;
           width: 24px;
@@ -181,7 +181,7 @@ export default defineComponent({
       align-items: center;
       border-radius: 50%;
       background-color: rgba(255, 255, 255, 0.2);
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       transition: transform 0.2s ease-in-out;
       &:hover {
         transform: scale(1.06);
@@ -224,7 +224,7 @@ export default defineComponent({
     font-size: 16px;
     color: rgba(255, 255, 255, 0.6);
     letter-spacing: 1px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     flex-shrink: 0;
     border-radius: 16px;
     transition: all 0.3s ease-in-out;

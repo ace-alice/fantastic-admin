@@ -146,7 +146,7 @@ export default defineComponent({
       font-size: 14px;
       color: #ffffff;
       font-weight: 500;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
     }
   }
 }

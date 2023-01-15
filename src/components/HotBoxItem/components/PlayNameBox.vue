@@ -5,7 +5,7 @@ import { parseTime, setItemName } from '@/utils'
 const ThirdTeamBox = defineAsyncComponent(() => import('./ThirdTeamBox.vue'))
 
 export default defineComponent({
-  name: 'PlayNameBox',
+  name: 'PlayNameBoxHot',
   components: { ThirdTeamBox },
   props: {
     itemInfo: {
@@ -39,7 +39,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="PlayNameBox">
+  <div class="play-name-box-hot">
     <ThirdTeamBox v-if="hasTeam3" :index="2" :item-info="itemInfo" />
     <template v-else>
       <div v-if="!hasTeam3 && hasPlayInfo" class="play-name">
@@ -73,7 +73,7 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-.PlayNameBox {
+.play-name-box-hot {
   width: 31%;
   height: 56px;
   display: flex;

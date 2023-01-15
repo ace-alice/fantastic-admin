@@ -223,7 +223,7 @@ export default {
   .close-img {
     height: 16px;
     width: 16px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   .header {
     display: flex;
@@ -241,7 +241,7 @@ export default {
     .close {
       width: 24px !important;
       height: 24px !important;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
     }
     .text {
       display: inline-block;
@@ -344,7 +344,7 @@ export default {
       color: #ffffff;
       font-weight: 500;
       text-align: center;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
     }
   }
 }

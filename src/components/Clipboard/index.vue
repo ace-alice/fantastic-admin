@@ -47,7 +47,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .clipboard {
-  cursor: url("~@/assets/icons/home_mouse.png"), auto;
+  cursor: url("@/assets/icons/home_mouse.png"), auto;
   &:hover {
     color: #fe5e00;
   }

@@ -186,7 +186,7 @@ export default defineComponent({
     font-family: PingFangSC-Regular, PingFangSC-Medium, monospace;
     font-size: 16px;
     color: rgba(255, 255, 255, 0.6);
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     border-radius: 6px;
     transition: all 0.3s ease-in-out;
     &:hover {

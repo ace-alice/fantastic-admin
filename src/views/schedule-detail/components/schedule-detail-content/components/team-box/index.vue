@@ -164,7 +164,7 @@ export default defineComponent({
     font-family: PingFangSC-Regular, PingFangSC-Medium, monospace;
     font-size: 16px;
     color: #ffffff;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     .switch-close {
       transform: rotate(90deg) !important;
     }

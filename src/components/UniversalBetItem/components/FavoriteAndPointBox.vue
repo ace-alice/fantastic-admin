@@ -5,7 +5,7 @@ import { userInfoStore } from '@/store/userInfo'
 import { toSetKeepFun } from '@/api/store-game-info'
 
 export default defineComponent({
-  name: 'FavoriteAndPointBox',
+  name: 'FavoriteAndPointBoxUn',
   components: {},
   props: {
     info: {
@@ -56,7 +56,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="FavoriteAndPointBox">
+  <div class="FavoriteAndPointBoxUn">
     <div class="points-count">
       +{{ info.pointsCount }}
     </div>
@@ -64,12 +64,12 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-.FavoriteAndPointBox {
+.FavoriteAndPointBoxUn {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 2.8% 0 4.6%;
+  justify-content: center;
   flex-shrink: 0;
+  width: 8%;
   .points-count {
     font-family: Gotham-Medium, PingFangSC-Medium, monospace;
     font-size: 16px;
@@ -80,7 +80,7 @@ export default defineComponent({
   .lazy-image {
     height: 24px;
     width: 24px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
 }
 </style>

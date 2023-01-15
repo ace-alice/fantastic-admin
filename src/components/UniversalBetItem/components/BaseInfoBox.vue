@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'VideoAndAnimationBox',
+  name: 'VideoAndAnimationBoxUn',
   components: {},
   props: {
     baseInfo: {
@@ -28,7 +28,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="VideoAndAnimationBox">
+  <div class="VideoAndAnimationBoxUn">
     <div class="top">
       {{ baseInfo.eventName || "IA ESPORT" }}
     </div>
@@ -43,7 +43,7 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-.VideoAndAnimationBox {
+.VideoAndAnimationBoxUn {
   width: 12.3%;
   padding-right: 2.8%;
   flex-shrink: 0;

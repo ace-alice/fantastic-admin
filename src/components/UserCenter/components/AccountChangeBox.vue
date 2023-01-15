@@ -2,6 +2,7 @@
 import { defineComponent, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { userInfoStore } from '@/store/userInfo'
+import useImageResource from '@/hooks/useImageResource'
 
 export default defineComponent({
   name: 'AccountChangeBox',
@@ -25,8 +26,11 @@ export default defineComponent({
       changeAvatarId(selectAvatarId.value)
     }
 
+    const imageResource: any = useImageResource()
+
     function getAvatarImage(id: number) {
-      return new URL(`@/assets/avatar/image-${id > 0 && id < 16 ? id : 1}.png`, import.meta.url).href
+      const ida = id > 0 && id < 16 ? id : 1
+      return imageResource[`avatar${ida}`]
     }
 
     return { changeAccount, getAvatarImage, avatarId, selectAvatarId }
@@ -123,7 +127,7 @@ export default defineComponent({
         color: #ffffff;
         font-weight: 500;
         margin-bottom: 24px;
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
       }
       .lazy-image {
         height: 88px;
@@ -189,7 +193,7 @@ export default defineComponent({
           width: 88px;
           border-radius: 50%;
           overflow: hidden;
-          cursor: url("~@/assets/icons/home_mouse.png"), auto;
+          cursor: url("@/assets/icons/home_mouse.png"), auto;
         }
       }
     }

@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import CountTo from '@/components/VueCountTo/index.vue'
 import { userInfoStore } from '@/store/userInfo'
+import useImageResource from '@/hooks/useImageResource'
 
 export default defineComponent({
   name: 'CenterCartBox',
@@ -21,10 +22,11 @@ export default defineComponent({
       userInfoStore(),
     )
 
+    const imageResource: any = useImageResource()
+
     const avatarImg = computed(() => {
-      return new URL(`@/assets/avatar/image-${
-        +avatarId.value > 0 && +avatarId.value < 16 ? avatarId.value : 1
-      }.png`, import.meta.url).href
+      const id = (+avatarId.value > 0) && +avatarId.value < 16 ? avatarId.value : 1
+      return imageResource[`avatar${id}`]
     })
 
     const startVal = ref(0)
@@ -177,7 +179,7 @@ export default defineComponent({
       padding: 4px 8px;
       font-size: 14px;
       color: #ffffff;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       &:hover {
         font-weight: 500;
         transform: scale(1.14) translateX(16px);

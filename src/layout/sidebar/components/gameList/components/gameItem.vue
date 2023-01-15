@@ -258,7 +258,7 @@ export default {
 .menu-item {
   width: 100%;
   height: 52px;
-  cursor: url("~@/assets/icons/home_mouse.png"), auto;
+  cursor: url("@/assets/icons/home_mouse.png"), auto;
   display: flex;
   align-items: center;
   //overflow: hidden;
@@ -313,7 +313,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     & > div {
       flex-shrink: 0;
     }
@@ -365,7 +365,7 @@ export default {
     width: 20px;
     text-align: center;
     line-height: 20px;
-    background-image: url("~@/assets/icons/choose.png");
+    background-image: url("@/assets/icons/choose.png");
     background-size: 100% 100%;
   }
 }

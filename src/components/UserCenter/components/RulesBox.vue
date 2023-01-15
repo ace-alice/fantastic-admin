@@ -93,7 +93,7 @@ export default defineComponent({
         color: #fe5e00 !important;
       }
       .rule-box-tab {
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
         font-family: PingFangSC-Regular, PingFangSC-Medium, monospace;
         font-size: 16px;
         font-weight: 500;
@@ -126,7 +126,7 @@ export default defineComponent({
         font-size: 24px;
         height: 22px;
         width: 22px;
-        background-image: url("~@/assets/icons/choose.png");
+        background-image: url("../../../src/assets/icons/choose.png");
         background-size: 100% 100%;
       }
     }

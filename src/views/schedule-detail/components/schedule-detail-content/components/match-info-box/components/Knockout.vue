@@ -226,7 +226,7 @@ export default defineComponent({
     right: 50px;
     z-index: 100;
     .icon {
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
     }
     .disable {
       cursor: not-allowed;

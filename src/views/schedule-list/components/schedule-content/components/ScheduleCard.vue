@@ -168,7 +168,7 @@ export default defineComponent({
   position: relative;
   height: 210px;
   overflow: hidden;
-  cursor: url("~@/assets/icons/home_mouse.png"), auto;
+  cursor: url("@/assets/icons/home_mouse.png"), auto;
   .banner-bg {
     height: 210px;
     width: 100%;

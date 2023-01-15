@@ -105,7 +105,7 @@ export default defineComponent({
   flex-grow: 1;
   max-width: 520px;
   display: flex;
-  cursor: url("~@/assets/icons/home_mouse.png"), auto;
+  cursor: url("@/assets/icons/home_mouse.png"), auto;
   align-items: center;
   .tag-title {
     padding: 4px 12px 3px;

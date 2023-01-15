@@ -3,9 +3,9 @@
 import { defineAsyncComponent } from 'vue'
 
 import SocketTest from '@/layout/header/components/SocketTest.vue'
-const ShortcutMenu = defineAsyncComponent(() =>
-  import('./components/ShortcutMenu.vue'),
-)
+// const ShortcutMenu = defineAsyncComponent(() =>
+//   import('./components/ShortcutMenu.vue'),
+// )
 const UserInfoItem = defineAsyncComponent(() =>
   import('./components/UserInfoItem.vue'),
 )
@@ -16,7 +16,7 @@ const NoticeItem = defineAsyncComponent(() =>
 export default {
 
   name: 'HeaderBox',
-  components: { ShortcutMenu, UserInfoItem, NoticeItem, SocketTest },
+  components: { UserInfoItem, NoticeItem, SocketTest },
   setup() {
     return {}
   },
@@ -27,7 +27,7 @@ export default {
   <div class="header">
     <div class="center-box">
       <NoticeItem />
-      <ShortcutMenu />
+      <!-- <ShortcutMenu /> -->
     </div>
     <div class="right-box">
       <SocketTest />

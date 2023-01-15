@@ -94,7 +94,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   .close-icon {
     position: absolute;
@@ -102,7 +102,7 @@ export default defineComponent({
     width: 24px;
     top: 14px;
     right: 20px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   .box-header {
     height: 46px;

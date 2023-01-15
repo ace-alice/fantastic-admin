@@ -182,7 +182,7 @@ export default {
       color: var(--color-white);
       font-weight: 500;
       margin-bottom: 44px;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
     }
   }
 }

@@ -113,7 +113,7 @@ export default {
     position: absolute;
     right: 24px;
     top: 24px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   &:deep(.tab-box) {
     display: flex;

@@ -271,7 +271,7 @@ export default defineComponent({
       right: 10px;
       top: 16px;
       z-index: 1000;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       background-color: #1e2934;
       padding: 4px;
       .lazy-image {

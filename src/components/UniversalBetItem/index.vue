@@ -1,108 +1,108 @@
-﻿<template>
-  <div class="universal-bet-item" @click.stop="toMatchDetail">
-    <LogoDateBox
-      :dataInfo="{
-        logo: matchInfo.game_logo,
-        startTime: matchInfo.game_start_time,
-        isLive: +matchInfo.category_id === 3,
-      }"
-    />
-    <BaseInfoBox
-      :baseInfo="{
-        bo: matchInfo.bo,
-        eventName: matchInfo.event_name,
-        hasVideo: videoHas,
-        hasAnimate: animationHas,
-      }"
-    />
-    <TeamBox
-      :itemInfo="matchInfo"
-      :key="hasPlayInfo ? `${matchInfo.recommend_play.id}0` : 0"
-      :index="0"
-    />
-    <PlayNameBox :itemInfo="matchInfo" />
-    <TeamBox
-      :itemInfo="matchInfo"
-      :index="1"
-      :key="hasPlayInfo ? `${matchInfo.recommend_play.id}1` : 1"
-    />
-    <FavoriteAndPointBox
-      :info="{
-        id: matchInfo.id,
-        pointsCount: matchInfo['team_count'],
-        isKeep: matchInfo.is_favorite,
-      }"
-    />
-  </div>
-</template>
-
-<script lang="ts">
-import { computed, defineAsyncComponent, defineComponent, inject } from "vue";
-import videoAndAnimationHook from "@/hooks/videoAndAnimationHook";
-import { useRouter } from "vue-router";
-const TeamBox = defineAsyncComponent(() => import("./components/TeamBox.vue"));
-const BaseInfoBox = defineAsyncComponent(
-  () => import("./components/BaseInfoBox.vue")
-);
-const FavoriteAndPointBox = defineAsyncComponent(
-  () => import("./components/FavoriteAndPointBox.vue")
-);
-const LogoDateBox = defineAsyncComponent(
-  () => import("./components/LogoDateBox.vue")
-);
-const PlayNameBox = defineAsyncComponent(
-  () => import("./components/PlayNameBox.vue")
-);
+﻿<script lang="ts">
+import { computed, defineAsyncComponent, defineComponent, inject } from 'vue'
+import { useRouter } from 'vue-router'
+import videoAndAnimationHook from '@/hooks/videoAndAnimationHook'
+const UnTeamBox = defineAsyncComponent(() => import('./components/TeamBox.vue'))
+const UnBaseInfoBox = defineAsyncComponent(
+  () => import('./components/BaseInfoBox.vue'),
+)
+const UnFavoriteAndPointBox = defineAsyncComponent(
+  () => import('./components/FavoriteAndPointBox.vue'),
+)
+const UnLogoDateBox = defineAsyncComponent(
+  () => import('./components/LogoDateBox.vue'),
+)
+const UnPlayNameBox = defineAsyncComponent(
+  () => import('./components/PlayNameBox.vue'),
+)
 
 export default defineComponent({
-  name: "UniversalBetItem",
+  name: 'UniversalBetItem',
   components: {
-    TeamBox,
-    BaseInfoBox,
-    FavoriteAndPointBox,
-    LogoDateBox,
-    PlayNameBox,
+    UnTeamBox,
+    UnBaseInfoBox,
+    UnFavoriteAndPointBox,
+    UnLogoDateBox,
+    UnPlayNameBox,
   },
   props: {
     matchInfo: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       },
     },
   },
   setup(props) {
-    const router = useRouter();
+    const router = useRouter()
 
     const hasPlayInfo = computed(() => {
       return (
-        !(props.matchInfo.recommend_play instanceof Array) &&
-        props.matchInfo.recommend_play.id
-      );
-    });
+        !(Array.isArray(props.matchInfo.recommend_play))
+        && props.matchInfo.recommend_play.id
+      )
+    })
 
-    const { videoHas, animationHas } = videoAndAnimationHook(props.matchInfo);
+    const { videoHas, animationHas } = videoAndAnimationHook(props.matchInfo)
 
-    const betType = inject("betType", "single");
+    const betType = inject('betType', 'single')
 
     function toMatchDetail() {
-      let query: any = {
+      const query: any = {
         game_id: props.matchInfo.id,
         betType,
-      };
+      }
       if (hasPlayInfo.value) {
-        query.match = props.matchInfo.recommend_play.match;
+        query.match = props.matchInfo.recommend_play.match
       }
       router.push({
-        name: "MatchDetail",
+        name: 'MatchDetail',
         query,
-      });
+      })
     }
 
-    return { hasPlayInfo, videoHas, animationHas, toMatchDetail };
+    return { hasPlayInfo, videoHas, animationHas, toMatchDetail }
   },
-});
+})
 </script>
+
+<template>
+  <div class="universal-bet-item" @click.stop="toMatchDetail">
+    <UnLogoDateBox
+      :data-info="{
+        logo: matchInfo.game_logo,
+        startTime: matchInfo.game_start_time,
+        isLive: +matchInfo.category_id === 3,
+      }"
+    />
+    <UnBaseInfoBox
+      :base-info="{
+        bo: matchInfo.matches,
+        eventName: matchInfo.event_name,
+        hasVideo: videoHas,
+        hasAnimate: animationHas,
+      }"
+    />
+    <UnTeamBox
+      :key="hasPlayInfo ? `${matchInfo.recommend_play.id}0` : 0"
+      :item-info="matchInfo"
+      :index="0"
+    />
+    <UnPlayNameBox :item-info="matchInfo" />
+    <UnTeamBox
+      :key="hasPlayInfo ? `${matchInfo.recommend_play.id}1` : 1"
+      :item-info="matchInfo"
+      :index="1"
+    />
+    <UnFavoriteAndPointBox
+      :info="{
+        id: matchInfo.id,
+        pointsCount: matchInfo.play_count,
+        isKeep: matchInfo.is_favorite,
+      }"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .universal-bet-item {

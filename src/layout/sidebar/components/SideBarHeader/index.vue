@@ -138,7 +138,7 @@ export default defineComponent({
     font-size: 16px;
     color: rgba(255, 255, 255, 0.6);
     font-weight: 500;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     transition: all 0.2s ease-in-out;
     white-space: nowrap;
     overflow: hidden;

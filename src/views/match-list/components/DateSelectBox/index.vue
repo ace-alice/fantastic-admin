@@ -79,7 +79,7 @@ export default defineComponent({
     justify-content: flex-end;
     .time-item {
       text-align: center;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       transition: all 0.2s ease-in-out;
       &:hover {
         .value {

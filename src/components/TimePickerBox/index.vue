@@ -155,7 +155,7 @@ export default defineComponent({
       height: 24px;
       width: 24px;
       margin-left: 8px;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
     }
     &:deep(.el-date-editor) {
       --el-input-border: none;
@@ -213,7 +213,7 @@ export default defineComponent({
         width: 46px;
         text-align: center;
         border-radius: 12px;
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
       }
     }
     & > div + div {

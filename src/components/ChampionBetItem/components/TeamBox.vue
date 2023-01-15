@@ -76,7 +76,7 @@ export default defineComponent({
     width: 94%;
     flex-shrink: 0;
     padding: 0 16px;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     background-image: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0) 50%,

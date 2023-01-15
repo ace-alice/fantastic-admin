@@ -5,7 +5,7 @@ const LiveIcon = defineAsyncComponent(
 )
 
 export default defineComponent({
-  name: 'VideoAndAnimationBox',
+  name: 'VideoAndAnimationBoxHot',
   components: { LiveIcon },
   props: {
     baseInfo: {
@@ -33,7 +33,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="VideoAndAnimationBox">
+  <div class="VideoAndAnimationBoxHot">
     <LazyImage :img-url="baseInfo.logo" />
     <div class="event-name">
       <span v-tooltip="{ width: 70, message: baseInfo.eventName }">{{
@@ -49,7 +49,7 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-.VideoAndAnimationBox {
+.VideoAndAnimationBoxHot {
   flex-grow: 1;
   display: flex;
   overflow: hidden;

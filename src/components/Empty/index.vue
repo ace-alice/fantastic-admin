@@ -96,7 +96,7 @@ export default {
         border-radius: 13px;
         color: var(--color-white) !important;
         background: var(--color-theme-primary);
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
         opacity: 1;
       }
     }

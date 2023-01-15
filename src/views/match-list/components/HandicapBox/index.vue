@@ -71,7 +71,7 @@ export default defineComponent({
       color: rgba(255, 255, 255, 0.6);
       letter-spacing: 2px;
       font-weight: 400;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       transition: all 0.2s ease-in-out;
       display: flex;
       align-items: center;
@@ -109,7 +109,7 @@ export default defineComponent({
     color: #ffffff;
     flex-shrink: 0;
     font-family: PingFangSC-Regular, PingFangSC-Medium, monospace;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

@@ -10,6 +10,7 @@ import { storeToRefs } from 'pinia'
 import { userInfoStore } from '@/store/userInfo'
 import useRouteHook from '@/hooks/useRouteHook'
 import CenterCartBox from '@/layout/header/components/CenterCartBox.vue'
+import useImageResource from '@/hooks/useImageResource'
 const CountTo = defineAsyncComponent(
   () => import('@/components/VueCountTo/index.vue'),
 )
@@ -25,6 +26,8 @@ export default defineComponent({
     const { routerJump } = useRouteHook()
 
     const { doGetUserInfo } = userInfoStore()
+
+    const imageResource: any = useImageResource()
 
     const startVal = ref(0)
 
@@ -50,9 +53,8 @@ export default defineComponent({
     }
 
     const avatarImage = computed(() => {
-      return new URL(`@/assets/avatar/image-${
-        +avatarId.value > 0 && +avatarId.value < 16 ? avatarId.value : 1
-      }.png`, import.meta.url).href
+      const id = (+avatarId.value > 0) && +avatarId.value < 16 ? avatarId.value : 1
+      return imageResource[`avatar${id}`]
     })
 
     const refreshImg = new URL('@/assets/images/refresh.png', import.meta.url).href

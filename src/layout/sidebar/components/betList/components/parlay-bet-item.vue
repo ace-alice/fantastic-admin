@@ -244,7 +244,7 @@ export default defineComponent({
         height: 24px;
         width: 24px;
         margin-left: 8px;
-        cursor: url("~@/assets/icons/home_mouse.png"), auto;
+        cursor: url("@/assets/icons/home_mouse.png"), auto;
       }
     }
   }

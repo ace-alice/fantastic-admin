@@ -9,7 +9,7 @@ const HasLiveIcon = defineAsyncComponent(
   () => import('@/components/HasLiveIcon/index.vue'),
 )
 export default defineComponent({
-  name: 'LogoDateBox',
+  name: 'LogoDateBoxUn',
   components: { LiveIcon, HasLiveIcon },
   props: {
     dataInfo: {
@@ -33,7 +33,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="LogoDateBox">
+  <div class="LogoDateBoxUn">
     <LazyImage :img-url="dataInfo.logo" />
     <div class="main-live">
       <div v-if="dataInfo.isLive || handicap === 'live'" class="live-tag">
@@ -67,7 +67,7 @@ export default defineComponent({
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.LogoDateBox {
+.LogoDateBoxUn {
   display: flex;
   flex-shrink: 0;
   width: 16.5%;

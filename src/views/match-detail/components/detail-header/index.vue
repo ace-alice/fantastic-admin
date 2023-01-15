@@ -203,7 +203,7 @@ export default {
     display: flex;
     align-items: center;
     transition: all 0.25s ease-in-out;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     .lazy-image {
       height: 24px;
       width: 24px;
@@ -233,7 +233,7 @@ export default {
     top: 24px;
     left: 32px;
     transition: all 0.25s ease-in-out;
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
   }
   .bo-event-name {
     transition: all 0.25s ease-in-out;

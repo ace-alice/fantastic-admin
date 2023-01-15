@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { userInfoStore } from '@/store/userInfo'
 import CountTo from '@/components/VueCountTo/index.vue'
 import notLoginMessage from '@/utils/notLoginMessage'
+import useImageResource from '@/hooks/useImageResource'
 
 export default defineComponent({
   name: 'CenterHeader',
@@ -32,10 +33,11 @@ export default defineComponent({
       },
     )
 
+    const imageResource: any = useImageResource()
+
     const avatarImage = computed(() => {
-      return new URL(`@/assets/avatar/image-${
-        +avatarId.value > 0 && +avatarId.value < 16 ? avatarId.value : 1
-      }.png`, import.meta.url).href
+      const id = (+avatarId.value > 0) && +avatarId.value < 16 ? avatarId.value : 1
+      return imageResource[`avatar${id}`]
     })
 
     const editIcon = new URL('@/assets/icons/edit.png', import.meta.url).href
@@ -165,7 +167,7 @@ export default defineComponent({
       padding: 4px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 50%;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       .lazy-image {
         height: 20px;
         width: 20px;
@@ -194,7 +196,7 @@ export default defineComponent({
       line-height: 42px;
       overflow: hidden;
       padding-left: 46px;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       & + div {
         margin-top: 4px;
       }

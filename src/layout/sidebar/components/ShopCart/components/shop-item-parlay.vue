@@ -120,7 +120,7 @@ export default {
     .close {
       width: 24px !important;
       height: 24px !important;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
     }
     .text {
       display: inline-block;

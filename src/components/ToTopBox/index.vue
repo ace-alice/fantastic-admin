@@ -42,7 +42,7 @@ export default defineComponent({
   bottom: 28px;
   right: 20px;
   z-index: 9001;
-  cursor: url("~@/assets/icons/home_mouse.png"), auto;
+  cursor: url("@/assets/icons/home_mouse.png"), auto;
   display: flex;
   justify-content: center;
   align-items: center;

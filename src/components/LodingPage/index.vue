@@ -69,7 +69,7 @@ export default defineComponent({
   left: 0;
   height: 100%;
   width: 100%;
-  background-image: url("~@/assets/images/loading-bg.png");
+  background-image: url("@/assets/images/loading-bg.png");
   background-size: 100% 100%;
 }
 </style>

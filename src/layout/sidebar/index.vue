@@ -215,7 +215,7 @@ export default {
     bottom: 44px;
     transition: all 0.3s linear;
     right: var(--right);
-    cursor: url("~@/assets/icons/home_mouse.png"), auto;
+    cursor: url("@/assets/icons/home_mouse.png"), auto;
     border-radius: 0 4px 4px 0;
     background-color: rgba(255, 255, 255, 0.1);
     z-index: 20;

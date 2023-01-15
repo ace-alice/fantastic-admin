@@ -194,7 +194,7 @@ export default defineComponent({
       line-height: 54px;
       text-align: center;
       background: #1a1f26;
-      cursor: url("~@/assets/icons/home_mouse.png"), auto;
+      cursor: url("@/assets/icons/home_mouse.png"), auto;
       color: rgba(255, 255, 255, 0.6);
     }
   }
