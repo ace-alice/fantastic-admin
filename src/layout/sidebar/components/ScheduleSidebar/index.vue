@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { storeToRefs } from 'pinia'
+import ScheduleGameItem from './components/ScheduleGameItem.vue'
 import { scheduleInfoStore } from '@/store/scheduleInfo'
-import ScheduleGameItem from '@/layout/sidebar/components/ScheduleSidebar/components/ScheduleGameItem.vue'
 
 export default defineComponent({
   name: 'ScheduleSidebar',

@@ -67,9 +67,9 @@ export default defineComponent({
         {{ matchInfo.event_name || "IA ESPORT" }}
       </div>
       <div class="start-time">
-        <span v-if="matchInfo.game_show_end_time && !countdown[0]">{{
+        <span v-if="matchInfo.game_start_time && !countdown[0]">{{
           parseTime(
-            Number(String(matchInfo.game_show_end_time).padEnd(13, "0")),
+            Number(String(matchInfo.game_start_time).padEnd(13, "0")),
             "{y}/{m}/{d} {h}:{i}",
           )
         }}</span>
@@ -85,7 +85,7 @@ export default defineComponent({
         <span>{{ $t("bonus_pool") }}</span>
       </div>
       <div>
-        <span>{{ matchInfo.team_count ? matchInfo.team_count : 0 }}</span>
+        <span>{{ teamPoints && teamPoints.length || 0 }}</span>
         <span>{{ $t("game_teams") }}</span>
       </div>
     </div>

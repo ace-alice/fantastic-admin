@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineAsyncComponent, defineComponent, ref, watch } from 'vue'
 import getUniversalListHook from '@/hooks/getUniversalListHook'
+import useImageResource from '@/hooks/useImageResource'
 const HotBoxItem = defineAsyncComponent(
   () => import('@/components/HotBoxItem/index.vue'),
 )
@@ -18,37 +19,15 @@ export default defineComponent({
   setup() {
     const { matchListData } = getUniversalListHook('hot' as any)
 
-    const hotBgImage = ref(['yxlm_01', 'yxlm_02', 'yxlm_03'])
+    const imageResource: any = useImageResource()
 
-    watch(
-      () => matchListData.value,
-      (newVal) => {
-        const tempArr: string[] = []
-        newVal.forEach((match: any, index) => {
-          if (index < 3) {
-            tempArr.push(String(match.game_type_id))
-            const len = tempArr.filter((id: string) => {
-              return id === String(match.game_type_id)
-            }).length
-
-            hotBgImage.value.splice(
-              index,
-              1,
-              `${gameTypeCode[String(match.game_type_id)] || 'wzry_'}${
-                len ? String(len).padStart(2, '0') : '1'
-              }`,
-            )
-          }
-        })
-      },
-      { deep: true },
-    )
-
-    function getImageUrl(str: string) {
-      return new URL(`@/assets/banner/${str}.png`, import.meta.url).href
+    function getImageUrl(game_type_id: number, index: number) {
+      const prev = gameTypeCode[String(game_type_id)]
+      const next = `0${index % 3 + 1}`
+      return imageResource[prev + next]
     }
 
-    return { matchListData, hotBgImage, getImageUrl }
+    return { matchListData, getImageUrl }
   },
 })
 </script>
@@ -60,7 +39,7 @@ export default defineComponent({
         v-if="index < 3"
         :key="match.id"
         :match-info="match"
-        :bg="getImageUrl(hotBgImage[index])"
+        :bg="getImageUrl(+match.game_type_id, index)"
       />
     </template>
   </div>

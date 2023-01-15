@@ -26,6 +26,26 @@ import avatar13 from '@/assets/avatar/image-13.png'
 import avatar14 from '@/assets/avatar/image-14.png'
 import avatar15 from '@/assets/avatar/image-15.png'
 
+import csgo_01 from '@/assets/banner/csgo_01.png'
+import csgo_02 from '@/assets/banner/csgo_02.png'
+import csgo_03 from '@/assets/banner/csgo_03.png'
+import csgo_04 from '@/assets/banner/csgo_04.png'
+
+import dota_01 from '@/assets/banner/dota_01.png'
+import dota_02 from '@/assets/banner/dota_02.png'
+import dota_03 from '@/assets/banner/dota_03.png'
+import dota_04 from '@/assets/banner/dota_04.png'
+
+import wzry_01 from '@/assets/banner/wzry_01.png'
+import wzry_02 from '@/assets/banner/wzry_02.png'
+import wzry_03 from '@/assets/banner/wzry_03.png'
+import wzry_04 from '@/assets/banner/wzry_04.png'
+
+import yxlm_01 from '@/assets/banner/yxlm_01.png'
+import yxlm_02 from '@/assets/banner/yxlm_02.png'
+import yxlm_03 from '@/assets/banner/yxlm_03.png'
+import yxlm_04 from '@/assets/banner/yxlm_04.png'
+
 export default function useImageResource() {
   return {
     liveIcon,
@@ -54,5 +74,21 @@ export default function useImageResource() {
     avatar13,
     avatar14,
     avatar15,
+    csgo_01,
+    csgo_02,
+    csgo_03,
+    csgo_04,
+    dota_01,
+    dota_02,
+    dota_03,
+    dota_04,
+    wzry_01,
+    wzry_02,
+    wzry_03,
+    wzry_04,
+    yxlm_01,
+    yxlm_02,
+    yxlm_03,
+    yxlm_04,
   }
 }
