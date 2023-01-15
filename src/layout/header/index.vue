@@ -1,4 +1,28 @@
-<!--suppress ALL -->
+<!-- suppress ALL -->
+<script lang="ts">
+import { defineAsyncComponent } from 'vue'
+
+import SocketTest from '@/layout/header/components/SocketTest.vue'
+const ShortcutMenu = defineAsyncComponent(() =>
+  import('./components/ShortcutMenu.vue'),
+)
+const UserInfoItem = defineAsyncComponent(() =>
+  import('./components/UserInfoItem.vue'),
+)
+const NoticeItem = defineAsyncComponent(() =>
+  import('./components/NoticeItem.vue'),
+)
+
+export default {
+
+  name: 'HeaderBox',
+  components: { ShortcutMenu, UserInfoItem, NoticeItem, SocketTest },
+  setup() {
+    return {}
+  },
+}
+</script>
+
 <template>
   <div class="header">
     <div class="center-box">
@@ -11,30 +35,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineAsyncComponent } from "vue";
-const ShortcutMenu = defineAsyncComponent(() =>
-  import("./components/ShortcutMenu.vue")
-);
-const UserInfoItem = defineAsyncComponent(() =>
-  import("./components/UserInfoItem.vue")
-);
-const NoticeItem = defineAsyncComponent(() =>
-  import("./components/NoticeItem.vue")
-);
-
-import SocketTest from "@/layout/header/components/SocketTest.vue";
-
-export default {
-  // eslint-disable-next-line vue/multi-word-component-names
-  name: "Header",
-  components: { ShortcutMenu, UserInfoItem, NoticeItem, SocketTest },
-  setup() {
-    return {};
-  },
-};
-</script>
 
 <style lang="scss" scoped>
 .header {

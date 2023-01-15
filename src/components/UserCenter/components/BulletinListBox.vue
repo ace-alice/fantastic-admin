@@ -1,12 +1,81 @@
+<script lang="ts">
+import type { Ref } from 'vue'
+import { defineComponent, onMounted, reactive, ref } from 'vue'
+import type { ElScrollbar } from 'element-plus'
+import { getNoticeInfo } from '@/api/tools-api'
+import BulletinItem from '@/components/UserCenter/components/BulletinItem.vue'
+import useImageResource from '@/hooks/useImageResource'
+
+export default defineComponent({
+  name: 'BulletinListBox',
+  components: { BulletinItem },
+  setup() {
+    const { emptyImg } = useImageResource()
+
+    const scrollbarRef: Ref<InstanceType<typeof ElScrollbar> | null>
+      = ref(null)
+
+    // 公告列表
+    const noticeList: Ref<Array<any>> = ref([])
+
+    // 公告数量
+    const noticeNum = ref(0)
+
+    // 发送请求的 数据
+    const formData = reactive({
+      start_date: null,
+      end_date: null,
+      keywords: null,
+      page: 1,
+      limit: 10,
+    })
+
+    const loading = ref(false)
+
+    // 获取公告列表
+    function getNoticeList() {
+      loading.value = true
+      getNoticeInfo(formData)
+        .then(({ data }: any) => {
+          if (+data.code === 1) {
+            if (scrollbarRef.value) {
+              scrollbarRef.value.setScrollTop(0)
+            }
+            noticeNum.value = +data.data.total
+            noticeList.value = data.data.data
+          }
+        })
+        .finally(() => {
+          loading.value = false
+        })
+    }
+
+    onMounted(() => {
+      getNoticeList()
+    })
+
+    return {
+      noticeList,
+      noticeNum,
+      formData,
+      getNoticeList,
+      scrollbarRef,
+      loading,
+      emptyImg,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="BulletinListBox tab-box">
-    <div class="box-header"></div>
+    <div class="box-header" />
     <div class="box-body">
-      <el-scrollbar ref="scrollbarRef" v-if="noticeList.length > 0 || loading">
+      <el-scrollbar v-if="noticeList.length > 0 || loading" ref="scrollbarRef">
         <transition-group name="list" appear>
           <BulletinItem
             v-for="info in noticeList"
-            :key="info['id']"
+            :key="info.id"
             :info="info"
           />
         </transition-group>
@@ -18,85 +87,17 @@
     </div>
     <div class="box-footer">
       <el-pagination
-        layout="prev, pager, next"
-        :total="noticeNum"
         v-model:page-size="formData.limit"
         v-model:current-page="formData.page"
+        layout="prev, pager, next"
+        :total="noticeNum"
         @current-change="getNoticeList"
       />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, reactive, ref, Ref } from "vue";
-import { getNoticeInfo } from "@/api/tools-api";
-import BulletinItem from "@/components/UserCenter/components/BulletinItem.vue";
-import { ElScrollbar } from "element-plus";
-import useImageResource from "@/hooks/useImageResource";
-
-export default defineComponent({
-  name: "BulletinListBox",
-  components: { BulletinItem },
-  setup() {
-    const { emptyImg } = useImageResource();
-
-    const scrollbarRef: Ref<InstanceType<typeof ElScrollbar> | null> =
-      ref(null);
-
-    // 公告列表
-    const noticeList: Ref<Array<any>> = ref([]);
-
-    // 公告数量
-    const noticeNum = ref(0);
-
-    // 发送请求的 数据
-    let formData = reactive({
-      start_date: null,
-      end_date: null,
-      keywords: null,
-      page: 1,
-      limit: 10,
-    });
-
-    const loading = ref(false);
-
-    // 获取公告列表
-    function getNoticeList() {
-      loading.value = true;
-      getNoticeInfo(formData)
-        .then(({ data }: any) => {
-          if (+data.code === 1) {
-            if (scrollbarRef.value) {
-              scrollbarRef.value.setScrollTop(0);
-            }
-            noticeNum.value = +data.data.total;
-            noticeList.value = data.data.data;
-          }
-        })
-        .finally(() => {
-          loading.value = false;
-        });
-    }
-
-    onMounted(() => {
-      getNoticeList();
-    });
-
-    return {
-      noticeList,
-      noticeNum,
-      formData,
-      getNoticeList,
-      scrollbarRef,
-      loading,
-      emptyImg,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .BulletinListBox {
   .box-body {

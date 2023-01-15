@@ -1,8 +1,53 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
+import { gameInfoStore } from '@/store/gameInfo'
+export default defineComponent({
+  name: 'IaShortcutMenu',
+  components: {},
+  setup() {
+    const i18n = useI18n()
+
+    const { gameList } = storeToRefs(gameInfoStore())
+
+    function hasGame(id: number | string) {
+      return !gameList.value.find((game: any) => {
+        return String(game.id) === String(id)
+      })
+    }
+
+    const icons = [
+      {
+        id: 'autochess',
+        text: i18n.t('autochess'),
+        icon: new URL('./assets/icons/chess-icon.png', import.meta.url).href,
+        routeName: 'AutoChess',
+      },
+      {
+        id: 'virtual',
+        text: i18n.t('v_speed_lol'),
+        icon: new URL('./assets/icons/lol-icon.png', import.meta.url).href,
+        routeName: 'Virtual',
+      },
+    ]
+
+    const router = useRouter()
+
+    function toPath(name: string) {
+      router.push({ name })
+    }
+    return { icons, toPath, hasGame }
+  },
+})
+</script>
+
 <template>
   <div class="shortcut-menu">
     <template v-for="item in icons" :key="item.text">
       <div
-        v-if="hasGame(item['id'])"
+        v-if="hasGame(item.id)"
         class="item"
         @click="toPath(item.routeName)"
       >
@@ -14,51 +59,6 @@
     </template>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { storeToRefs } from "pinia";
-import { gameInfoStore } from "@/store/gameInfo";
-export default defineComponent({
-  name: "ia-shortcut-menu",
-  components: {},
-  setup() {
-    const i18n = useI18n();
-
-    const { gameList } = storeToRefs(gameInfoStore());
-
-    function hasGame(id: number | string) {
-      return !gameList.value.find((game: any) => {
-        return String(game.id) === String(id);
-      });
-    }
-
-    const icons = [
-      {
-        id: "autochess",
-        text: i18n.t("autochess"),
-        icon: new URL("./assets/icons/chess-icon.png",import.meta.url).href,
-        routeName: "AutoChess",
-      },
-      {
-        id: "virtual",
-        text: i18n.t("v_speed_lol"),
-        icon: new URL("./assets/icons/lol-icon.png",import.meta.url).href,
-        routeName: "Virtual",
-      },
-    ];
-
-    const router = useRouter();
-
-    function toPath(name: string) {
-      router.push({ name });
-    }
-    return { icons, toPath, hasGame };
-  },
-});
-</script>
 
 <style scoped lang="scss">
 .shortcut-menu {

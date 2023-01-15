@@ -1,3 +1,14 @@
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
+export default defineComponent({
+  name: 'LayoutContainer',
+  setup() {
+    const keepName = ref(['MatchList'])
+    return { keepName }
+  },
+})
+</script>
+
 <template>
   <div class="main-container">
     <router-view v-slot="{ Component }">
@@ -7,16 +18,7 @@
     </router-view>
   </div>
 </template>
-<script lang="ts">
-import { ref, defineComponent } from "vue";
-export default defineComponent({
-  name: "LayoutContainer",
-  setup() {
-    const keepName = ref(["MatchList"]);
-    return { keepName };
-  },
-});
-</script>
+
 <style lang="scss" scoped>
 .main-container {
   background: var(--color-bg-primary);

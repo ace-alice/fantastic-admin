@@ -1,7 +1,57 @@
+<!-- eslint-disable vue/require-explicit-emits -->
+<script lang="ts">
+import GamePlayers from './GamePlayers.vue'
+export default {
+  name: 'BracketNode',
+  components: { GamePlayers },
+  props: ['bracketNode', 'highlightedPlayerId'],
+  computed: {
+    playersArePresent() {
+      return this.bracketNode.player1 && this.bracketNode.player2
+    },
+  },
+  methods: {
+    getBracketNodeClass(bracketNode: any) {
+      if (
+        (bracketNode.games[0] && bracketNode.games[0].player1.id != null)
+        || (bracketNode.games[1] && bracketNode.games[1].player1.id != null)
+      ) {
+        return 'vtb-item-parent'
+      }
+
+      if (bracketNode.hasParent) {
+        return 'vtb-item-child'
+      }
+
+      return ''
+    },
+    getPlayerClass(player: any) {
+      if (player.winner === null || player.winner === undefined) {
+        return ''
+      }
+
+      let clazz = player.winner ? 'winner' : 'defeated'
+
+      if (this.highlightedPlayerId === player.id) {
+        clazz += ' highlight'
+      }
+
+      return clazz
+    },
+    highlightPlayer(playerId: any) {
+      this.$emit('onSelectedPlayer', playerId)
+    },
+    unhighlightPlayer() {
+      this.$emit('onDeselectedPlayer')
+    },
+  },
+}
+</script>
+
 <template>
-  <div class="vtb-item" v-if="playersArePresent">
+  <div v-if="playersArePresent" class="vtb-item">
     <div :class="getBracketNodeClass(bracketNode)">
-      <game-players
+      <GamePlayers
         :bracket-node="bracketNode"
         :highlighted-player-id="highlightedPlayerId"
         @onSelectedPlayer="highlightPlayer"
@@ -16,19 +66,19 @@
         <template #player-extension-bottom="{ match }">
           <slot name="player-extension-bottom" :match="match" />
         </template>
-      </game-players>
+      </GamePlayers>
     </div>
 
     <div
       v-if="
-        (bracketNode.games[0] && bracketNode.games[0].player1.id != null) ||
-        (bracketNode.games[1] && bracketNode.games[1].player1.id != null)
+        (bracketNode.games[0] && bracketNode.games[0].player1.id != null)
+          || (bracketNode.games[1] && bracketNode.games[1].player1.id != null)
       "
       class="vtb-item-children"
     >
       <div
-        class="vtb-item-child"
         v-if="bracketNode.games[0] && bracketNode.games[0].player1.id != null"
+        class="vtb-item-child"
       >
         <bracket-node
           :bracket-node="bracketNode.games[0]"
@@ -48,8 +98,8 @@
         </bracket-node>
       </div>
       <div
-        class="vtb-item-child"
         v-if="bracketNode.games[1] && bracketNode.games[1].player1.id != null"
+        class="vtb-item-child"
       >
         <bracket-node
           :bracket-node="bracketNode.games[1]"
@@ -57,7 +107,7 @@
           @onSelectedPlayer="highlightPlayer"
           @onDeselectedPlayer="unhighlightPlayer"
         >
-          <div class="player-extension-top"></div>
+          <div class="player-extension-top" />
           <template #player="{ player }">
             <slot name="player" :player="player" />
           </template>
@@ -71,55 +121,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import GamePlayers from "./GamePlayers.vue";
-export default {
-  name: "bracket-node",
-  components: { GamePlayers },
-  props: ["bracketNode", "highlightedPlayerId"],
-  computed: {
-    playersArePresent() {
-      return this.bracketNode.player1 && this.bracketNode.player2;
-    },
-  },
-  methods: {
-    getBracketNodeClass(bracketNode:any) {
-      if (
-        (bracketNode.games[0] && bracketNode.games[0].player1.id != null) ||
-        (bracketNode.games[1] && bracketNode.games[1].player1.id != null)
-      ) {
-        return "vtb-item-parent";
-      }
-
-      if (bracketNode.hasParent) {
-        return "vtb-item-child";
-      }
-
-      return "";
-    },
-    getPlayerClass(player:any) {
-      if (player.winner === null || player.winner === undefined) {
-        return "";
-      }
-
-      let clazz = player.winner ? "winner" : "defeated";
-
-      if (this.highlightedPlayerId === player.id) {
-        clazz += " highlight";
-      }
-
-      return clazz;
-    },
-    highlightPlayer(playerId:any) {
-      this.$emit("onSelectedPlayer", playerId);
-    },
-    unhighlightPlayer() {
-      this.$emit("onDeselectedPlayer");
-    },
-  },
-};
-</script>
 
 <style lang="scss">
 .vtb-item {

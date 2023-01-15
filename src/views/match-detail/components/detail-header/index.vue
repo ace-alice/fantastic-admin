@@ -1,7 +1,95 @@
+<script lang="ts">
+import {
+  defineAsyncComponent,
+  getCurrentInstance,
+  inject,
+  onMounted,
+  onUnmounted,
+  ref,
+} from 'vue'
+import { parseTime } from '@/utils'
+import useImageResource from '@/hooks/useImageResource'
+import useRouteHook from '@/hooks/useRouteHook'
+import videoAndAnimationHook from '@/hooks/videoAndAnimationHook'
+const LiveIcon = defineAsyncComponent(
+  () => import('@/components/LiveIcon/index.vue'),
+)
+export default {
+  name: 'IaMatchTab',
+  components: { LiveIcon },
+  props: {
+    matchInfo: {
+      type: Object,
+      default: () => null,
+    },
+  },
+  emits: ['showVideoEmit', 'showAnimateEmit'],
+  setup(props: any, { emit }: any) {
+    const { prevImg } = useImageResource()
+    const { routerJump } = useRouteHook()
+    const { animationHas, videoHas } = videoAndAnimationHook(props.matchInfo)
+
+    const videoImage = new URL('@/assets/icons/live.png', import.meta.url).href
+
+    const animateImage = new URL('@/assets/icons/score.png', import.meta.url).href
+
+    const showVideo = inject('showVideo')
+
+    const showAnimate = inject('showAnimate')
+
+    const goBack = () => {
+      routerJump('MatchList')
+    }
+
+    const allHeight = ref(true)
+
+    const { proxy }: any = getCurrentInstance()
+
+    function toShowVideo() {
+      if (!videoHas.value) {
+        return
+      }
+      emit('showVideoEmit')
+    }
+
+    function toShowAnimate() {
+      if (!animationHas.value) {
+        return
+      }
+      emit('showAnimateEmit')
+    }
+
+    onMounted(() => {
+      proxy.mittBus.on('changeHeightBus', (tag: boolean) => {
+        allHeight.value = tag
+      })
+    })
+
+    onUnmounted(() => {
+      proxy.mittBus.off('changeHeightBus')
+    })
+
+    return {
+      prevImg,
+      goBack,
+      allHeight,
+      videoImage,
+      animateImage,
+      animationHas,
+      videoHas,
+      toShowVideo,
+      showVideo,
+      toShowAnimate,
+      showAnimate,
+      parseTime,
+    }
+  },
+}
+</script>
+
 <template>
   <div
-    :class="{
-      'match-tab': true,
+    class="match-tab" :class="{
       'cut-height': !allHeight || showVideo || showAnimate,
     }"
   >
@@ -18,18 +106,20 @@
     </div>
     <div class="video-animate">
       <LazyImage
-        :img-url="videoImage"
         v-if="videoHas"
+        :img-url="videoImage"
         @click.stop="toShowVideo"
       />
       <LazyImage
-        :img-url="animateImage"
         v-if="animationHas"
+        :img-url="animateImage"
         @click.stop="toShowAnimate"
       />
     </div>
     <div class="play-info">
-      <div class="team-name">{{ matchInfo.team_name_1 }}</div>
+      <div class="team-name">
+        {{ matchInfo.team_name_1 }}
+      </div>
       <LazyImage :img-url="matchInfo.team_logo_1" />
       <div class="score-box">
         <div>{{ matchInfo.score_1 || 0 }}</div>
@@ -40,97 +130,12 @@
         </div>
       </div>
       <LazyImage :img-url="matchInfo.team_logo_1" />
-      <div class="team-name">{{ matchInfo.team_name_2 }}</div>
+      <div class="team-name">
+        {{ matchInfo.team_name_2 }}
+      </div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { parseTime } from "@/utils";
-import useImageResource from "@/hooks/useImageResource";
-import useRouteHook from "@/hooks/useRouteHook";
-const LiveIcon = defineAsyncComponent(
-  () => import("@/components/LiveIcon/index.vue")
-);
-import {
-  defineAsyncComponent,
-  getCurrentInstance,
-  inject,
-  onMounted,
-  onUnmounted,
-  ref,
-} from "vue";
-import videoAndAnimationHook from "@/hooks/videoAndAnimationHook";
-export default {
-  name: "ia-match-tab",
-  props: {
-    matchInfo: {
-      type: Object,
-      default: () => null,
-    },
-  },
-  components: { LiveIcon },
-  emits: ["showVideoEmit", "showAnimateEmit"],
-  setup(props: any, { emit }: any) {
-    const { prevImg } = useImageResource();
-    const { routerJump } = useRouteHook();
-    const { animationHas, videoHas } = videoAndAnimationHook(props.matchInfo);
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const videoImage = new URL("@/assets/icons/live.png" ,import.meta.url).href;
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const animateImage = new URL("@/assets/icons/score.png" ,import.meta.url).href;
-
-    const showVideo = inject("showVideo");
-
-    const showAnimate = inject("showAnimate");
-
-    const goBack = () => {
-      routerJump("MatchList");
-    };
-
-    const allHeight = ref(true);
-
-    const { proxy }: any = getCurrentInstance();
-
-    function toShowVideo() {
-      if (!videoHas.value) return;
-      emit("showVideoEmit");
-    }
-
-    function toShowAnimate() {
-      if (!animationHas.value) return;
-      emit("showAnimateEmit");
-    }
-
-    onMounted(() => {
-      proxy.mittBus.on("changeHeightBus", (tag: boolean) => {
-        allHeight.value = tag;
-      });
-    });
-
-    onUnmounted(() => {
-      proxy.mittBus.off("changeHeightBus");
-    });
-
-    return {
-      prevImg,
-      goBack,
-      allHeight,
-      videoImage,
-      animateImage,
-      animationHas,
-      videoHas,
-      toShowVideo,
-      showVideo,
-      toShowAnimate,
-      showAnimate,
-      parseTime,
-    };
-  },
-};
-</script>
 
 <style scoped lang="scss">
 .match-tab {

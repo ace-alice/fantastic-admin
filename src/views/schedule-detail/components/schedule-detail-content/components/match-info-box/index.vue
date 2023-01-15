@@ -1,128 +1,77 @@
-<template>
-  <div
-    :class="{ 'match-info-box': true, 'close-info-box': openFlag !== 'info' }"
-  >
-    <div class="box-switch" @click.stop="shrinkBox">
-      <div>{{ $t("game_schedule") }}</div>
-      <div
-        :class="{
-          'switch-btn': true,
-          'switch-close': openFlag !== 'info',
-        }"
-      >
-        <LazyImage :img-url="prevImg" />
-      </div>
-    </div>
-    <div class="info-box">
-      <div class="schedule-tabs">
-        <div
-          :class="{
-            'schedule-tab': true,
-            'active-tab': index === currentScheduleIndex,
-          }"
-          v-for="(schedule, index) in scheduleNameList"
-          :key="index"
-          @click.stop="changeCurrentScheduleIndex(index)"
-        >
-          {{ schedule["zone_name"] }}
-        </div>
-      </div>
-      <div class="schedule-ch-tabs" v-show="schedulesList.length > 1">
-        <div
-          :class="{
-            'schedule-ch-tab': true,
-            'active-ch-tab': schedule['schedule_id'] === currentScheduleChId,
-          }"
-          v-for="schedule in schedulesList"
-          :key="schedule['schedule_id']"
-          @click.stop="
-            changeCurrentScheduleChId(Number(schedule['schedule_id']))
-          "
-        >
-          {{ schedule["schedule_name"] }}
-        </div>
-      </div>
-      <keep-alive>
-        <component
-          v-if="initData"
-          :is="'ScheduleDetail'"
-          :key="'schedule' + currentScheduleChId"
-          :detail="{ schedule_id: currentScheduleChId }"
-        />
-      </keep-alive>
-    </div>
-  </div>
-</template>
-
+<!-- eslint-disable @typescript-eslint/no-use-before-define -->
 <script lang="ts">
-import { computed, defineComponent, inject, onMounted, ref, Ref } from "vue";
-import { getEventZonesFun } from "@/api/store-game-schedule";
-import ScheduleDetail from "./components/ScheduleDetail.vue";
+import type { Ref } from 'vue'
+import { computed, defineComponent, inject, onMounted, ref } from 'vue'
+import ScheduleDetail from './components/ScheduleDetail.vue'
+import { getEventZonesFun } from '@/api/store-game-schedule'
 
 export default defineComponent({
-  name: "match-info-box",
+  name: 'MatchInfoBox',
   components: { ScheduleDetail },
-  emits: ["setFlag"],
+  emits: ['setFlag'],
   setup(props: any, { emit }: any) {
     function shrinkBox() {
-      emit("setFlag", "info");
+      emit('setFlag', 'info')
     }
 
-    const openFlag = inject("openFlag", "");
+    const openFlag = inject('openFlag', '')
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const prevImg = new URL("@/assets/icons/turn-on.png" ,import.meta.url).href;
+    const prevImg = new URL('@/assets/icons/turn-on.png', import.meta.url).href
 
-    const initData = ref(false);
+    const initData = ref(false)
 
-    const eventDetail: any = inject("eventDetail", {});
+    const eventDetail: any = inject('eventDetail', {})
 
     // 赛事赛制
-    const scheduleNameList: Ref<any[]> = ref([]);
+    const scheduleNameList: Ref<any[]> = ref([])
 
     // 获取赛事赛制
     function getEventZones() {
       getEventZonesFun({ event_id: eventDetail.value.id }).then((res: any) => {
         if (res.data.code === 1) {
-          scheduleNameList.value = res.data.data;
+          scheduleNameList.value = res.data.data
           setTimeout(() => {
             if (schedulesList.value[0]?.schedule_id) {
-              changeCurrentScheduleChId(schedulesList.value[0]?.schedule_id);
-              initData.value = true;
+              changeCurrentScheduleChId(schedulesList.value[0]?.schedule_id)
+              initData.value = true
             }
-          }, 10);
+          }, 10)
         }
-      });
+      })
     }
 
-    const currentScheduleIndex = ref(0);
+    const currentScheduleIndex = ref(0)
 
     function changeCurrentScheduleIndex(inx: number) {
-      if (currentScheduleIndex.value === inx) return;
-      currentScheduleIndex.value = inx;
+      if (currentScheduleIndex.value === inx) {
+        return
+      }
+      currentScheduleIndex.value = inx
       setTimeout(() => {
         if (schedulesList.value[0]?.schedule_id) {
-          changeCurrentScheduleChId(schedulesList.value[0]?.schedule_id);
+          changeCurrentScheduleChId(schedulesList.value[0]?.schedule_id)
         }
-      }, 10);
+      }, 10)
     }
 
     const schedulesList = computed(() => {
       return (
         scheduleNameList.value[currentScheduleIndex.value]?.schedules || []
-      );
-    });
+      )
+    })
 
-    const currentScheduleChId = ref(0);
+    const currentScheduleChId = ref(0)
 
     function changeCurrentScheduleChId(id: number) {
-      if (currentScheduleChId.value === id) return;
-      currentScheduleChId.value = id;
+      if (currentScheduleChId.value === id) {
+        return
+      }
+      currentScheduleChId.value = id
     }
 
     onMounted(() => {
-      getEventZones();
-    });
+      getEventZones()
+    })
 
     return {
       shrinkBox,
@@ -135,10 +84,63 @@ export default defineComponent({
       currentScheduleChId,
       changeCurrentScheduleChId,
       prevImg,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <div
+    class="match-info-box" :class="{ 'close-info-box': openFlag !== 'info' }"
+  >
+    <div class="box-switch" @click.stop="shrinkBox">
+      <div>{{ $t("game_schedule") }}</div>
+      <div
+        class="switch-btn" :class="{
+          'switch-close': openFlag !== 'info',
+        }"
+      >
+        <LazyImage :img-url="prevImg" />
+      </div>
+    </div>
+    <div class="info-box">
+      <div class="schedule-tabs">
+        <div
+          v-for="(schedule, index) in scheduleNameList" :key="index"
+          class="schedule-tab"
+          :class="{
+            'active-tab': index === currentScheduleIndex,
+          }"
+          @click.stop="changeCurrentScheduleIndex(index)"
+        >
+          {{ schedule.zone_name }}
+        </div>
+      </div>
+      <div v-show="schedulesList.length > 1" class="schedule-ch-tabs">
+        <div
+          v-for="schedule in schedulesList" :key="schedule.schedule_id"
+          class="schedule-ch-tab"
+          :class="{
+            'active-ch-tab': schedule.schedule_id === currentScheduleChId,
+          }"
+          @click.stop="
+            changeCurrentScheduleChId(Number(schedule.schedule_id))
+          "
+        >
+          {{ schedule.schedule_name }}
+        </div>
+      </div>
+      <keep-alive>
+        <component
+          is="ScheduleDetail"
+          v-if="initData"
+          :key="`schedule${currentScheduleChId}`"
+          :detail="{ schedule_id: currentScheduleChId }"
+        />
+      </keep-alive>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .close-info-box {

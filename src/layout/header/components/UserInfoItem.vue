@@ -1,52 +1,3 @@
-<template>
-  <div class="UserInfoItem">
-    <div
-      class="schedule"
-      @click.stop="routerJump('Schedule')"
-      v-tooltip="{ width: 10, message: $t('schedule') }"
-    >
-      <LazyImage :img-url="scheduleImg"></LazyImage>
-    </div>
-    <div
-      class="center-cart"
-      :class="{ 'not-login': !isLogin }"
-      @mouseenter="showCenterCartHandle(true)"
-      @mouseleave="showCenterCartHandle(false)"
-    >
-      <LazyImage :img-url="avatarImage"></LazyImage>
-      <CenterCartBox :show="showCenterCart" />
-    </div>
-    <div class="balance-info">
-      <div>
-        {{
-          balanceInfo.nickname ? balanceInfo.nickname : $t("you_not_login_now")
-        }}
-      </div>
-      <div v-if="balanceInfo.amount">
-        <span>
-          {{ currentCurrencyInfo?.symbol || "" }}
-        </span>
-        <CountTo
-          :startVal="Number(startVal)"
-          :endVal="Number(balanceInfo.amount)"
-          :duration="1000"
-        />
-      </div>
-    </div>
-    <div
-      class="refresh"
-      :class="{ 'not-login': !isLogin }"
-      v-if="balanceInfo.nickname"
-      @click.stop="getBalanceInfo"
-    >
-      <LazyImage
-        :img-url="refreshImg"
-        :class="{ 'get-balance': isSearch }"
-      ></LazyImage>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import {
   computed,
@@ -54,63 +5,67 @@ import {
   defineComponent,
   ref,
   watch,
-} from "vue";
-import { userInfoStore } from "@/store/userInfo";
-import { storeToRefs } from "pinia";
-import useRouteHook from "@/hooks/useRouteHook";
+} from 'vue'
+import { storeToRefs } from 'pinia'
+import { userInfoStore } from '@/store/userInfo'
+import useRouteHook from '@/hooks/useRouteHook'
+import CenterCartBox from '@/layout/header/components/CenterCartBox.vue'
 const CountTo = defineAsyncComponent(
-  () => import("@/components/VueCountTo/index.vue")
-);
-import CenterCartBox from "@/layout/header/components/CenterCartBox.vue";
+  () => import('@/components/VueCountTo/index.vue'),
+)
 
 export default defineComponent({
-  name: "UserInfoItem",
+  name: 'UserInfoItem',
   components: { CountTo, CenterCartBox },
   setup() {
     const { balanceInfo, avatarId, currentCurrencyInfo, isLogin } = storeToRefs(
-      userInfoStore()
-    );
+      userInfoStore(),
+    )
 
-    const { routerJump } = useRouteHook();
+    const { routerJump } = useRouteHook()
 
-    const { doGetUserInfo } = userInfoStore();
+    const { doGetUserInfo } = userInfoStore()
 
-    const startVal = ref(0);
+    const startVal = ref(0)
 
     watch(
       () => balanceInfo.value.amount,
       (newVal, oldVal) => {
-        startVal.value = (oldVal as any) || 0;
-      }
-    );
+        startVal.value = (oldVal as any) || 0
+      },
+    )
 
-    const isSearch = ref(false);
+    const isSearch = ref(false)
 
     function getBalanceInfo() {
-      if (!isLogin.value) return;
-      isSearch.value = true;
+      if (!isLogin.value) {
+        return
+      }
+      isSearch.value = true
       doGetUserInfo().finally(() => {
         setTimeout(() => {
-          isSearch.value = false;
-        }, 1000);
-      });
+          isSearch.value = false
+        }, 1000)
+      })
     }
 
     const avatarImage = computed(() => {
       return new URL(`@/assets/avatar/image-${
         +avatarId.value > 0 && +avatarId.value < 16 ? avatarId.value : 1
-      }.png`,import.meta.url).href;
-    });
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const refreshImg = new URL("@/assets/images/refresh.png" ,import.meta.url).href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const scheduleImg = new URL("@/assets/icons/competition-01.png" ,import.meta.url).href;
+      }.png`, import.meta.url).href
+    })
 
-    const showCenterCart = ref(false);
+    const refreshImg = new URL('@/assets/images/refresh.png', import.meta.url).href
+
+    const scheduleImg = new URL('@/assets/icons/competition-01.png', import.meta.url).href
+
+    const showCenterCart = ref(false)
 
     function showCenterCartHandle(status: boolean) {
-      if (!isLogin.value) return;
-      showCenterCart.value = status;
+      if (!isLogin.value) {
+        return
+      }
+      showCenterCart.value = status
     }
 
     return {
@@ -126,10 +81,59 @@ export default defineComponent({
       currentCurrencyInfo,
       showCenterCartHandle,
       isLogin,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <div class="UserInfoItem">
+    <div
+      v-tooltip="{ width: 10, message: $t('schedule') }"
+      class="schedule"
+      @click.stop="routerJump('Schedule')"
+    >
+      <LazyImage :img-url="scheduleImg" />
+    </div>
+    <div
+      class="center-cart"
+      :class="{ 'not-login': !isLogin }"
+      @mouseenter="showCenterCartHandle(true)"
+      @mouseleave="showCenterCartHandle(false)"
+    >
+      <LazyImage :img-url="avatarImage" />
+      <CenterCartBox :show="showCenterCart" />
+    </div>
+    <div class="balance-info">
+      <div>
+        {{
+          balanceInfo.nickname ? balanceInfo.nickname : $t("you_not_login_now")
+        }}
+      </div>
+      <div v-if="balanceInfo.amount">
+        <span>
+          {{ currentCurrencyInfo?.symbol || "" }}
+        </span>
+        <CountTo
+          :start-val="Number(startVal)"
+          :end-val="Number(balanceInfo.amount)"
+          :duration="1000"
+        />
+      </div>
+    </div>
+    <div
+      v-if="balanceInfo.nickname"
+      class="refresh"
+      :class="{ 'not-login': !isLogin }"
+      @click.stop="getBalanceInfo"
+    >
+      <LazyImage
+        :img-url="refreshImg"
+        :class="{ 'get-balance': isSearch }"
+      />
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .UserInfoItem {

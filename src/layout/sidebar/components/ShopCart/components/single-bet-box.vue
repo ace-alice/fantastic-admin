@@ -1,43 +1,10 @@
-<template>
-  <div class="single-bet-box">
-    <div class="warn-box" v-show="hasChange">{{ warnMessage }}</div>
-    <div class="total-bet">
-      <div>{{ $t("tot_bet") }}</div>
-      <div>
-        <CountTo
-          :startVal="Number(betStartVal)"
-          :endVal="Number(totalBet)"
-          :duration="1000"
-        />
-      </div>
-    </div>
-    <div class="total-bonus">
-      <div>{{ $t("tot_bonus") }}</div>
-      <div>
-        <CountTo
-          :startVal="Number(bonusStartVal)"
-          :endVal="Number(totalBonus)"
-          :duration="1000"
-        />
-      </div>
-    </div>
-    <div
-      :class="{ 'bet-btn': true, disabled: disabled, 'has-change': hasChange }"
-      @click.stop="toBet"
-    >
-      {{ hasChange ? $t("accept_odds") : $t("bet_now") }}
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
-import CountTo from "@/components/VueCountTo/index.vue";
+import { computed, defineComponent, ref } from 'vue'
+import CountTo from '@/components/VueCountTo/index.vue'
 
 export default defineComponent({
-  name: "single-bet-box",
+  name: 'SingleBetBox',
   components: { CountTo },
-  emits: ["toBet", "acceptChange"],
   props: {
     totalBet: {
       type: Number,
@@ -53,31 +20,68 @@ export default defineComponent({
     },
     warnMessage: {
       type: String,
-      default: "",
+      default: '',
     },
   },
+  emits: ['toBet', 'acceptChange'],
   setup(props: any, { emit }: any) {
-    const betStartVal = ref(0);
+    const betStartVal = ref(0)
 
-    const bonusStartVal = ref(0);
+    const bonusStartVal = ref(0)
 
     const hasChange = computed(() => {
-      return props.warnMessage;
-    });
+      return props.warnMessage
+    })
 
     function toBet() {
       if (hasChange.value) {
-        emit("acceptChange");
-        return;
+        emit('acceptChange')
+        return
       }
-      if (props.disabled) return;
-      emit("toBet");
+      if (props.disabled) {
+        return
+      }
+      emit('toBet')
     }
 
-    return { betStartVal, bonusStartVal, toBet, hasChange };
+    return { betStartVal, bonusStartVal, toBet, hasChange }
   },
-});
+})
 </script>
+
+<template>
+  <div class="single-bet-box">
+    <div v-show="hasChange" class="warn-box">
+      {{ warnMessage }}
+    </div>
+    <div class="total-bet">
+      <div>{{ $t("tot_bet") }}</div>
+      <div>
+        <CountTo
+          :start-val="Number(betStartVal)"
+          :end-val="Number(totalBet)"
+          :duration="1000"
+        />
+      </div>
+    </div>
+    <div class="total-bonus">
+      <div>{{ $t("tot_bonus") }}</div>
+      <div>
+        <CountTo
+          :start-val="Number(bonusStartVal)"
+          :end-val="Number(totalBonus)"
+          :duration="1000"
+        />
+      </div>
+    </div>
+    <div
+      class="bet-btn" :class="{ 'disabled': disabled, 'has-change': hasChange }"
+      @click.stop="toBet"
+    >
+      {{ hasChange ? $t("accept_odds") : $t("bet_now") }}
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .single-bet-box {

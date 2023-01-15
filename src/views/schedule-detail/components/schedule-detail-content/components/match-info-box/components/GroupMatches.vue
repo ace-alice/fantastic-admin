@@ -1,10 +1,40 @@
+<script lang="ts">
+import type { PropType } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
+import { parseTime } from '@/utils'
+
+export default defineComponent({
+  name: 'GroupMatches',
+  components: {},
+  props: {
+    info: {
+      type: Array as PropType<any[]>,
+      default: () => [],
+    },
+  },
+  setup(props: any) {
+    const currentIndex = ref(0)
+
+    function changeCurrentIndex(inx: number) {
+      currentIndex.value = inx
+    }
+
+    const currentGroupInfo = computed(() => {
+      return props.info[currentIndex.value] || {}
+    })
+
+    return { currentIndex, changeCurrentIndex, currentGroupInfo, parseTime }
+  },
+})
+</script>
+
 <template>
   <div class="GroupMatches">
-    <div class="group-tabs" v-show="info.length > 1">
+    <div v-show="info.length > 1" class="group-tabs">
       <div
-        :class="{ 'group-tab': true, 'active-tab': currentIndex === index }"
-        v-for="(group, index) in info"
-        :key="group.id"
+        v-for="(group, index) in info" :key="group.id"
+        class="group-tab"
+        :class="{ 'active-tab': currentIndex === index }"
         @click.stop="changeCurrentIndex(index)"
       >
         {{ group.name }}
@@ -21,20 +51,20 @@
         </div>
         <div
           v-if="
-            currentGroupInfo['scores'] && currentGroupInfo['scores'].length > 0
+            currentGroupInfo.scores && currentGroupInfo.scores.length > 0
           "
         >
           <div
+            v-for="score in currentGroupInfo.scores"
+            :key="score.team_id"
             class="scores-item"
-            v-for="score in currentGroupInfo['scores']"
-            :key="score['team_id']"
           >
             <div>
-              <LazyImage :img-url="score['team_logo']" />
-              <span>{{ score["team_name"] }}</span>
+              <LazyImage :img-url="score.team_logo" />
+              <span>{{ score.team_name }}</span>
             </div>
             <div>{{ score.win }}</div>
-            <div>{{ score["draw"] }}</div>
+            <div>{{ score.draw }}</div>
             <div>{{ score.lose }}</div>
             <div>{{ score.score }}</div>
           </div>
@@ -50,22 +80,26 @@
         </div>
         <div
           v-if="
-            currentGroupInfo['games'] && currentGroupInfo['games'].length > 0
+            currentGroupInfo.games && currentGroupInfo.games.length > 0
           "
         >
           <div
-            class="games-item"
-            v-for="(game, index) in currentGroupInfo['games']"
+            v-for="(game, index) in currentGroupInfo.games"
             :key="index"
+            class="games-item"
           >
             <div>
               <LazyImage :img-url="game.team_logo_1" />
-              <div class="game-name">{{ game.team_name_1 }}</div>
+              <div class="game-name">
+                {{ game.team_name_1 }}
+              </div>
             </div>
             <div>{{ game.score_1 }} - {{ game.score_2 }}</div>
             <div>
               <LazyImage :img-url="game.team_logo_2" />
-              <div class="game-name">{{ game.team_name_2 }}</div>
+              <div class="game-name">
+                {{ game.team_name_2 }}
+              </div>
             </div>
             <div>BO{{ game.bo }}</div>
             <div>{{ parseTime(game.start_time, "{y}-{m}-{d}") }}</div>
@@ -75,35 +109,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { computed, defineComponent, ref, PropType } from "vue";
-import { parseTime } from "@/utils";
-
-export default defineComponent({
-  name: "GroupMatches",
-  components: {},
-  props: {
-    info: {
-      type: Array as PropType<any[]>,
-      default: () => [],
-    },
-  },
-  setup(props: any) {
-    const currentIndex = ref(0);
-
-    function changeCurrentIndex(inx: number) {
-      currentIndex.value = inx;
-    }
-
-    const currentGroupInfo = computed(() => {
-      return props.info[currentIndex.value] || {};
-    });
-
-    return { currentIndex, changeCurrentIndex, currentGroupInfo, parseTime };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @mixin scores-item {

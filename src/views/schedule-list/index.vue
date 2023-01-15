@@ -1,25 +1,25 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import ScheduleHeader from './components/schedule-header/index.vue'
+import ScheduleContent from './components/schedule-content/index.vue'
+export default defineComponent({
+  name: 'ScheduleList',
+  components: { ScheduleHeader, ScheduleContent },
+  setup() {
+    return {}
+  },
+})
+</script>
+
 <template>
   <div class="schedule-list">
     <ScheduleHeader />
     <div class="bottom-box">
       <ScheduleContent />
     </div>
-    <div class="footer"></div>
+    <div class="footer" />
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import ScheduleHeader from "./components/schedule-header/index.vue";
-import ScheduleContent from "./components/schedule-content/index.vue";
-export default defineComponent({
-  name: "ScheduleList",
-  components: { ScheduleHeader, ScheduleContent },
-  setup() {
-    return {};
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .schedule-list {

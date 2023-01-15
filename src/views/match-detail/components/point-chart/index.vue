@@ -1,21 +1,21 @@
+<script lang="ts">
+import { defineComponent, inject } from 'vue'
+
+export default defineComponent({
+  name: 'PointChart',
+  components: {},
+  setup() {
+    const showChart = inject('showChart')
+    return { showChart }
+  },
+})
+</script>
+
 <template>
-  <div :class="{ 'point-chart': true, 'show-chart': showChart }">
+  <div class="point-chart" :class="{ 'show-chart': showChart }">
     point-chart
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, inject } from "vue";
-
-export default defineComponent({
-  name: "point-chart",
-  components: {},
-  setup() {
-    const showChart = inject("showChart");
-    return { showChart };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .point-chart {

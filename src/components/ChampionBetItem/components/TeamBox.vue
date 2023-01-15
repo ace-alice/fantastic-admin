@@ -1,35 +1,9 @@
-<template>
-  <div
-    :class="{
-      TeamBox: true,
-      'to-center': index % 3 === 1,
-      'to-right': index % 3 === 2,
-    }"
-  >
-    <div
-      :class="{
-        'team-box-content': true,
-        [animateType]: true,
-        [animateType + '-border']: !hasAdd,
-        'cart-active': hasAdd,
-      }"
-      @click.stop="toAddCart"
-    >
-      <LazyImage :img-url="itemInfo['team_logo'] || ''" />
-      <div class="team-name">{{ itemInfo["desc"] }}</div>
-      <div class="point">
-        {{ currentTeamPoint ? currentTeamPoint["point"] : "" }}
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
-import { defineComponent } from "vue";
-import championTeamPointHook from "@/hooks/championTeamPointHook";
+import { defineComponent } from 'vue'
+import championTeamPointHook from '@/hooks/championTeamPointHook'
 
 export default defineComponent({
-  name: "TeamBox",
+  name: 'TeamBox',
   components: {},
   props: {
     index: {
@@ -39,17 +13,43 @@ export default defineComponent({
     itemInfo: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       },
     },
   },
   setup(props: any) {
-    const { currentTeamPoint, hasAdd, isAllowAddCart, toAddCart, animateType } =
-      championTeamPointHook(props.itemInfo);
-    return { currentTeamPoint, hasAdd, isAllowAddCart, toAddCart, animateType };
+    const { currentTeamPoint, hasAdd, isAllowAddCart, toAddCart, animateType }
+      = championTeamPointHook(props.itemInfo)
+    return { currentTeamPoint, hasAdd, isAllowAddCart, toAddCart, animateType }
   },
-});
+})
 </script>
+
+<template>
+  <div
+    class="TeamBox" :class="{
+      'to-center': index % 3 === 1,
+      'to-right': index % 3 === 2,
+    }"
+  >
+    <div
+      class="team-box-content" :class="{
+        [animateType]: true,
+        [`${animateType}-border`]: !hasAdd,
+        'cart-active': hasAdd,
+      }"
+      @click.stop="toAddCart"
+    >
+      <LazyImage :img-url="itemInfo.team_logo || ''" />
+      <div class="team-name">
+        {{ itemInfo.desc }}
+      </div>
+      <div class="point">
+        {{ currentTeamPoint ? currentTeamPoint.point : "" }}
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .to-center {

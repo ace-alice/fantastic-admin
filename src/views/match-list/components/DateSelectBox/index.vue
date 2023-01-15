@@ -1,3 +1,33 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { parseTime } from '@/utils'
+
+export default defineComponent({
+  name: 'DateSelectBox',
+  components: {},
+  props: {
+    weekDateOptions: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+    currentDate: {
+      type: String,
+      default: '',
+    },
+  },
+  emits: ['change'],
+  setup(props, { emit }) {
+    function changeCurrentDate(item: any) {
+      emit('change', item)
+    }
+
+    return { changeCurrentDate, parseTime }
+  },
+})
+</script>
+
 <template>
   <div class="DateSelectBox">
     <div class="current-data">
@@ -5,48 +35,22 @@
     </div>
     <div class="time-list">
       <div
-        class="time-item"
-        :class="{ active: currentDate === item['dataValue'] }"
         v-for="item in weekDateOptions"
-        :key="item['label']"
+        :key="item.label"
+        class="time-item"
+        :class="{ active: currentDate === item.dataValue }"
         @click="changeCurrentDate(item)"
       >
-        <div class="label">{{ item["label"] }}</div>
-        <div class="value">{{ item["data"] }}</div>
+        <div class="label">
+          {{ item.label }}
+        </div>
+        <div class="value">
+          {{ item.data }}
+        </div>
       </div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { parseTime } from "@/utils";
-
-export default defineComponent({
-  name: "DateSelectBox",
-  components: {},
-  props: {
-    weekDateOptions: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-    currentDate: {
-      type: String,
-      default: "",
-    },
-  },
-  emits: ["change"],
-  setup(props, { emit }) {
-    function changeCurrentDate(item: any) {
-      emit("change", item);
-    }
-
-    return { changeCurrentDate, parseTime };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .DateSelectBox {

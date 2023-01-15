@@ -1,10 +1,57 @@
+<script lang="ts">
+import type { Ref } from 'vue'
+import { defineComponent, inject, onMounted, ref } from 'vue'
+import { getTeamListFun } from '@/api/store-game-schedule'
+
+export default defineComponent({
+  name: 'TeamBox',
+  components: {},
+  emits: ['setFlag'],
+  setup(props: any, { emit }: any) {
+    // 队伍信息
+    const teamList = ref<any[]>([])
+
+    const teamListRef: Ref<HTMLDivElement | null> = ref(null)
+
+    const eventDetail: any = inject('eventDetail')
+
+    const prevImg = new URL('@/assets/icons/turn-on.png', import.meta.url).href
+
+    // 获取队伍列表信息
+    function getTeamList() {
+      getTeamListFun({ event_id: eventDetail.value.id }).then((res: any) => {
+        if (+res.data.code === 1) {
+          teamList.value = res.data.data
+        }
+      })
+    }
+
+    function shrinkBox() {
+      emit('setFlag', 'team')
+    }
+
+    const openFlag = inject('openFlag', '')
+
+    onMounted(() => {
+      getTeamList()
+    })
+    return {
+      teamList,
+      teamListRef,
+      shrinkBox,
+      openFlag,
+      prevImg,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="team-box" :class="{ 'close-team-box': openFlag !== 'team' }">
     <div class="box-switch" @click.stop="shrinkBox">
       <div>{{ $t("game_teams") }}</div>
       <div
-        :class="{
-          'switch-btn': true,
+        class="switch-btn" :class="{
           'switch-close': openFlag !== 'team',
         }"
       >
@@ -13,84 +60,44 @@
     </div>
     <div class="team-list">
       <div ref="teamListRef">
-        <div class="list-tab-title">{{ $t("invite_team") }}</div>
+        <div class="list-tab-title">
+          {{ $t("invite_team") }}
+        </div>
         <div class="list-tab-box">
           <div
-            :class="{ 'team-info': true, 'has-margin': index % 5 !== 0 }"
-            v-for="(team, index) in teamList[0]"
-            :key="team.id"
+            v-for="(team, index) in teamList[0]" :key="team.id"
+            class="team-info"
+            :class="{ 'has-margin': index % 5 !== 0 }"
           >
             <div class="team-info-logo-box">
               <LazyImage :img-url="team.logo" />
             </div>
-            <div class="team-info-name">{{ team["team_name"] }}</div>
+            <div class="team-info-name">
+              {{ team.team_name }}
+            </div>
           </div>
         </div>
-        <div class="list-tab-title">{{ $t("promotion_team") }}</div>
+        <div class="list-tab-title">
+          {{ $t("promotion_team") }}
+        </div>
         <div class="list-tab-box">
           <div
-            :class="{ 'team-info': true, 'has-margin': index % 5 !== 0 }"
-            v-for="(team, index) in teamList[1]"
-            :key="team.id"
+            v-for="(team, index) in teamList[1]" :key="team.id"
+            class="team-info"
+            :class="{ 'has-margin': index % 5 !== 0 }"
           >
             <div class="team-info-logo-box">
               <LazyImage :img-url="team.logo" />
             </div>
-            <div class="team-info-name">{{ team["team_name"] }}</div>
+            <div class="team-info-name">
+              {{ team.team_name }}
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, inject, onMounted, Ref, ref } from "vue";
-import { getTeamListFun } from "@/api/store-game-schedule";
-
-export default defineComponent({
-  name: "team-box",
-  components: {},
-  emits: ["setFlag"],
-  setup(props: any, { emit }: any) {
-    //队伍信息
-    const teamList = ref([]);
-
-    const teamListRef: Ref<HTMLDivElement | null> = ref(null);
-
-    const eventDetail: any = inject("eventDetail");
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const prevImg = new URL("@/assets/icons/turn-on.png" ,import.meta.url).href;
-
-    //获取队伍列表信息
-    function getTeamList() {
-      getTeamListFun({ event_id: eventDetail.value.id }).then((res: any) => {
-        if (+res.data.code === 1) {
-          teamList.value = res.data.data;
-        }
-      });
-    }
-
-    function shrinkBox() {
-      emit("setFlag", "team");
-    }
-
-    const openFlag = inject("openFlag", "");
-
-    onMounted(() => {
-      getTeamList();
-    });
-    return {
-      teamList,
-      teamListRef,
-      shrinkBox,
-      openFlag,
-      prevImg,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .close-team-box {

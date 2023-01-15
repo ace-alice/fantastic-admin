@@ -1,6 +1,84 @@
+<script lang="ts">
+import { computed, defineComponent, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
+import { userInfoStore } from '@/store/userInfo'
+import CountTo from '@/components/VueCountTo/index.vue'
+import notLoginMessage from '@/utils/notLoginMessage'
+
+export default defineComponent({
+  name: 'CenterHeader',
+  components: { CountTo },
+  props: {
+    boxName: {
+      type: String,
+      default: 'RulesBox',
+    },
+  },
+  emits: ['change'],
+  setup(props: any, { emit }) {
+    const i18n = useI18n()
+
+    const { balanceInfo, avatarId, currentCurrencyInfo } = storeToRefs(
+      userInfoStore(),
+    )
+
+    const startVal = ref(0)
+
+    watch(
+      () => balanceInfo.value.amount,
+      (newVal, oldVal) => {
+        startVal.value = (oldVal as any) || 0
+      },
+    )
+
+    const avatarImage = computed(() => {
+      return new URL(`@/assets/avatar/image-${
+        +avatarId.value > 0 && +avatarId.value < 16 ? avatarId.value : 1
+      }.png`, import.meta.url).href
+    })
+
+    const editIcon = new URL('@/assets/icons/edit.png', import.meta.url).href
+
+    const { isLogin } = storeToRefs(userInfoStore())
+
+    const tabs = [
+      { name: i18n.t('bet_records'), value: 'BetHistoryBox' },
+      // { name: "账变", value: "AccountChangeBox" },
+      { name: i18n.t('the_announcement'), value: 'BulletinListBox' },
+      { name: i18n.t('egame_rule'), value: 'RulesBox' },
+    ]
+
+    function changeComponentName(cName: string) {
+      if (
+        !isLogin.value
+        && ['AccountChangeBox', 'BetHistoryBox'].includes(cName)
+      ) {
+        return notLoginMessage()
+      }
+      emit('change', cName)
+    }
+
+    return {
+      changeComponentName,
+      tabs,
+      avatarImage,
+      editIcon,
+      balanceInfo,
+      startVal,
+      avatarId,
+      currentCurrencyInfo,
+      isLogin,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="CenterHeader">
-    <div class="header-self">个人中心</div>
+    <div class="header-self">
+      个人中心
+    </div>
     <div class="avatar-box">
       <LazyImage class="avatar-image" :img-url="avatarImage" />
       <div class="edit-avatar-icon" :class="{ 'not-login': !isLogin }">
@@ -20,19 +98,19 @@
         {{ currentCurrencyInfo?.symbol || "" }}
       </span>
       <CountTo
-        :startVal="Number(startVal)"
-        :endVal="Number(balanceInfo.amount)"
+        :start-val="Number(startVal)"
+        :end-val="Number(balanceInfo.amount)"
         :duration="1000"
       />
     </div>
     <div class="header-tabs">
       <div
-        :class="{
-          active: boxName === tab.value,
-          'not-login': !isLogin && tab.value === 'BetHistoryBox',
-        }"
         v-for="tab in tabs"
         :key="tab.value"
+        :class="{
+          'active': boxName === tab.value,
+          'not-login': !isLogin && tab.value === 'BetHistoryBox',
+        }"
         @click.stop="changeComponentName(tab.value)"
       >
         {{ tab.name }}
@@ -40,83 +118,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { computed, defineComponent, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { storeToRefs } from "pinia";
-import { userInfoStore } from "@/store/userInfo";
-import CountTo from "@/components/VueCountTo/index.vue";
-import notLoginMessage from "@/utils/notLoginMessage";
-
-export default defineComponent({
-  name: "CenterHeader",
-  components: { CountTo },
-  props: {
-    boxName: {
-      type: String,
-      default: "RulesBox",
-    },
-  },
-  emits: ["change"],
-  setup(props: any, { emit }) {
-    const i18n = useI18n();
-
-    const { balanceInfo, avatarId, currentCurrencyInfo } = storeToRefs(
-      userInfoStore()
-    );
-
-    const startVal = ref(0);
-
-    watch(
-      () => balanceInfo.value.amount,
-      (newVal, oldVal) => {
-        startVal.value = (oldVal as any) || 0;
-      }
-    );
-
-    const avatarImage = computed(() => {
-      return new URL(`@/assets/avatar/image-${
-        +avatarId.value > 0 && +avatarId.value < 16 ? avatarId.value : 1
-      }.png`, import.meta.url).href;
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const editIcon = new URL("@/assets/icons/edit.png" ,import.meta.url).href;
-
-    const { isLogin } = storeToRefs(userInfoStore());
-
-    const tabs = [
-      { name: i18n.t("bet_records"), value: "BetHistoryBox" },
-      // { name: "账变", value: "AccountChangeBox" },
-      { name: i18n.t("the_announcement"), value: "BulletinListBox" },
-      { name: i18n.t("egame_rule"), value: "RulesBox" },
-    ];
-
-    function changeComponentName(cName: string) {
-      if (
-        !isLogin.value &&
-        ["AccountChangeBox", "BetHistoryBox"].includes(cName)
-      ) {
-        return notLoginMessage();
-      }
-      emit("change", cName);
-    }
-
-    return {
-      changeComponentName,
-      tabs,
-      avatarImage,
-      editIcon,
-      balanceInfo,
-      startVal,
-      avatarId,
-      currentCurrencyInfo,
-      isLogin,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .CenterHeader {

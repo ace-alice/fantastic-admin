@@ -1,45 +1,13 @@
-<template>
-  <div
-    @click.stop="toAddShopCart"
-    :class="{
-      team: true,
-      [index % 2 ? 'team-right' : 'team-left']: true,
-      [animateType]: !isDisabled,
-      [animateType + '-border']: !hasAdd && !isDisabled,
-      'cart-active': hasAdd,
-      disabled: isDisabled,
-      'has-top': index > 1,
-    }"
-    v-if="currentTeamPointInfo"
-  >
-    <span class="desc">{{ currentTeamPointInfo["desc"] }}</span>
-    <span
-      class="point"
-      :class="{ point: true, [index % 2 ? 'box-right' : 'box-normal']: true }"
-    >
-      <span v-if="!isDisabled">
-        {{ currentTeamPointInfo["point"] }}
-      </span>
-      <span v-else-if="pointStatus === 'cleared'">
-        <LazyImage :img-url="statusIcon === 'win' ? winImage : failImage" />
-      </span>
-      <span v-else>
-        <LazyImage class="lock-image" :img-url="lockImage" />
-      </span>
-    </span>
-  </div>
-</template>
-
 <script lang="ts">
-import detailTeamPointHook from "@/hooks/DetailTeamPointHook";
+import detailTeamPointHook from '@/hooks/DetailTeamPointHook'
 
 export default {
-  name: "ia-detail-team",
+  name: 'IaDetailTeam',
   props: {
     playInfo: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       },
     },
     index: {
@@ -56,14 +24,13 @@ export default {
       pointStatus,
       statusIcon,
       isDisabled,
-    } = detailTeamPointHook(props.playInfo, props.index);
+    } = detailTeamPointHook(props.playInfo, props.index)
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const lockImage = new URL("@/assets/icons/lock.png" ,import.meta.url).href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const winImage = new URL("@/assets/icons/status-1.png" ,import.meta.url).href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const failImage = new URL("@/assets/icons/status-2.png" ,import.meta.url).href;
+    const lockImage = new URL('@/assets/icons/lock.png', import.meta.url).href
+
+    const winImage = new URL('@/assets/icons/status-1.png', import.meta.url).href
+
+    const failImage = new URL('@/assets/icons/status-2.png', import.meta.url).href
     return {
       currentTeamPointInfo,
       hasAdd,
@@ -75,10 +42,41 @@ export default {
       winImage,
       failImage,
       isDisabled,
-    };
+    }
   },
-};
+}
 </script>
+
+<template>
+  <div
+    v-if="currentTeamPointInfo" class="team"
+    :class="{
+      [index % 2 ? 'team-right' : 'team-left']: true,
+      [animateType]: !isDisabled,
+      [`${animateType}-border`]: !hasAdd && !isDisabled,
+      'cart-active': hasAdd,
+      'disabled': isDisabled,
+      'has-top': index > 1,
+    }"
+    @click.stop="toAddShopCart"
+  >
+    <span class="desc">{{ currentTeamPointInfo.desc }}</span>
+    <span
+      class="point point"
+      :class="{ [index % 2 ? 'box-right' : 'box-normal']: true }"
+    >
+      <span v-if="!isDisabled">
+        {{ currentTeamPointInfo.point }}
+      </span>
+      <span v-else-if="pointStatus === 'cleared'">
+        <LazyImage :img-url="statusIcon === 'win' ? winImage : failImage" />
+      </span>
+      <span v-else>
+        <LazyImage class="lock-image" :img-url="lockImage" />
+      </span>
+    </span>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .has-top {

@@ -1,66 +1,67 @@
 // noinspection JSUnusedGlobalSymbols
 
-import { defineStore } from "pinia";
-import { getLocal, setLocal } from "@/utils/storage";
+import { defineStore } from 'pinia'
+import type { Ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
+import { getLocal, setLocal } from '@/utils/storage'
 import {
   currencyInfoFn,
   getLangFn,
   getUserInfo,
   setLangFn,
-} from "@/api/store-user-info";
-import { LangCode } from "@/enum";
-import { getLocale } from "@/locale";
-import {
+} from '@/api/store-user-info'
+import { LangCode } from '@/enum'
+import { getLocale } from '@/locale'
+import type {
   BalanceInfosType,
   CurrencyInfoType,
   LangConfigType,
-} from "@/interface/userInfo";
-import { ref, reactive, Ref, computed } from "vue";
+} from '@/interface/userInfo'
 
-export const userInfoStore = defineStore("userInfo", () => {
+export const userInfoStore = defineStore('userInfo', () => {
   const balanceInfo: BalanceInfosType = reactive({
-    amount: "",
-    nickname: "",
-    currency_id: "",
-  });
+    amount: '',
+    nickname: '',
+    currency_id: '',
+  })
 
-  const currencyInfo: Ref<CurrencyInfoType[]> = ref([]);
+  const currencyInfo: Ref<CurrencyInfoType[]> = ref([])
 
-  getLocal("avatarId") || setLocal("avatarId", 1);
+  getLocal('avatarId') || setLocal('avatarId', 1)
 
-  const avatarId = ref(getLocal("avatarId"));
+  const avatarId = ref(getLocal('avatarId'))
 
   function changeAvatarId(id: number) {
     if (id > 0 && id < 16) {
-      avatarId.value = id;
-      setLocal("avatarId", id);
+      avatarId.value = id
+      setLocal('avatarId', id)
     }
   }
 
-  const isLogin: Ref<boolean> = ref(false);
+  const isLogin: Ref<boolean> = ref(false)
 
   const langConfig: LangConfigType = reactive(
-    getLocal("langConfig") || {
+    getLocal('langConfig') || {
       id: 1,
-      lang: "zh-CN",
+      lang: 'zh-CN',
       change_lang: 1,
-      theme: "b",
-    }
-  );
+      theme: 'b',
+    },
+  )
 
   function getCurrencyInfo() {
     currencyInfoFn().then((res: any) => {
       if (+res.data.code === 1) {
-        currencyInfo.value = res.data.data;
+        currencyInfo.value = res.data.data
       }
-    });
+    })
   }
 
   const currentCurrencyInfo = computed(() => {
     return currencyInfo.value.find((currency) => {
-      return String(currency.id) === String(balanceInfo.currency_id);
-    });
-  });
+      return String(currency.id) === String(balanceInfo.currency_id)
+    })
+  })
 
   // 获取会员信息
   function doGetUserInfo() {
@@ -69,15 +70,15 @@ export const userInfoStore = defineStore("userInfo", () => {
       getUserInfo()
         .then(({ data }: any) => {
           if (data.code === 1) {
-            Object.assign(balanceInfo, data.data);
-            setLoginStatus(true);
-            getCurrencyInfo();
+            Object.assign(balanceInfo, data.data)
+            setLoginStatus(true)
+            getCurrencyInfo()
           }
         })
         .finally(() => {
-          resolve(true);
-        });
-    });
+          resolve(true)
+        })
+    })
   }
 
   // 切换语言
@@ -87,25 +88,26 @@ export const userInfoStore = defineStore("userInfo", () => {
       setLangFn(data)
         .then((res: any) => {
           if (+res.data.code === 1) {
-            resolve(true);
-          } else {
-            resolve(false);
+            resolve(true)
+          }
+          else {
+            resolve(false)
           }
         })
-        .catch(() => resolve(false));
-    });
+        .catch(() => resolve(false))
+    })
   }
 
   function updateLangConfig(data: { lang: any }) {
     Object.assign(langConfig, data, {
       id: data.lang,
       lang: LangCode[Number(data.lang)],
-    });
-    setLocal("langConfig", langConfig);
-    document.title = String(langConfig.id) === "1" ? "小艾电竞" : "IA ESPORTS";
+    })
+    setLocal('langConfig', langConfig)
+    document.title = String(langConfig.id) === '1' ? '小艾电竞' : 'IA ESPORTS'
     // setLocale(LangCode[Number(res.data.data.lang)]);
-    if (data.lang != Number(getLocale())) {
-      window.location.reload();
+    if (+data.lang !== Number(getLocale())) {
+      window.location.reload()
     }
   }
 
@@ -113,22 +115,23 @@ export const userInfoStore = defineStore("userInfo", () => {
     getLangFn()
       .then((res: any) => {
         if (res.data.code === 1) {
-          updateLangConfig(res.data.data);
-        } else {
+          updateLangConfig(res.data.data)
+        }
+        else {
           updateLangConfig({
-            lang: getLocal("lang") || 1,
-          });
+            lang: getLocal('lang') || 1,
+          })
         }
       })
       .catch(() => {
         updateLangConfig({
-          lang: getLocal("lang") || 1,
-        });
-      });
+          lang: getLocal('lang') || 1,
+        })
+      })
   }
 
   function setLoginStatus(status: boolean) {
-    isLogin.value = status;
+    isLogin.value = status
   }
 
   return {
@@ -144,5 +147,5 @@ export const userInfoStore = defineStore("userInfo", () => {
     changeAvatarId,
     currentCurrencyInfo,
     setLoginStatus,
-  };
-});
+  }
+})

@@ -1,23 +1,23 @@
+<script lang="ts">
+export default {
+  name: 'IaNoMore',
+  props: {
+    text: {
+      type: String,
+      default: () => '暂无更多',
+    },
+  },
+  setup() {
+    return {}
+  },
+}
+</script>
+
 <template>
   <div class="no-more">
     <span class="text">{{ text }}</span>
   </div>
 </template>
-
-<script lang="ts">
-export default {
-  name: "ia-no-more",
-  props: {
-    text: {
-      type: String,
-      default: () => "暂无更多",
-    },
-  },
-  setup() {
-    return {};
-  },
-};
-</script>
 
 <style scoped lang="scss">
 .no-more {

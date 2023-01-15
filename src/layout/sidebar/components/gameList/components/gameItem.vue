@@ -1,178 +1,89 @@
-<template>
-  <div
-    v-if="!notShowGameArr.includes(String(itemInfo.id))"
-    :class="{
-      'active-item': isCurrent && isTradition,
-      'active-item-two': isCurrent && !isTradition,
-      item: true,
-      'item-mode2': !isTradition,
-      'has-bg': isTradition && hasBg,
-    }"
-  >
-    <div
-      class="menu-item"
-      :class="{
-        active: +itemInfo.id === +currentGameId,
-        'menu-item-isTradition': isTradition,
-      }"
-      @click="handleClick(String(itemInfo.id))"
-      :style="{ '--not-tradition-logo': !isTradition ? '-18px' : 0 }"
-    >
-      <div
-        :class="{
-          'pre-box': true,
-        }"
-      />
-      <LazyImage :img-url="+itemInfo.id === 0 ? allImg : itemInfo.logo" />
-      <div class="game-title">
-        <span v-tooltip="{ width: 84, message: itemInfo.game_name }">
-          {{ itemInfo.game_name }}</span
-        >
-      </div>
-      <div
-        :class="{
-          'active-bag': String(itemInfo.id) === currentGameId,
-          bag: true,
-        }"
-      >
-        {{ gameEventDetail.total ? gameEventDetail.total : 0 }}
-      </div>
-      <div class="next-box" />
-    </div>
-    <div
-      class="division-list"
-      :style="{
-        '--height': showD ? gameEventDetail.events.length + 1 : 0,
-      }"
-      v-show="isTradition"
-    >
-      <div class="division-title">
-        <div
-          class="checked-input"
-          :class="{
-            'active-input':
-              checkedEvenList.length === gameEventDetail.events?.length ||
-              checkedEvenList.includes('all'),
-          }"
-          @click="setCheckedEvenList('all')"
-        ></div>
-        <div class="event-name" @click="setCheckedEvenList('all')">
-          {{ $t("select_all") }}
-        </div>
-        <div class="event_num" @click="setCheckedEvenList('clear')">
-          <LazyImage :img-url="clearIcon" />
-        </div>
-      </div>
-      <div
-        v-for="item in gameEventDetail.events"
-        :key="item['event_id']"
-        class="division-item"
-        @click="setCheckedEvenList(String(item['event_id']))"
-      >
-        <div
-          class="checked-input"
-          :class="{
-            'active-input':
-              checkedEvenList.includes(String(item['event_id'])) ||
-              checkedEvenList.includes('all'),
-          }"
-        ></div>
-        <div class="event-name">
-          {{ item.event_name }}
-        </div>
-        <div class="event_num">
-          {{ item["match_amount"] ? item["match_amount"] : 0 }}
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
-import allImg from "@/assets/images/logo-all.png";
-import { gameInfoStore } from "@/store/gameInfo";
-import { storeToRefs } from "pinia";
-import { computed, inject, nextTick, onMounted, ref, watch } from "vue";
-import useImageResource from "@/hooks/useImageResource";
+import { storeToRefs } from 'pinia'
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
+import allImg from '@/assets/images/logo-all.png'
+import { gameInfoStore } from '@/store/gameInfo'
+import useImageResource from '@/hooks/useImageResource'
 export default {
-  name: "ia-gameItem",
+  name: 'IaGameItem',
+  components: {},
   props: {
     itemInfo: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       },
     },
   },
-  components: {},
   setup(props: any) {
-    const notShowGameArr = ["autochess", "virtual", "50"];
+    const notShowGameArr = ['autochess', 'virtual', '50']
 
-    const { gameList } = storeToRefs(gameInfoStore());
+    const { gameList } = storeToRefs(gameInfoStore())
 
-    const isTradition = inject("isTradition", true);
+    const isTradition = inject('isTradition', true)
 
-    const { currentGameId, checkedEvenList } = storeToRefs(gameInfoStore());
-    const { clearIcon } = useImageResource();
-    const { setCurrentGameId, setCheckedEvenList } = gameInfoStore();
+    const { currentGameId, checkedEvenList } = storeToRefs(gameInfoStore())
+    const { clearIcon } = useImageResource()
+    const { setCurrentGameId, setCheckedEvenList } = gameInfoStore()
 
-    const showChild = ref(false);
+    const showChild = ref(false)
     const handleClick = (id: string) => {
-      setCurrentGameId(id);
-      showChild.value = !showChild.value;
-    };
+      setCurrentGameId(id)
+      showChild.value = !showChild.value
+    }
     const gameEventDetail: any = computed(() => {
       if (props.itemInfo.events_count?.total) {
-        return props.itemInfo.events_count;
-      } else {
+        return props.itemInfo.events_count
+      }
+      else {
         return {
           total: 0,
           events: [],
-        };
+        }
       }
-    });
+    })
 
-    const init = ref(false);
+    const init = ref(false)
 
     const isCurrent = computed(
-      () => String(props.itemInfo.id) === currentGameId.value
-    );
+      () => String(props.itemInfo.id) === currentGameId.value,
+    )
 
     watch(
       () => isCurrent.value,
       (newVal) => {
         if (newVal) {
-          showChild.value = true;
+          showChild.value = true
         }
-      }
-    );
+      },
+    )
 
     const showD = computed(() => {
       return (
-        isCurrent.value &&
-        showChild.value &&
-        gameEventDetail.value.events &&
-        gameEventDetail.value.events.length > 0
-      );
-    });
+        isCurrent.value
+        && showChild.value
+        && gameEventDetail.value.events
+        && gameEventDetail.value.events.length > 0
+      )
+    })
 
     const hasBg = computed(() => {
       const inx1 = gameList.value.findIndex((game) => {
-        return String(game.id) === String(props.itemInfo.id);
-      });
+        return String(game.id) === String(props.itemInfo.id)
+      })
       const inx2 = gameList.value.findIndex((game) => {
-        return String(game.id) === String(currentGameId.value);
-      });
-      return inx1 <= inx2;
-    });
+        return String(game.id) === String(currentGameId.value)
+      })
+      return inx1 <= inx2
+    })
 
     onMounted(() => {
       nextTick(() => {
         setTimeout(() => {
-          init.value = true;
-        }, 1000);
-      });
-    });
+          init.value = true
+        }, 1000)
+      })
+    })
 
     return {
       setCurrentGameId,
@@ -190,10 +101,95 @@ export default {
       isCurrent,
       notShowGameArr,
       hasBg,
-    };
+    }
   },
-};
+}
 </script>
+
+<template>
+  <div
+    v-if="!notShowGameArr.includes(String(itemInfo.id))"
+    class="item" :class="{
+      'active-item': isCurrent && isTradition,
+      'active-item-two': isCurrent && !isTradition,
+      'item-mode2': !isTradition,
+      'has-bg': isTradition && hasBg,
+    }"
+  >
+    <div
+      class="menu-item"
+      :class="{
+        'active': +itemInfo.id === +currentGameId,
+        'menu-item-isTradition': isTradition,
+      }"
+      :style="{ '--not-tradition-logo': !isTradition ? '-18px' : 0 }"
+      @click="handleClick(String(itemInfo.id))"
+    >
+      <div
+        class="pre-box"
+      />
+      <LazyImage :img-url="+itemInfo.id === 0 ? allImg : itemInfo.logo" />
+      <div class="game-title">
+        <span v-tooltip="{ width: 84, message: itemInfo.game_name }">
+          {{ itemInfo.game_name }}</span>
+      </div>
+      <div
+        class="bag" :class="{
+          'active-bag': String(itemInfo.id) === currentGameId,
+        }"
+      >
+        {{ gameEventDetail.total ? gameEventDetail.total : 0 }}
+      </div>
+      <div class="next-box" />
+    </div>
+    <div
+      v-show="isTradition"
+      class="division-list"
+      :style="{
+        '--height': showD ? gameEventDetail.events.length + 1 : 0,
+      }"
+    >
+      <div class="division-title">
+        <div
+          class="checked-input"
+          :class="{
+            'active-input':
+              checkedEvenList.length === gameEventDetail.events?.length
+              || checkedEvenList.includes('all'),
+          }"
+          @click="setCheckedEvenList('all')"
+        />
+        <div class="event-name" @click="setCheckedEvenList('all')">
+          {{ $t("select_all") }}
+        </div>
+        <div class="event_num" @click="setCheckedEvenList('clear')">
+          <LazyImage :img-url="clearIcon" />
+        </div>
+      </div>
+      <div
+        v-for="item in gameEventDetail.events"
+        :key="item.event_id"
+        class="division-item"
+        @click="setCheckedEvenList(String(item.event_id))"
+      >
+        <div
+          class="checked-input"
+          :class="{
+            'active-input':
+              checkedEvenList.includes(String(item.event_id))
+              || checkedEvenList.includes('all'),
+          }"
+        />
+        <div class="event-name">
+          {{ item.event_name }}
+        </div>
+        <div class="event_num">
+          {{ item.match_amount ? item.match_amount : 0 }}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .next-box {

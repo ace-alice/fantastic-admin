@@ -1,26 +1,26 @@
+<script lang="ts">
+import { defineComponent, inject } from 'vue'
+import useRouteHook from '@/hooks/useRouteHook'
+
+export default defineComponent({
+  name: 'LogoItem',
+  components: {},
+  setup() {
+    const { routerJump } = useRouteHook()
+    const isTradition = inject('isTradition', true)
+
+    const logoImg = new URL('@/assets/images/logo.png', import.meta.url).href
+
+    return { routerJump, logoImg, isTradition }
+  },
+})
+</script>
+
 <template>
-  <div :class="{ LogoItem: true, 'not-show': !isTradition }">
+  <div class="LogoItem" :class="{ 'not-show': !isTradition }">
     <LazyImage :img-url="logoImg" @click="routerJump('Match')" />
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, inject } from "vue";
-import useRouteHook from "@/hooks/useRouteHook";
-
-export default defineComponent({
-  name: "LogoItem",
-  components: {},
-  setup() {
-    const { routerJump } = useRouteHook();
-    const isTradition = inject("isTradition", true);
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const logoImg = new URL("@/assets/images/logo.png" ,import.meta.url).href;
-
-    return { routerJump, logoImg, isTradition };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .LogoItem {

@@ -1,7 +1,71 @@
+<script lang="ts">
+import { computed, ref, watch } from 'vue'
+import useImageResource from '@/hooks/useImageResource'
+import { CategoryIdName } from '@/enum'
+import { setItemName } from '@/utils'
+import { shopCartStore } from '@/store/shopCart'
+export default {
+  name: 'ShopItemParlay',
+  components: {},
+  props: {
+    itemInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup(props: any) {
+    const { betTitleImg, closeImg, lockIcon } = useImageResource()
+
+    const { changeShopCartElement } = shopCartStore()
+
+    const isLock = computed(() => {
+      return (
+        +props.itemInfo.is_del === 1
+        || +props.itemInfo.is_finish === 1
+        || +props.itemInfo.is_parlay === 0
+        || +props.itemInfo.parlay_money_min <= 0
+      )
+    })
+
+    const isOddChange = ref(false)
+
+    let changeTimer: any = null
+
+    watch(
+      () => props.itemInfo.odd,
+      () => {
+        isOddChange.value = true
+        clearTimeout(changeTimer)
+        changeTimer = null
+        changeTimer = setTimeout(() => {
+          isOddChange.value = false
+        }, 3000)
+      },
+    )
+
+    function closeCart() {
+      changeShopCartElement(String(props.itemInfo.shop_id), 'parlay')
+    }
+
+    return {
+      betTitleImg,
+      closeImg,
+      setItemName,
+      CategoryIdName,
+      isLock,
+      closeCart,
+      lockIcon,
+      isOddChange,
+    }
+  },
+}
+</script>
+
 <template>
   <div
-    :class="{
-      'shop-item': true,
+    class="shop-item" :class="{
       'lock-disabled': isLock,
     }"
   >
@@ -20,10 +84,8 @@
           }  ${itemInfo.desc}`
         }}</span>
         <span class="bet">
-          <LazyImage :img-url="lockIcon" v-show="isLock" />
-          <span v-show="!isLock" :class="{ isOddChange: isOddChange }"
-            >x{{ itemInfo.odd }}</span
-          >
+          <LazyImage v-show="isLock" :img-url="lockIcon" />
+          <span v-show="!isLock" :class="{ isOddChange }">x{{ itemInfo.odd }}</span>
         </span>
       </div>
       <div class="team-show">
@@ -34,71 +96,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import useImageResource from "@/hooks/useImageResource";
-import { CategoryIdName } from "@/enum";
-import { setItemName } from "@/utils";
-import { computed, ref, watch } from "vue";
-import { shopCartStore } from "@/store/shopCart";
-export default {
-  name: "shop-item-parlay",
-  components: {},
-  props: {
-    itemInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup(props: any) {
-    const { betTitleImg, closeImg, lockIcon } = useImageResource();
-
-    const { changeShopCartElement } = shopCartStore();
-
-    const isLock = computed(() => {
-      return (
-        +props.itemInfo.is_del === 1 ||
-        +props.itemInfo.is_finish === 1 ||
-        +props.itemInfo.is_parlay === 0 ||
-        +props.itemInfo.parlay_money_min <= 0
-      );
-    });
-
-    const isOddChange = ref(false);
-
-    let changeTimer: any = null;
-
-    watch(
-      () => props.itemInfo.odd,
-      () => {
-        isOddChange.value = true;
-        clearTimeout(changeTimer);
-        changeTimer = null;
-        changeTimer = setTimeout(() => {
-          isOddChange.value = false;
-        }, 3000);
-      }
-    );
-
-    function closeCart() {
-      changeShopCartElement(String(props.itemInfo.shop_id), "parlay");
-    }
-
-    return {
-      betTitleImg,
-      closeImg,
-      setItemName,
-      CategoryIdName,
-      isLock,
-      closeCart,
-      lockIcon,
-      isOddChange,
-    };
-  },
-};
-</script>
 
 <style lang="scss" scoped>
 .shop-item {

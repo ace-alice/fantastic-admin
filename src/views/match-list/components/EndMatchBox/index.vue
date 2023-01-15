@@ -1,7 +1,50 @@
+<script lang="ts">
+import { defineAsyncComponent, defineComponent } from 'vue'
+import getUniversalListHook from '@/hooks/getUniversalListHook'
+import EmptyBox from '@/components/Empty/index.vue'
+import matchListToTopHook from '@/hooks/matchListToTopHook'
+import ToTopBox from '@/components/ToTopBox/index.vue'
+const DateSelectBox = defineAsyncComponent(
+  () => import('../../components/DateSelectBox/index.vue'),
+)
+const EndBetItem = defineAsyncComponent(
+  () => import('@/components/EndBetItem/index.vue'),
+)
+
+export default defineComponent({
+  name: 'EndMatchBox',
+  components: { DateSelectBox, EndBetItem, EmptyBox, ToTopBox },
+  setup() {
+    const {
+      matchListData,
+      weekDateOptions,
+      currentDate,
+      changeCurrentDate,
+      loadList,
+    } = getUniversalListHook('end')
+
+    const { toTopHandle, scrollbarRef, scrollHandle, hasToTop }
+      = matchListToTopHook()
+
+    return {
+      matchListData,
+      weekDateOptions,
+      currentDate,
+      changeCurrentDate,
+      loadList,
+      toTopHandle,
+      scrollbarRef,
+      scrollHandle,
+      hasToTop,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="list-box EndMatchBox" :style="{ '--scrollbar-height': 90 }">
     <DateSelectBox
-      :weekDateOptions="weekDateOptions"
+      :week-date-options="weekDateOptions"
       :current-date="currentDate"
       @change="changeCurrentDate"
     />
@@ -15,60 +58,17 @@
           <EndBetItem
             v-for="match in matchListData"
             :key="match.id"
-            :matchInfo="match"
+            :match-info="match"
           />
         </transition-group>
       </el-scrollbar>
       <EmptyBox v-show="!loadList && matchListData.length === 0" type="live" />
     </div>
-    <ToTopBox @toTop="toTopHandle" v-if="hasToTop" />
+    <ToTopBox v-if="hasToTop" @to-top="toTopHandle" />
   </div>
 </template>
 
-<script lang="ts">
-import { defineAsyncComponent, defineComponent } from "vue";
-import getUniversalListHook from "@/hooks/getUniversalListHook";
-const DateSelectBox = defineAsyncComponent(
-  () => import("../../components/DateSelectBox/index.vue")
-);
-const EndBetItem = defineAsyncComponent(
-  () => import("@/components/EndBetItem/index.vue")
-);
-import EmptyBox from "@/components/Empty/index.vue";
-import matchListToTopHook from "@/hooks/matchListToTopHook";
-import ToTopBox from "@/components/ToTopBox/index.vue";
-
-export default defineComponent({
-  name: "EndMatchBox",
-  components: { DateSelectBox, EndBetItem, EmptyBox, ToTopBox },
-  setup() {
-    const {
-      matchListData,
-      weekDateOptions,
-      currentDate,
-      changeCurrentDate,
-      loadList,
-    } = getUniversalListHook("end");
-
-    const { toTopHandle, scrollbarRef, scrollHandle, hasToTop } =
-      matchListToTopHook();
-
-    return {
-      matchListData,
-      weekDateOptions,
-      currentDate,
-      changeCurrentDate,
-      loadList,
-      toTopHandle,
-      scrollbarRef,
-      scrollHandle,
-      hasToTop,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .EndMatchBox {
   flex-grow: 1;

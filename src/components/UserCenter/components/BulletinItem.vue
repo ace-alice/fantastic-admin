@@ -1,77 +1,79 @@
-<!--suppress ALL -->
+<!-- suppress ALL -->
+<script lang="ts">
+import type { Ref } from 'vue'
+import { defineComponent, nextTick, onMounted, ref } from 'vue'
+import { parseTime } from '@/utils'
+
+export default defineComponent({
+  name: 'BulletinItem',
+  components: {},
+  props: {
+    info: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup() {
+    const contentBoxRef: Ref<HTMLDivElement | null> = ref(null)
+
+    const hasMore = ref(false)
+
+    const showMore = ref(false)
+
+    const contentHeight = ref(0)
+
+    onMounted(() => {
+      nextTick(() => {
+        setTimeout(() => {
+          if (contentBoxRef.value) {
+            contentHeight.value = contentBoxRef.value?.clientHeight
+            if (contentBoxRef.value?.clientHeight > 35) {
+              hasMore.value = true
+            }
+          }
+        }, 20)
+      })
+    })
+
+    return { contentBoxRef, hasMore, showMore, contentHeight, parseTime }
+  },
+})
+</script>
+
 <template>
   <div
     class="BulletinItem"
-    @click.stop="showMore = !showMore"
     :style="{ '--content-height': contentHeight }"
+    @click.stop="showMore = !showMore"
   >
     <div class="bulletin-header">
-      <div class="header-title">{{ info["title"] }}</div>
+      <div class="header-title">
+        {{ info.title }}
+      </div>
       <div class="header-time">
-        <span v-if="info['create_time'] || info['update_time']">{{
-          parseTime(info["create_time"] || info["update_time"])
+        <span v-if="info.create_time || info.update_time">{{
+          parseTime(info.create_time || info.update_time)
         }}</span>
       </div>
     </div>
     <div
-      :class="{
-        'notice-info-content': true,
+      class="notice-info-content" :class="{
         'more-height': !showMore || !hasMore,
       }"
     >
       <div
         ref="contentBoxRef"
         class="content-box"
-        v-html="info['content']"
-      ></div>
+        v-html="info.content"
+      />
     </div>
-    <div class="more-and_more" v-if="hasMore">
+    <div v-if="hasMore" class="more-and_more">
       <span>{{ showMore ? $t("fold") : $t("More_and_more") }}</span>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, nextTick, onMounted, Ref, ref } from "vue";
-import { parseTime } from "@/utils";
-
-export default defineComponent({
-  name: "BulletinItem",
-  components: {},
-  props: {
-    info: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup() {
-    const contentBoxRef: Ref<HTMLDivElement | null> = ref(null);
-
-    const hasMore = ref(false);
-
-    const showMore = ref(false);
-
-    const contentHeight = ref(0);
-
-    onMounted(() => {
-      nextTick(() => {
-        setTimeout(() => {
-          if (contentBoxRef.value) {
-            contentHeight.value = contentBoxRef.value?.clientHeight;
-            if (contentBoxRef.value?.clientHeight > 35) {
-              hasMore.value = true;
-            }
-          }
-        }, 20);
-      });
-    });
-
-    return { contentBoxRef, hasMore, showMore, contentHeight, parseTime };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .BulletinItem {

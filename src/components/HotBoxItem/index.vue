@@ -1,3 +1,77 @@
+<script lang="ts">
+import { computed, defineAsyncComponent, defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
+import videoAndAnimationHook from '@/hooks/videoAndAnimationHook'
+const TeamBox = defineAsyncComponent(() => import('./components/TeamBox.vue'))
+const BaseInfoBox = defineAsyncComponent(
+  () => import('./components/BaseInfoBox.vue'),
+)
+const FavoriteAndPointBox = defineAsyncComponent(
+  () => import('./components/FavoriteAndPointBox.vue'),
+)
+
+const PlayNameBox = defineAsyncComponent(
+  () => import('./components/PlayNameBox.vue'),
+)
+export default defineComponent({
+  name: 'HotBoxItem',
+  components: { TeamBox, FavoriteAndPointBox, PlayNameBox, BaseInfoBox },
+  props: {
+    matchInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+    bg: {
+      type: String,
+      default: new URL('@/assets/banner/wzry_01.png', import.meta.url).href,
+    },
+  },
+  setup(props) {
+    const hasPlayInfo = computed(() => {
+      return (
+        !(Array.isArray(props.matchInfo.recommend_play))
+        && props.matchInfo.recommend_play.id
+      )
+    })
+
+    const { videoHas, animationHas } = videoAndAnimationHook(props.matchInfo)
+
+    const router = useRouter()
+
+    function toMatchDetail() {
+      const query: any = {
+        game_id: props.matchInfo.id,
+        category_id: props.matchInfo.category_id,
+        betType: 'single',
+      }
+      if (hasPlayInfo.value) {
+        query.match = props.matchInfo.recommend_play.match
+      }
+      router.push({
+        name: 'MatchDetail',
+        query,
+      })
+    }
+
+    const videoIcon = new URL('@/assets/icons/live.png', import.meta.url).href
+
+    const animateIcon = new URL('@/assets/icons/score.png', import.meta.url)
+      .href
+
+    return {
+      hasPlayInfo,
+      videoHas,
+      animationHas,
+      toMatchDetail,
+      videoIcon,
+      animateIcon,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="hot-box-item" @click.stop="toMatchDetail">
     <div class="bg-image">
@@ -9,21 +83,21 @@
     </div>
     <div class="top">
       <TeamBox
-        :itemInfo="matchInfo"
         :key="hasPlayInfo ? `${matchInfo.recommend_play.id}0` : 0"
+        :item-info="matchInfo"
         :index="0"
       />
-      <PlayNameBox :itemInfo="matchInfo" />
+      <PlayNameBox :item-info="matchInfo" />
       <TeamBox
-        :itemInfo="matchInfo"
-        :index="1"
         :key="hasPlayInfo ? `${matchInfo.recommend_play.id}1` : 1"
+        :item-info="matchInfo"
+        :index="1"
       />
     </div>
     <div class="bottom">
-      <!--suppress JSUnresolvedVariable -->
+      <!-- suppress JSUnresolvedVariable -->
       <BaseInfoBox
-        :baseInfo="{
+        :base-info="{
           bo: matchInfo.bo,
           eventName: matchInfo.event_name || 'IA ESPORT',
           isLive: +matchInfo.category_id === 3,
@@ -33,86 +107,13 @@
       <FavoriteAndPointBox
         :info="{
           id: matchInfo.id,
-          pointsCount: matchInfo['team_count'],
+          pointsCount: matchInfo.team_count,
           isKeep: matchInfo.is_favorite,
         }"
       />
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { computed, defineAsyncComponent, defineComponent } from "vue";
-import videoAndAnimationHook from "@/hooks/videoAndAnimationHook";
-import { useRouter } from "vue-router";
-const TeamBox = defineAsyncComponent(() => import("./components/TeamBox.vue"));
-const BaseInfoBox = defineAsyncComponent(
-  () => import("./components/BaseInfoBox.vue")
-);
-const FavoriteAndPointBox = defineAsyncComponent(
-  () => import("./components/FavoriteAndPointBox.vue")
-);
-
-const PlayNameBox = defineAsyncComponent(
-  () => import("./components/PlayNameBox.vue")
-);
-export default defineComponent({
-  name: "HotBoxItem",
-  components: { TeamBox, FavoriteAndPointBox, PlayNameBox, BaseInfoBox },
-  props: {
-    matchInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-    bg: {
-      type: String,
-      default: new URL("@/assets/banner/wzry_01.png" ,import.meta.url).href,
-    },
-  },
-  setup(props) {
-    const hasPlayInfo = computed(() => {
-      return (
-        !(props.matchInfo.recommend_play instanceof Array) &&
-        props.matchInfo.recommend_play.id
-      );
-    });
-
-    const { videoHas, animationHas } = videoAndAnimationHook(props.matchInfo);
-
-    const router = useRouter();
-
-    function toMatchDetail() {
-      let query: any = {
-        game_id: props.matchInfo.id,
-        category_id: props.matchInfo.category_id,
-        betType: "single",
-      };
-      if (hasPlayInfo.value) {
-        query.match = props.matchInfo.recommend_play.match;
-      }
-      router.push({
-        name: "MatchDetail",
-        query,
-      });
-    }
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const videoIcon = new URL("@/assets/icons/live.png" ,import.meta.url).href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const animateIcon = new URL("@/assets/icons/score.png" ,import.meta.url).href;
-
-    return {
-      hasPlayInfo,
-      videoHas,
-      animationHas,
-      toMatchDetail,
-      videoIcon,
-      animateIcon,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .hot-box-item {

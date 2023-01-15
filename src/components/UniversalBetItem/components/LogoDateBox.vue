@@ -1,8 +1,42 @@
+<script lang="ts">
+import { defineAsyncComponent, defineComponent, inject } from 'vue'
+import { parseTime } from '@/utils'
+import { countdownHook } from '@/hooks/countdownHook'
+const LiveIcon = defineAsyncComponent(
+  () => import('@/components/LiveIcon/index.vue'),
+)
+const HasLiveIcon = defineAsyncComponent(
+  () => import('@/components/HasLiveIcon/index.vue'),
+)
+export default defineComponent({
+  name: 'LogoDateBox',
+  components: { LiveIcon, HasLiveIcon },
+  props: {
+    dataInfo: {
+      type: Object,
+      default: () => {
+        return {
+          logo: '',
+          startTime: 0,
+        }
+      },
+    },
+  },
+  setup(props) {
+    const { countdown } = countdownHook(props.dataInfo.startTime, 3)
+
+    const handicap = inject('handicap')
+
+    return { parseTime, countdown, handicap }
+  },
+})
+</script>
+
 <template>
   <div class="LogoDateBox">
     <LazyImage :img-url="dataInfo.logo" />
     <div class="main-live">
-      <div class="live-tag" v-if="dataInfo.isLive || handicap === 'live'">
+      <div v-if="dataInfo.isLive || handicap === 'live'" class="live-tag">
         <template v-if="dataInfo.isLive">
           <LiveIcon style="margin-right: 12px" />
         </template>
@@ -15,7 +49,7 @@
           {{
             parseTime(
               Number(String(dataInfo.startTime).padEnd(13, "0")),
-              "{h}:{i}"
+              "{h}:{i}",
             )
           }}
         </template>
@@ -26,40 +60,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineAsyncComponent, defineComponent, inject } from "vue";
-import { parseTime } from "@/utils";
-import { countdownHook } from "@/hooks/countdownHook";
-const LiveIcon = defineAsyncComponent(
-  () => import("@/components/LiveIcon/index.vue")
-);
-const HasLiveIcon = defineAsyncComponent(
-  () => import("@/components/HasLiveIcon/index.vue")
-);
-export default defineComponent({
-  name: "LogoDateBox",
-  components: { LiveIcon, HasLiveIcon },
-  props: {
-    dataInfo: {
-      type: Object,
-      default: () => {
-        return {
-          logo: "",
-          startTime: 0,
-        };
-      },
-    },
-  },
-  setup(props) {
-    const { countdown } = countdownHook(props.dataInfo.startTime, 3);
-
-    const handicap = inject("handicap");
-
-    return { parseTime, countdown, handicap };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @mixin text-overflow-ellipsis {

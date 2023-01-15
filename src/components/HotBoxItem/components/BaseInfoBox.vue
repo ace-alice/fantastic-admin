@@ -1,3 +1,37 @@
+<script lang="ts">
+import { defineAsyncComponent, defineComponent } from 'vue'
+const LiveIcon = defineAsyncComponent(
+  () => import('@/components/LiveIcon/index.vue'),
+)
+
+export default defineComponent({
+  name: 'VideoAndAnimationBox',
+  components: { LiveIcon },
+  props: {
+    baseInfo: {
+      type: Object,
+      default: () => {
+        return {
+          bo: 0,
+          eventName: '',
+          hasVideo: false,
+          hasAnimate: false,
+          logo: '',
+          isLive: false,
+        }
+      },
+    },
+  },
+  setup() {
+    const videoIcon = new URL('@/assets/icons/live.png', import.meta.url).href
+
+    const animateIcon = new URL('@/assets/icons/score.png', import.meta.url).href
+
+    return { videoIcon, animateIcon }
+  },
+})
+</script>
+
 <template>
   <div class="VideoAndAnimationBox">
     <LazyImage :img-url="baseInfo.logo" />
@@ -6,46 +40,13 @@
         baseInfo.eventName
       }}</span>
     </div>
-    <div class="deliver"></div>
-    <div class="bo">BO{{ baseInfo.bo || 0 }}</div>
+    <div class="deliver" />
+    <div class="bo">
+      BO{{ baseInfo.bo || 0 }}
+    </div>
     <LiveIcon v-if="baseInfo.isLive" />
   </div>
 </template>
-
-<script lang="ts">
-import { defineAsyncComponent, defineComponent } from "vue";
-const LiveIcon = defineAsyncComponent(
-  () => import("@/components/LiveIcon/index.vue")
-);
-
-export default defineComponent({
-  name: "VideoAndAnimationBox",
-  components: { LiveIcon },
-  props: {
-    baseInfo: {
-      type: Object,
-      default: () => {
-        return {
-          bo: 0,
-          eventName: "",
-          hasVideo: false,
-          hasAnimate: false,
-          logo: "",
-          isLive: false,
-        };
-      },
-    },
-  },
-  setup() {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const videoIcon = new URL("@/assets/icons/live.png" ,import.meta.url).href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const animateIcon = new URL("@/assets/icons/score.png" ,import.meta.url).href;
-
-    return { videoIcon, animateIcon };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .VideoAndAnimationBox {

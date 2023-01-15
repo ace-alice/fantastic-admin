@@ -1,3 +1,51 @@
+<script lang="ts">
+import { defineComponent, reactive } from 'vue'
+import { storeToRefs } from 'pinia'
+import { gameInfoStore } from '@/store/gameInfo'
+
+export default defineComponent({
+  name: 'FilterCriteriaBox',
+  components: {},
+  emits: ['search'],
+  setup(props: any, { emit }: any) {
+    const formData: any = reactive({
+      is_getprize: null,
+      game_id: null,
+    })
+
+    const { gameList } = storeToRefs(gameInfoStore())
+
+    const getprizeOptions = [
+      {
+        label: '未结算',
+        value: 0,
+      },
+      {
+        label: '已结算',
+        value: 1,
+      },
+    ]
+
+    const betTypeOptions = [
+      {
+        label: '单注',
+        value: 1,
+      },
+      {
+        label: '串关',
+        value: 2,
+      },
+    ]
+
+    function toSearch() {
+      emit('search', formData)
+    }
+
+    return { formData, betTypeOptions, gameList, getprizeOptions, toSearch }
+  },
+})
+</script>
+
 <template>
   <div class="FilterCriteriaBox">
     <el-select
@@ -7,12 +55,12 @@
       size="small"
       @change="toSearch"
     >
-      <!--suppress JSUnresolvedVariable -->
+      <!-- suppress JSUnresolvedVariable -->
       <el-option
         v-for="item in getprizeOptions"
-        :key="item['value']"
-        :label="item['label']"
-        :value="item['value']"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
       />
     </el-select>
     <el-select
@@ -22,12 +70,12 @@
       size="small"
       @change="toSearch"
     >
-      <!--suppress JSUnresolvedVariable -->
+      <!-- suppress JSUnresolvedVariable -->
       <el-option
         v-for="item in betTypeOptions"
-        :key="item['value']"
-        :label="item['label']"
-        :value="item['value']"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
       />
     </el-select>
     <el-select
@@ -37,68 +85,22 @@
       size="small"
       @change="toSearch"
     >
-      <!--suppress JSUnresolvedVariable -->
-      <template v-for="item in gameList" :key="item['id']">
+      <!-- suppress JSUnresolvedVariable -->
+      <template v-for="item in gameList" :key="item.id">
         <el-option
-          v-if="+item['id'] !== 0"
-          :label="item['game_name']"
-          :value="item['id']"
+          v-if="+item.id !== 0"
+          :label="item.game_name"
+          :value="item.id"
         />
       </template>
     </el-select>
     <div class="search-box">
-      <div class="search" @click.stop="toSearch">搜索</div>
+      <div class="search" @click.stop="toSearch">
+        搜索
+      </div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, reactive } from "vue";
-import { storeToRefs } from "pinia";
-import { gameInfoStore } from "@/store/gameInfo";
-
-export default defineComponent({
-  name: "FilterCriteriaBox",
-  components: {},
-  emits: ["search"],
-  setup(props: any, { emit }: any) {
-    const formData:any = reactive({
-      is_getprize: null,
-      game_id: null,
-    });
-
-    const { gameList } = storeToRefs(gameInfoStore());
-
-    const getprizeOptions = [
-      {
-        label: "未结算",
-        value: 0,
-      },
-      {
-        label: "已结算",
-        value: 1,
-      },
-    ];
-
-    const betTypeOptions = [
-      {
-        label: "单注",
-        value: 1,
-      },
-      {
-        label: "串关",
-        value: 2,
-      },
-    ];
-
-    function toSearch() {
-      emit("search", formData);
-    }
-
-    return { formData, betTypeOptions, gameList, getprizeOptions, toSearch };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .FilterCriteriaBox {

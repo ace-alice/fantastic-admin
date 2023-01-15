@@ -1,4 +1,55 @@
-<!--suppress JSUnresolvedVariable -->
+<!-- suppress JSUnresolvedVariable -->
+<script lang="ts">
+import { computed, defineComponent, ref } from 'vue'
+import { parseTime } from '@/utils'
+import { countdownHook } from '@/hooks/countdownHook'
+import TeamBox from '@/components/ChampionBetItem/components/TeamBox.vue'
+export default defineComponent({
+  name: 'ChampionBetItem',
+  components: { TeamBox },
+  props: {
+    matchInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup(props: any) {
+    const retractableImage = new URL('@/assets/icons/prev.png', import.meta.url).href
+
+    const { countdown } = countdownHook(props.matchInfo.game_show_end_time, 3)
+
+    const isPackUp = ref(true)
+
+    function changePackStatus() {
+      isPackUp.value = !isPackUp.value
+    }
+
+    const teamPoints = computed(() => {
+      if (
+        props.matchInfo.recommend_play
+        && props.matchInfo.recommend_play.team_points
+      ) {
+        return props.matchInfo.recommend_play.team_points
+      }
+      else {
+        return undefined
+      }
+    })
+
+    return {
+      parseTime,
+      countdown,
+      retractableImage,
+      isPackUp,
+      changePackStatus,
+      teamPoints,
+    }
+  },
+})
+</script>
+
 <template>
   <div
     class="champion-bet-item"
@@ -12,12 +63,14 @@
   >
     <div class="champion-header">
       <LazyImage :img-url="matchInfo.game_logo" />
-      <div class="event-name">{{ matchInfo.event_name || "IA ESPORT" }}</div>
+      <div class="event-name">
+        {{ matchInfo.event_name || "IA ESPORT" }}
+      </div>
       <div class="start-time">
-        <span v-if="matchInfo['game_show_end_time'] && !countdown[0]">{{
+        <span v-if="matchInfo.game_show_end_time && !countdown[0]">{{
           parseTime(
-            Number(String(matchInfo["game_show_end_time"]).padEnd(13, "0")),
-            "{y}/{m}/{d} {h}:{i}"
+            Number(String(matchInfo.game_show_end_time).padEnd(13, "0")),
+            "{y}/{m}/{d} {h}:{i}",
           )
         }}</span>
         <span v-else>
@@ -32,15 +85,15 @@
         <span>{{ $t("bonus_pool") }}</span>
       </div>
       <div>
-        <span>{{ matchInfo["team_count"] ? matchInfo["team_count"] : 0 }}</span>
+        <span>{{ matchInfo.team_count ? matchInfo.team_count : 0 }}</span>
         <span>{{ $t("game_teams") }}</span>
       </div>
     </div>
-    <div :class="{ 'team-box-group': true }">
+    <div class="team-box-group">
       <template v-for="(match, index) in teamPoints" :key="index">
         <TeamBox
           :index="index"
-          :itemInfo="
+          :item-info="
             Object.assign(match, {
               event_name: matchInfo.event_name,
               game_id: matchInfo.game_type_id,
@@ -57,7 +110,7 @@
     </div>
     <div
       v-if="teamPoints.length > 6"
-      :class="{ retractable: true, 'is-pack': isPackUp }"
+      class="retractable" :class="{ 'is-pack': isPackUp }"
       @click.stop="changePackStatus"
     >
       <div>{{ isPackUp ? $t("more_teams") : $t("pack_up") }}</div>
@@ -65,57 +118,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { computed, defineComponent, ref } from "vue";
-import { parseTime } from "@/utils";
-import { countdownHook } from "@/hooks/countdownHook";
-import TeamBox from "@/components/ChampionBetItem/components/TeamBox.vue";
-export default defineComponent({
-  name: "champion-bet-item",
-  components: { TeamBox },
-  props: {
-    matchInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup(props: any) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const retractableImage = new URL("@/assets/icons/prev.png" ,import.meta.url).href;
-
-    const { countdown } = countdownHook(props.matchInfo.game_show_end_time, 3);
-
-    const isPackUp = ref(true);
-
-    function changePackStatus() {
-      isPackUp.value = !isPackUp.value;
-    }
-
-    const teamPoints = computed(() => {
-      if (
-        props.matchInfo["recommend_play"] &&
-        props.matchInfo["recommend_play"]["team_points"]
-      ) {
-        return props.matchInfo["recommend_play"]["team_points"];
-      } else {
-        return undefined;
-      }
-    });
-
-    return {
-      parseTime,
-      countdown,
-      retractableImage,
-      isPackUp,
-      changePackStatus,
-      teamPoints,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .champion-bet-item {

@@ -1,37 +1,37 @@
-<template>
-  <div class="lazy-image">
-    <el-image :src="imgUrl" fit="contain">
-      <template #error>
-        <img :src="errImg" alt="" />
-      </template>
-      <template #placeholder>
-        <div></div>
-      </template>
-    </el-image>
-  </div>
-</template>
-
 <script lang="ts">
-import errImg from "@/assets/images/logo-error.png";
+import errImg from '@/assets/images/logo-error.png'
 export default {
-  name: "ia-lazy-img",
+  name: 'IaLazyImg',
   props: {
     imgUrl: {
       type: String,
-      default: "",
+      default: '',
     },
     errImg: {
       type: String,
       default: () => errImg,
     },
-    fitType: { type: String, default: "contain" },
+    fitType: { type: String, default: 'contain' },
   },
 
   setup() {
-    return {};
+    return {}
   },
-};
+}
 </script>
+
+<template>
+  <div class="lazy-image">
+    <el-image :src="imgUrl" fit="contain">
+      <template #error>
+        <img :src="errImg" alt="">
+      </template>
+      <template #placeholder>
+        <div />
+      </template>
+    </el-image>
+  </div>
+</template>
 
 <style scoped lang="scss">
 ::v-deep(.el-image) {

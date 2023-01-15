@@ -1,25 +1,95 @@
+<script lang="ts">
+import type { PropType } from 'vue'
+import { defineComponent, getCurrentInstance, inject, ref, watch } from 'vue'
+import useImageResource from '@/hooks/useImageResource'
+import { setItemName } from '@/utils'
+
+export default defineComponent({
+  name: 'RoundTabs',
+  components: {},
+  props: {
+    roundList: {
+      type: Array as PropType<any[]>,
+      default: () => [],
+    },
+    gameLang: { type: String, default: '' },
+    tabIndex: {
+      type: Number,
+      default: 0,
+    },
+  },
+  setup(props) {
+    const { prevImg } = useImageResource()
+    const currentIndex = ref(props.tabIndex)
+
+    const { proxy }: any = getCurrentInstance()
+
+    const showChart = inject('showChart')
+
+    watch(
+      () => props.tabIndex,
+      (newVal) => {
+        currentIndex.value = newVal
+        if (
+          proxy.$refs.scrollbarRef
+          && proxy.$refs[`scrollbar${currentIndex.value}`]
+        ) {
+          const scrollbarCurrent
+            = Array.isArray(proxy.$refs[`scrollbar${currentIndex.value}`])
+              ? proxy.$refs[`scrollbar${currentIndex.value}`][0]
+              : proxy.$refs[`scrollbar${currentIndex.value}`]
+          proxy.$refs.scrollbarRef.setScrollLeft(
+            scrollbarCurrent.offsetLeft / 2,
+          )
+        }
+      },
+      { deep: true },
+    )
+
+    function toTab(tabIndex: number) {
+      if (tabIndex >= 0 && tabIndex < props.roundList.length) {
+        proxy.mittBus.emit('scrollToEmit', tabIndex)
+      }
+    }
+
+    function changeChartStatus(status: string) {
+      proxy.mittBus.emit('scrollToEmit', status)
+    }
+
+    return {
+      setItemName,
+      currentIndex,
+      prevImg,
+      toTab,
+      changeChartStatus,
+      showChart,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="round-tabs">
     <div class="chart-btn">
-      <!--      <div v-tooltip="{ width: 10, message: 'item.text' }">chart-btn</div>-->
-      <!--      <div-->
-      <!--        :class="{ reverse: showChart }"-->
-      <!--        @click.stop="-->
-      <!--          changeChartStatus(showChart ? 'notShowChart' : 'showChart')-->
-      <!--        "-->
-      <!--      >-->
-      <!--        <LazyImage :img-url="prevImg" />-->
-      <!--      </div>-->
+      <!--      <div v-tooltip="{ width: 10, message: 'item.text' }">chart-btn</div> -->
+      <!--      <div -->
+      <!--        :class="{ reverse: showChart }" -->
+      <!--        @click.stop=" -->
+      <!--          changeChartStatus(showChart ? 'notShowChart' : 'showChart') -->
+      <!--        " -->
+      <!--      > -->
+      <!--        <LazyImage :img-url="prevImg" /> -->
+      <!--      </div> -->
     </div>
     <div class="round-box">
       <el-scrollbar ref="scrollbarRef">
         <div class="round-list">
           <div
-            class="scrollbar-box"
-            :class="{ 'tab-active': currentIndex === index }"
             v-for="(item, index) in roundList"
             :ref="`scrollbar${index}`"
             :key="index"
+            class="scrollbar-box"
+            :class="{ 'tab-active': currentIndex === index }"
             @click.stop="toTab(index)"
           >
             {{ setItemName(+item, gameLang) }}
@@ -44,76 +114,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, getCurrentInstance, inject, ref, watch } from "vue";
-import useImageResource from "@/hooks/useImageResource";
-import { setItemName } from "@/utils";
-
-export default defineComponent({
-  name: "round-tabs",
-  components: {},
-  props: {
-    roundList: {
-      type: Array,
-      default: () => [],
-    },
-    gameLang: { type: String, default: "" },
-    tabIndex: {
-      type: Number,
-      default: 0,
-    },
-  },
-  setup(props) {
-    const { prevImg } = useImageResource();
-    const currentIndex = ref(props.tabIndex);
-
-    const { proxy }: any = getCurrentInstance();
-
-    const showChart = inject("showChart");
-
-    watch(
-      () => props.tabIndex,
-      (newVal) => {
-        currentIndex.value = newVal;
-        if (
-          proxy.$refs["scrollbarRef"] &&
-          proxy.$refs[`scrollbar${currentIndex.value}`]
-        ) {
-          const scrollbarCurrent =
-            proxy.$refs[`scrollbar${currentIndex.value}`] instanceof Array
-              ? proxy.$refs[`scrollbar${currentIndex.value}`][0]
-              : proxy.$refs[`scrollbar${currentIndex.value}`];
-          proxy.$refs["scrollbarRef"].setScrollLeft(
-            scrollbarCurrent.offsetLeft / 2
-          );
-        }
-      },
-      { deep: true }
-    );
-
-    function toTab(tabIndex: number) {
-      if (0 <= tabIndex && tabIndex < props.roundList.length) {
-        proxy.mittBus.emit("scrollToEmit", tabIndex);
-      }
-    }
-
-    function changeChartStatus(status: string) {
-      proxy.mittBus.emit("scrollToEmit", status);
-    }
-
-    return {
-      setItemName,
-      currentIndex,
-      prevImg,
-      toTab,
-      changeChartStatus,
-      showChart,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .round-tabs {
   height: 80px;

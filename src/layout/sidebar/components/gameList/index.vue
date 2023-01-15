@@ -1,36 +1,36 @@
+<script lang="ts">
+import { defineAsyncComponent } from 'vue'
+import { storeToRefs } from 'pinia'
+import { gameInfoStore } from '@/store/gameInfo'
+import listAnimateHook from '@/hooks/listAnimateHook'
+const GameItem = defineAsyncComponent(
+  () => import('./components/gameItem.vue'),
+)
+export default {
+  name: 'GameList',
+  components: { GameItem },
+  setup() {
+    const { gameList } = storeToRefs(gameInfoStore())
+
+    const { beforeEnter, paragraphEnter } = listAnimateHook()
+
+    return { gameList, beforeEnter, paragraphEnter }
+  },
+}
+</script>
+
 <template>
   <el-scrollbar>
     <GameItem
-      :item-info="item"
       v-for="(item, index) in gameList"
       :key="item.id"
-      :style="{ '--margin-top': 48 + index * 5 + 'px' }"
+      :item-info="item"
+      :style="{ '--margin-top': `${48 + index * 5}px` }"
     />
   </el-scrollbar>
 </template>
 
-<script lang="ts">
-import { defineAsyncComponent } from "vue";
-import { gameInfoStore } from "@/store/gameInfo";
-const GameItem = defineAsyncComponent(
-  () => import("./components/gameItem.vue")
-);
-import { storeToRefs } from "pinia";
-import listAnimateHook from "@/hooks/listAnimateHook";
-export default {
-  name: "GameList",
-  components: { GameItem },
-  setup() {
-    const { gameList } = storeToRefs(gameInfoStore());
-
-    const { beforeEnter, paragraphEnter } = listAnimateHook();
-
-    return { gameList, beforeEnter, paragraphEnter };
-  },
-};
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style scoped lang="scss">
 :deep(.el-scrollbar) {
   .el-scrollbar__bar {

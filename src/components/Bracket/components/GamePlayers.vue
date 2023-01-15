@@ -1,3 +1,40 @@
+<!-- eslint-disable vue/require-explicit-emits -->
+<script lang="ts">
+export default {
+  name: 'GamePlayers',
+  props: ['bracketNode', 'highlightedPlayerId'],
+  computed: {
+    matchProperties() {
+      return Object.assign({}, this.bracketNode, {
+        games: undefined,
+        hasParent: undefined,
+      })
+    },
+  },
+  methods: {
+    getPlayerClass(player: any) {
+      if (player.winner === null || player.winner === undefined) {
+        return ''
+      }
+
+      let clazz = player.winner ? 'winner' : 'defeated'
+
+      if (this.highlightedPlayerId === player.id) {
+        clazz += ' highlight'
+      }
+
+      return clazz
+    },
+    highlightPlayer(playerId: any) {
+      this.$emit('onSelectedPlayer', playerId)
+    },
+    unhighlightPlayer() {
+      this.$emit('onDeselectedPlayer')
+    },
+  },
+}
+</script>
+
 <template>
   <div class="vtb-item-players">
     <div class="player-extension-top">
@@ -6,9 +43,7 @@
 
     <div>
       <div
-        :class="[
-          'vtb-player',
-          'vtb-player1',
+        class="vtb-player vtb-player1" :class="[
           getPlayerClass(bracketNode.player1),
         ]"
         @mouseover="highlightPlayer(bracketNode.player1.id)"
@@ -18,9 +53,7 @@
       </div>
 
       <div
-        :class="[
-          'vtb-player',
-          'vtb-player2',
+        class="vtb-player vtb-player2" :class="[
           getPlayerClass(bracketNode.player2),
         ]"
         @mouseover="highlightPlayer(bracketNode.player2.id)"
@@ -34,42 +67,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-export default {
-  name: "game-players",
-  props: ["bracketNode", "highlightedPlayerId"],
-  computed: {
-    matchProperties() {
-      return Object.assign({}, this.bracketNode, {
-        games: undefined,
-        hasParent: undefined,
-      });
-    },
-  },
-  methods: {
-    getPlayerClass(player) {
-      if (player.winner === null || player.winner === undefined) {
-        return "";
-      }
-
-      let clazz = player.winner ? "winner" : "defeated";
-
-      if (this.highlightedPlayerId === player.id) {
-        clazz += " highlight";
-      }
-
-      return clazz;
-    },
-    highlightPlayer(playerId) {
-      this.$emit("onSelectedPlayer", playerId);
-    },
-    unhighlightPlayer() {
-      this.$emit("onDeselectedPlayer");
-    },
-  },
-};
-</script>
 
 <style lang="scss" scoped>
 .vtb-item-players {

@@ -1,22 +1,22 @@
-<template>
-  <div class="live-icon">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-</template>
-
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: "has-live-icon",
+  name: 'HasLiveIcon',
   components: {},
   setup() {
-    return {};
+    return {}
   },
-});
+})
 </script>
+
+<template>
+  <div class="live-icon">
+    <span />
+    <span />
+    <span />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 @keyframes movement {

@@ -1,18 +1,11 @@
-<template>
-  <div class="FavoriteAndPointBox">
-    <div class="points-count">+{{ info.pointsCount }}</div>
-  </div>
-</template>
-
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { defineComponent, ref, watch } from "vue";
-import { storeToRefs } from "pinia";
-import { userInfoStore } from "@/store/userInfo";
-import { toSetKeepFun } from "@/api/store-game-info";
+import { defineComponent, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { userInfoStore } from '@/store/userInfo'
+import { toSetKeepFun } from '@/api/store-game-info'
 
 export default defineComponent({
-  name: "FavoriteAndPointBox",
+  name: 'FavoriteAndPointBox',
   components: {},
   props: {
     info: {
@@ -22,43 +15,53 @@ export default defineComponent({
           id: null,
           pointsCount: 0,
           isKeep: false,
-        };
+        }
       },
     },
   },
   setup(props) {
-    const { isLogin } = storeToRefs(userInfoStore());
+    const { isLogin } = storeToRefs(userInfoStore())
 
-    const isKeep = ref(props.info.isKeep);
+    const isKeep = ref(props.info.isKeep)
 
-    const keepIcon = new URL("@/assets/icons/collect.png" ,import.meta.url).href;
+    const keepIcon = new URL('@/assets/icons/collect.png', import.meta.url).href
 
-    const notKeepIcon = new URL("@/assets/icons/not-collect.png" ,import.meta.url).href;
+    const notKeepIcon = new URL('@/assets/icons/not-collect.png', import.meta.url).href
 
     // 收藏和取消收藏
     async function toSetKeep(isAdd: string | number) {
-      if (!isLogin.value) return;
+      if (!isLogin.value) {
+        return
+      }
       const form = {
         game_id: props.info.id,
         is_add: isAdd,
-      };
-      const statusTag = await toSetKeepFun(form);
+      }
+      const statusTag = await toSetKeepFun(form)
       if (+statusTag.data.code === 1) {
-        isKeep.value = isAdd;
+        isKeep.value = isAdd
       }
     }
 
     watch(
       () => props.info.isKeep,
       (newValue) => {
-        isKeep.value = newValue || false;
-      }
-    );
+        isKeep.value = newValue || false
+      },
+    )
 
-    return { isKeep, keepIcon, notKeepIcon, toSetKeep };
+    return { isKeep, keepIcon, notKeepIcon, toSetKeep }
   },
-});
+})
 </script>
+
+<template>
+  <div class="FavoriteAndPointBox">
+    <div class="points-count">
+      +{{ info.pointsCount }}
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .FavoriteAndPointBox {

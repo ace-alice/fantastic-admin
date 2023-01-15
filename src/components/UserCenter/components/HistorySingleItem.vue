@@ -1,20 +1,46 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { getBetListStatus, parseTime, toFixedNumber } from '@/utils'
+import Clipboard from '@/components/Clipboard/index.vue'
+
+export default defineComponent({
+  name: 'HistorySingleItem',
+  components: { Clipboard },
+  props: {
+    info: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup() {
+    const copyImage = new URL('@/assets/icons/time-Copy.png', import.meta.url).href
+
+    return { toFixedNumber, copyImage, getBetListStatus, parseTime }
+  },
+})
+</script>
+
 <template>
   <div class="HistorySingleItem">
     <div class="single-body">
       <div class="body-logo">
-        <LazyImage :img-url="info['game_type_logo']"></LazyImage>
-        <div class="single-tag">{{ $t("single_bet") }}</div>
+        <LazyImage :img-url="info.game_type_logo" />
+        <div class="single-tag">
+          {{ $t("single_bet") }}
+        </div>
       </div>
       <div class="body-info">
-        <div>{{ info["event_name"] }}</div>
-        <div>{{ info["desc"] }}</div>
-        <div v-if="!+info['is_champion']">
-          {{ info["team_name_1"] }} - Vs - {{ info["team_name_2"] }}
+        <div>{{ info.event_name }}</div>
+        <div>{{ info.desc }}</div>
+        <div v-if="!+info.is_champion">
+          {{ info.team_name_1 }} - Vs - {{ info.team_name_2 }}
         </div>
       </div>
       <div class="body-status">
         <div class="odds-status">
-          <div>x{{ info["odds"] }}</div>
+          <div>x{{ info.odds }}</div>
           <div
             :style="{
               color: getBetListStatus(info).color,
@@ -24,12 +50,11 @@
           </div>
         </div>
         <div
+          v-if="[5, 6, '5', '6'].includes(getBetListStatus(info).code)" class="win-lose"
           :class="{
-            'win-lose': true,
             'win-bg': [5, '5'].includes(getBetListStatus(info).code),
             'lose-bg': [6, '6'].includes(getBetListStatus(info).code),
           }"
-          v-if="[5, 6, '5', '6'].includes(getBetListStatus(info).code)"
         >
           {{ getBetListStatus(info).name }}
         </div>
@@ -44,53 +69,27 @@
       <div>
         {{ $t("bet_clearing_amount") }}:
         <span
-          :class="Number(info['win_lose']) < 0 ? 'red-color' : 'green-color'"
-          >{{ info["win_lose"] > 0 ? "+" : ""
-          }}{{ toFixedNumber(info["win_lose"]) }}</span
-        >
+          :class="Number(info.win_lose) < 0 ? 'red-color' : 'green-color'"
+        >{{ info.win_lose > 0 ? "+" : ""
+        }}{{ toFixedNumber(info.win_lose) }}</span>
       </div>
       <div>
         {{ $t("order_id") }}:
-        <Clipboard :content="info['order_id']">
+        <Clipboard :content="info.order_id">
           <template #label>
             <span class="order-id">
-              <span>{{ info["order_id"] }}</span>
+              <span>{{ info.order_id }}</span>
               <LazyImage :img-url="copyImage" />
             </span>
           </template>
         </Clipboard>
       </div>
       <div>
-        {{ info["create_time"] ? parseTime(info["create_time"]) : "--" }}
+        {{ info.create_time ? parseTime(info.create_time) : "--" }}
       </div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { toFixedNumber, getBetListStatus, parseTime } from "@/utils";
-import Clipboard from "@/components/Clipboard/index.vue";
-
-export default defineComponent({
-  name: "HistorySingleItem",
-  components: { Clipboard },
-  props: {
-    info: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup() {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const copyImage = new URL("@/assets/icons/time-Copy.png" ,import.meta.url).href;
-
-    return { toFixedNumber, copyImage, getBetListStatus, parseTime };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .HistorySingleItem {

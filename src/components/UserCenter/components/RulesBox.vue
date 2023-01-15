@@ -1,77 +1,78 @@
+<script lang="ts">
+import type { Ref } from 'vue'
+import { defineComponent, onMounted, reactive, ref } from 'vue'
+import type { ElScrollbar } from 'element-plus'
+import { getGameRuleApi } from '@/api/tools-api'
+
+export default defineComponent({
+  name: 'RulesBox',
+  components: {},
+  setup() {
+    let gameRule = reactive<any>({
+      category: [],
+      rules: {},
+    })
+
+    const scrollbarRef: Ref<InstanceType<typeof ElScrollbar> | null>
+      = ref(null)
+
+    const currentTabId: Ref<number | string> = ref(0)
+
+    // 获取玩法规则
+    function getGameRules(category_id?: number | string) {
+      getGameRuleApi(category_id ? { category_id } : {}).then((res: any) => {
+        if (+res.data.code === 1) {
+          gameRule = Object.assign(gameRule, res.data.data)
+          currentTabId.value = (gameRule.rules as any)?.id
+          if (scrollbarRef.value) {
+            scrollbarRef.value.setScrollTop(0)
+          }
+        }
+      })
+    }
+
+    function changeCurrentTabId(value: number | string) {
+      currentTabId.value = value
+      getGameRules(currentTabId.value)
+    }
+
+    onMounted(async () => {
+      await getGameRules()
+    })
+
+    return { gameRule, currentTabId, changeCurrentTabId, scrollbarRef }
+  },
+})
+</script>
+
 <template>
   <div class="RulesBox tab-box">
     <div class="box-header">
       <div class="rule-box-tabs">
         <div
           v-for="tab in gameRule.category"
-          :key="tab['id']"
+          :key="tab.id"
           class="rule-box-tab"
-          :class="{ active: String(tab['id']) === String(currentTabId) }"
-          @click.stop="changeCurrentTabId(tab['id'])"
+          :class="{ active: String(tab.id) === String(currentTabId) }"
+          @click.stop="changeCurrentTabId(tab.id)"
         >
-          {{ tab["cname"] }}
+          {{ tab.cname }}
         </div>
       </div>
     </div>
     <div class="box-body">
       <el-scrollbar ref="scrollbarRef">
-        <div class="rule-content" v-html="gameRule.rules['content']"></div>
+        <div class="rule-content" v-html="gameRule.rules.content" />
       </el-scrollbar>
     </div>
     <div class="box-footer">
-      <div></div>
+      <div />
       <div>参与小艾电竞竞猜赛事即为阅读并同意以上规则</div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, reactive, Ref, ref } from "vue";
-import { getGameRuleApi } from "@/api/tools-api";
-import { ElScrollbar } from "element-plus";
-
-export default defineComponent({
-  name: "RulesBox",
-  components: {},
-  setup() {
-    let gameRule = reactive({
-      category: [],
-      rules: {},
-    });
-
-    const scrollbarRef: Ref<InstanceType<typeof ElScrollbar> | null> =
-      ref(null);
-
-    const currentTabId: Ref<number | string> = ref(0);
-
-    //获取玩法规则
-    function getGameRules(category_id?: number | string) {
-      getGameRuleApi(category_id ? { category_id } : {}).then((res: any) => {
-        if (+res.data.code === 1) {
-          gameRule = Object.assign(gameRule, res.data.data);
-          currentTabId.value = (gameRule.rules as any)?.id;
-          if (scrollbarRef.value) {
-            scrollbarRef.value.setScrollTop(0);
-          }
-        }
-      });
-    }
-
-    function changeCurrentTabId(value: number | string) {
-      currentTabId.value = value;
-      getGameRules(currentTabId.value);
-    }
-
-    onMounted(async () => {
-      await getGameRules();
-    });
-
-    return { gameRule, currentTabId, changeCurrentTabId, scrollbarRef };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .RulesBox {
   .box-body {

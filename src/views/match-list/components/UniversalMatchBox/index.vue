@@ -1,3 +1,58 @@
+<script lang="ts">
+import { computed, defineAsyncComponent, defineComponent } from 'vue'
+import getUniversalListHook from '@/hooks/getUniversalListHook'
+import EmptyBox from '@/components/Empty/index.vue'
+
+import NoMore from '@/components/NoMore/index.vue'
+import ToTopBox from '@/components/ToTopBox/index.vue'
+import matchListToTopHook from '@/hooks/matchListToTopHook'
+const UniversalBetItem = defineAsyncComponent(
+  () => import('@/components/UniversalBetItem/index.vue'),
+)
+const DateSelectBox = defineAsyncComponent(
+  () => import('../../components/DateSelectBox/index.vue'),
+)
+
+export default defineComponent({
+  name: 'UniversalMatchBox',
+  components: { UniversalBetItem, DateSelectBox, EmptyBox, NoMore, ToTopBox },
+  props: {
+    handicap: {
+      type: String,
+      default: 'code',
+    },
+  },
+  setup(props) {
+    const {
+      matchListData,
+      currentDate,
+      weekDateOptions,
+      changeCurrentDate,
+      loadList,
+    } = getUniversalListHook(props.handicap as any)
+
+    const hasDateSelect = computed(() => {
+      return ['live', 'fix', 'parlay'].includes(props.handicap)
+    })
+
+    const { toTopHandle, scrollbarRef, scrollHandle, hasToTop }
+      = matchListToTopHook()
+    return {
+      matchListData,
+      currentDate,
+      weekDateOptions,
+      changeCurrentDate,
+      hasDateSelect,
+      loadList,
+      toTopHandle,
+      scrollbarRef,
+      scrollHandle,
+      hasToTop,
+    }
+  },
+})
+</script>
+
 <template>
   <div
     class="list-box UniversalMatchBox"
@@ -5,7 +60,7 @@
   >
     <DateSelectBox
       v-if="hasDateSelect"
-      :weekDateOptions="weekDateOptions"
+      :week-date-options="weekDateOptions"
       :current-date="currentDate"
       @change="changeCurrentDate"
     />
@@ -19,7 +74,7 @@
           <UniversalBetItem
             v-for="match in matchListData"
             :key="match.id"
-            :matchInfo="match"
+            :match-info="match"
           />
         </transition-group>
         <NoMore />
@@ -29,66 +84,11 @@
         :type="handicap === 'live' ? 'default' : 'live'"
       />
     </div>
-    <ToTopBox @toTop="toTopHandle" v-if="hasToTop" />
+    <ToTopBox v-if="hasToTop" @to-top="toTopHandle" />
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineAsyncComponent, defineComponent } from "vue";
-import getUniversalListHook from "@/hooks/getUniversalListHook";
-const UniversalBetItem = defineAsyncComponent(
-  () => import("@/components/UniversalBetItem/index.vue")
-);
-const DateSelectBox = defineAsyncComponent(
-  () => import("../../components/DateSelectBox/index.vue")
-);
-import EmptyBox from "@/components/Empty/index.vue";
-
-import NoMore from "@/components/NoMore/index.vue";
-import ToTopBox from "@/components/ToTopBox/index.vue";
-import matchListToTopHook from "@/hooks/matchListToTopHook";
-
-export default defineComponent({
-  name: "UniversalMatchBox",
-  components: { UniversalBetItem, DateSelectBox, EmptyBox, NoMore, ToTopBox },
-  props: {
-    handicap: {
-      type: String,
-      default: "code",
-    },
-  },
-  setup(props) {
-    const {
-      matchListData,
-      currentDate,
-      weekDateOptions,
-      changeCurrentDate,
-      loadList,
-    } = getUniversalListHook(props.handicap as any);
-
-    const hasDateSelect = computed(() => {
-      return ["live", "fix", "parlay"].includes(props.handicap);
-    });
-
-    const { toTopHandle, scrollbarRef, scrollHandle, hasToTop } =
-      matchListToTopHook();
-    return {
-      matchListData,
-      currentDate,
-      weekDateOptions,
-      changeCurrentDate,
-      hasDateSelect,
-      loadList,
-      toTopHandle,
-      scrollbarRef,
-      scrollHandle,
-      hasToTop,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .UniversalMatchBox {
   flex-grow: 1;

@@ -21,25 +21,25 @@ export enum NumberCn {
 }
 
 export enum LangCode {
-  "zh-CN" = 1,
-  "en-US",
-  "zh-TW",
-  "th-TH",
-  "vi-VN",
-  "in-ID",
-  "ja-JP",
-  "ko-KR",
+  'zh-CN' = 1,
+  'en-US',
+  'zh-TW',
+  'th-TH',
+  'vi-VN',
+  'in-ID',
+  'ja-JP',
+  'ko-KR',
 }
 
 export enum CategoryIdName {
-  "normal_bet" = 1,
-  "fix_bet",
-  "live_bet",
-  "champion_bet",
-  "parlay_game",
+  'normal_bet' = 1,
+  'fix_bet',
+  'live_bet',
+  'champion_bet',
+  'parlay_game',
 }
 
 export enum resultStatus {
-  "未开始" = 1,
-  "已结束" = 2,
+  '未开始' = 1,
+  '已结束' = 2,
 }

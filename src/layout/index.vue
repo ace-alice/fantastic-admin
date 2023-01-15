@@ -1,60 +1,60 @@
-<template>
-  <div class="layout">
-    <LoadingPage ref="loadingPageRef" />
-    <Sidebar />
-    <div class="layout-body">
-      <Header />
-      <Container />
-      <div class="footer"></div>
-    </div>
-    <userCenter />
-  </div>
-</template>
-
 <script lang="ts">
-import Header from "@/layout/header/index.vue";
-import Sidebar from "@/layout/sidebar/index.vue";
-import Container from "@/layout/container/index.vue";
-import LoadingPage from "@/components/LodingPage/index.vue";
+import type { Ref } from 'vue'
 import {
   defineAsyncComponent,
-  Ref,
-  ref,
   defineComponent,
   onMounted,
-} from "vue";
-import { gameInfoStore } from "@/store/gameInfo";
+  ref,
+} from 'vue'
+import HeaderBox from '@/layout/header/index.vue'
+import Sidebar from '@/layout/sidebar/index.vue'
+import Container from '@/layout/container/index.vue'
+import LoadingPage from '@/components/LodingPage/index.vue'
+import { gameInfoStore } from '@/store/gameInfo'
 const userCenter = defineAsyncComponent(
-  () => import("@/components/UserCenter/index.vue")
-);
+  () => import('@/components/UserCenter/index.vue'),
+)
 export default defineComponent({
-  name: "LayoutBox",
+  name: 'LayoutBox',
   components: {
-    Header,
+    HeaderBox,
     Sidebar,
     Container,
-    userCenter,
+    UserCenter: userCenter,
     LoadingPage,
   },
   setup() {
-    const loadingPageRef: Ref<any> = ref(null);
+    const loadingPageRef: Ref<any> = ref(null)
 
-    const { initGameInfo } = gameInfoStore();
+    const { initGameInfo } = gameInfoStore()
 
     onMounted(() => {
       initGameInfo().finally(() => {
         setTimeout(() => {
           if (loadingPageRef.value) {
-            loadingPageRef.value.end();
+            loadingPageRef.value.end()
           }
-        }, 240);
-      });
-    });
+        }, 240)
+      })
+    })
 
-    return { loadingPageRef };
+    return { loadingPageRef }
   },
-});
+})
 </script>
+
+<template>
+  <div class="layout">
+    <LoadingPage ref="loadingPageRef" />
+    <Sidebar />
+    <div class="layout-body">
+      <HeaderBox />
+      <Container />
+      <div class="footer" />
+    </div>
+    <UserCenter />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .layout {
@@ -66,18 +66,22 @@ export default defineComponent({
   margin: auto;
   min-width: 1080px;
   position: relative;
+
   .layout-body {
     flex-grow: 1;
     overflow: hidden;
+
     & > div {
       overflow: hidden;
     }
+
     .footer {
       height: 20px;
       width: 100%;
       position: relative;
       overflow: visible;
-      &:before {
+
+      &::before {
         content: "";
         position: absolute;
         top: -10px;

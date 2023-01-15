@@ -1,7 +1,27 @@
+<script lang="ts">
+import { defineComponent, inject, ref } from 'vue'
+
+export default defineComponent({
+  name: 'NotLoginBox',
+  components: {},
+  setup() {
+    const isTradition = inject('isTradition', true)
+
+    const closeIcon = new URL('@/assets/icons/closed.png', import.meta.url).href
+
+    const bing = new URL('@/assets/icons/bling.png', import.meta.url).href
+
+    const show = ref(true)
+
+    return { closeIcon, bing, show, isTradition }
+  },
+})
+</script>
+
 <template>
   <div
     class="not-login-box"
-    :class="{ close: !show, 'not-show': !isTradition }"
+    :class="{ 'close': !show, 'not-show': !isTradition }"
   >
     <LazyImage class="close-icon" :img-url="closeIcon" @click="show = false" />
     <div class="box-header">
@@ -9,36 +29,21 @@
     </div>
     <div class="box-message">
       <LazyImage :img-url="bing" />
-      <div class="text">热门赛事直播/滚球</div>
+      <div class="text">
+        热门赛事直播/滚球
+      </div>
     </div>
     <div class="box-message">
       <LazyImage :img-url="bing" />
-      <div class="text">多样玩法/投注</div>
+      <div class="text">
+        多样玩法/投注
+      </div>
     </div>
-    <div class="box-login-btn">立即登陆</div>
+    <div class="box-login-btn">
+      立即登陆
+    </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, inject, ref } from "vue";
-
-export default defineComponent({
-  name: "not-login-box",
-  components: {},
-  setup() {
-    const isTradition = inject("isTradition", true);
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const closeIcon = new URL("@/assets/icons/closed.png" ,import.meta.url).href;
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const bing = new URL("@/assets/icons/bling.png" ,import.meta.url).href;
-
-    const show = ref(true);
-
-    return { closeIcon, bing, show, isTradition };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .close {

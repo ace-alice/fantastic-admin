@@ -1,52 +1,17 @@
-<template>
-  <div
-    :class="{
-      'team-box': true,
-      [animateType]: true,
-      [animateType + '-border']: !hasAdd,
-      'not-allowed': isNotAllowAdd,
-      'right-to-left': index % 2,
-      'cart-active': hasAdd,
-    }"
-    @click.stop="toAddShopCart"
-  >
-    <div class="desc">{{ teamName }}</div>
-    <div
-      :class="{
-        point: true,
-        [index % 2 ? 'box-right' : 'box-normal']: true,
-        'box-column': true,
-      }"
-      v-if="currentPlayInfo && currentTeamPointInfo"
-    >
-      <span v-if="!isNotAllowAdd">
-        {{ currentTeamPointInfo["point"] }}
-      </span>
-      <span v-else-if="pointStatus === 'cleared'">
-        <LazyImage :img-url="statusIcon === 'win' ? winImage : failImage" />
-      </span>
-      <span v-else>
-        <LazyImage :img-url="lockIcon" />
-      </span>
-    </div>
-    <div v-else class="point"></div>
-  </div>
-</template>
-
 <script lang="ts">
-import lazyImage from "@/components/lazyImage/index.vue";
-import teamPointHook from "@/hooks/teamPointHook";
-import { inject } from "vue";
-import { BetType } from "@/interface/shopCart";
-import useImageResource from "@/hooks/useImageResource";
+import { inject } from 'vue'
+import lazyImage from '@/components/lazyImage/index.vue'
+import teamPointHook from '@/hooks/teamPointHook'
+import type { BetType } from '@/interface/shopCart'
+import useImageResource from '@/hooks/useImageResource'
 export default {
-  name: "TeamBox",
-  components: { lazyImage },
+  name: 'TeamBox',
+  components: { LazyImage: lazyImage },
   props: {
     itemInfo: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       },
     },
     index: {
@@ -55,8 +20,8 @@ export default {
     },
   },
   setup(props: any) {
-    const betType: BetType = inject("betType", "single");
-    const { teamImg, lockIcon } = useImageResource();
+    const betType: BetType = inject('betType', 'single')
+    const { teamImg, lockIcon } = useImageResource()
     const {
       currentTeamPointInfo,
       teamName,
@@ -68,12 +33,11 @@ export default {
       currentPlayInfo,
       isNotAllowAdd,
       statusIcon,
-    } = teamPointHook(props.itemInfo as any, betType, props.index);
+    } = teamPointHook(props.itemInfo as any, betType, props.index)
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const winImage = new URL("@/assets/icons/status-1.png" ,import.meta.url).href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const failImage = new URL("@/assets/icons/status-2.png" ,import.meta.url).href;
+    const winImage = new URL('@/assets/icons/status-1.png', import.meta.url).href
+
+    const failImage = new URL('@/assets/icons/status-2.png', import.meta.url).href
 
     return {
       teamImg,
@@ -90,10 +54,44 @@ export default {
       winImage,
       failImage,
       statusIcon,
-    };
+    }
   },
-};
+}
 </script>
+
+<template>
+  <div
+    class="team-box" :class="{
+      [animateType]: true,
+      [`${animateType}-border`]: !hasAdd,
+      'not-allowed': isNotAllowAdd,
+      'right-to-left': index % 2,
+      'cart-active': hasAdd,
+    }"
+    @click.stop="toAddShopCart"
+  >
+    <div class="desc">
+      {{ teamName }}
+    </div>
+    <div
+      v-if="currentPlayInfo && currentTeamPointInfo" class="point box-column"
+      :class="{
+        [index % 2 ? 'box-right' : 'box-normal']: true,
+      }"
+    >
+      <span v-if="!isNotAllowAdd">
+        {{ currentTeamPointInfo.point }}
+      </span>
+      <span v-else-if="pointStatus === 'cleared'">
+        <LazyImage :img-url="statusIcon === 'win' ? winImage : failImage" />
+      </span>
+      <span v-else>
+        <LazyImage :img-url="lockIcon" />
+      </span>
+    </div>
+    <div v-else class="point" />
+  </div>
+</template>
 
 <style scoped lang="scss">
 .right-to-left {

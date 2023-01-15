@@ -1,42 +1,46 @@
-<template>
-  <div class="err_page">
-    <LazyImage :img-url="textLogo" />
-    <div class="text text1">
-      {{ errorText || error403 }}
-    </div>
-    <div class="text text2">IP: {{ ip }}（{{ cityname }}）</div>
-  </div>
-</template>
 <script lang="ts">
-import { useRoute } from "vue-router";
-import { defineComponent, onMounted, Ref, ref } from "vue";
-import { useI18n } from "vue-i18n";
+import { useRoute } from 'vue-router'
+import type { Ref } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
-  name: "errPage",
+  name: 'ErrPage',
   components: {},
   setup() {
-    const i18n = useI18n();
-    const route = useRoute();
-    const error403 = ref(i18n.t("error_info_1"));
-    const errorText: Ref<any> = ref("");
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const textLogo = new URL("@/assets/images/que_xianzhi.png" ,import.meta.url).href;
-    const ip = localStorage.getItem("Ip");
-    const cityname = localStorage.getItem("cityname");
+    const i18n = useI18n()
+    const route = useRoute()
+    const error403 = ref(i18n.t('error_info_1'))
+    const errorText: Ref<any> = ref('')
+
+    const textLogo = new URL('@/assets/images/que_xianzhi.png', import.meta.url).href
+    const ip = localStorage.getItem('Ip')
+    const cityname = localStorage.getItem('cityname')
     onMounted(() => {
-      errorText.value = route.query.message;
-    });
+      errorText.value = route.query.message
+    })
     return {
       error403,
       textLogo,
       cityname,
       ip,
       errorText,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <div class="err_page">
+    <LazyImage :img-url="textLogo" />
+    <div class="text text1">
+      {{ errorText || error403 }}
+    </div>
+    <div class="text text2">
+      IP: {{ ip }}（{{ cityname }}）
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .err_page {

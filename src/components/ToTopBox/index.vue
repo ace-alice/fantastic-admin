@@ -1,3 +1,28 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'ToTop',
+  components: {},
+  emits: ['toTop'],
+  setup(props: any, { emit }: any) {
+    const topImage = new URL('@/assets/icons/home_ live_top.png', import.meta.url).href
+
+    function toTopHandle() {
+      emit('toTop')
+      const el: any = document.querySelector('.match-list')
+      if (!el) {
+        return
+      }
+      setTimeout(() => {
+        el.scrollTo({ behavior: 'smooth', top: 0 })
+      }, 700)
+    }
+    return { topImage, toTopHandle }
+  },
+})
+</script>
+
 <template>
   <teleport to=".layout">
     <div class="to-top" @click="toTopHandle">
@@ -5,30 +30,6 @@
     </div>
   </teleport>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "to-top",
-  components: {},
-  emits: ["toTop"],
-  setup(props: any, { emit }: any) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const topImage = new URL("@/assets/icons/home_ live_top.png" ,import.meta.url).href;
-
-    function toTopHandle() {
-      emit("toTop");
-      const el: any = document.querySelector(".match-list");
-      if (!el) return;
-      setTimeout(() => {
-        el.scrollTo({ behavior: "smooth", top: 0 });
-      }, 700);
-    }
-    return { topImage, toTopHandle };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .to-top {

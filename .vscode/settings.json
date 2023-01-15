@@ -1,7 +1,7 @@
 {
-    "editor.fontSize": 16,
-    "eslint.alwaysShowStatus": true,
-    "eslint.format.enable": true,
-    "eslint.run": "onSave",
-    "eslint.useESLintClass": true
+  "editor.fontSize": 16,
+  "eslint.alwaysShowStatus": true,
+  "eslint.format.enable": true,
+  "eslint.run": "onSave",
+  "eslint.useESLintClass": true
 }

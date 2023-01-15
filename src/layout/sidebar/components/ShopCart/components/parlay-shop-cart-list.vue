@@ -1,11 +1,63 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import ShopItemParlay from './shop-item-parlay.vue'
+import ParlayBetBox from './parlay-bet-box.vue'
+import parlayCartHook from '@/hooks/parlayCartHook'
+import Empty from '@/components/Empty/index.vue'
+import { toFixedNumber } from '@/utils'
+
+export default defineComponent({
+  name: 'ParlayShopCartList',
+  components: { ShopItemParlay, Empty, ParlayBetBox },
+  setup() {
+    const openImage = new URL('@/assets/icons/spread-01.png', import.meta.url)
+      .href
+
+    const closeImage = new URL('@/assets/icons/spread-02.png', import.meta.url)
+      .href
+
+    const closeImg = new URL('@/assets/icons/closed.png', import.meta.url).href
+
+    const {
+      parlayCartList,
+      totalPrice,
+      totalBet,
+      toBet,
+      acceptChange,
+      betOptions,
+      showFastNumberFun,
+      isAllowToBet,
+      showMore,
+      showMoreHandle,
+    } = parlayCartHook()
+    return {
+      parlayCartList,
+      totalPrice,
+      totalBet,
+      toBet,
+      acceptChange,
+      betOptions,
+      openImage,
+      closeImage,
+      showFastNumberFun,
+      isAllowToBet,
+      toFixedNumber,
+      closeImg,
+      showMore,
+      showMoreHandle,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="parlay-shop-cart-list">
     <div class="list-box">
       <el-scrollbar>
         <div
+          v-if="parlayCartList.length > 0"
           class="parlay-shop-cart-list"
           :style="{ '--width-li': 200 }"
-          v-if="parlayCartList.length > 0"
         >
           <transition-group name="list" appear>
             <ShopItemParlay
@@ -15,14 +67,14 @@
             />
           </transition-group>
           <transition name="list" appear>
-            <div class="bet-options" v-if="betOptions.length > 0">
+            <div v-if="betOptions.length > 0" class="bet-options">
               <div class="option-header">
                 <LazyImage class="option-icon" img-url="kkk" />
                 <div>{{ $t("parlay_game") }}</div>
                 <LazyImage
                   class="control-icon"
-                  @click="showMoreHandle"
                   :img-url="showMore ? closeImage : openImage"
+                  @click="showMoreHandle"
                 />
               </div>
               <div class="option-list">
@@ -30,7 +82,7 @@
                   v-for="(option, index) in betOptions"
                   :key="option.name"
                 >
-                  <div class="option-item" v-show="showMore || index === 0">
+                  <div v-show="showMore || index === 0" class="option-item">
                     <div>
                       <span>{{ option.name }}</span>
                       <span v-show="+option.point > 0">
@@ -45,48 +97,47 @@
                       <el-input
                         v-model="option.amount"
                         :placeholder="
-                          option.money_min() > option.money_max() ||
-                          option.money_max() === 0
+                          option.money_min() > option.money_max()
+                            || option.money_max() === 0
                             ? '投注额已满'
                             : `${option.money_min()}-${option.money_max()}`
                         "
                         :disabled="
-                          option.money_min() > option.money_max() ||
-                          option.money_max() === 0
+                          option.money_min() > option.money_max()
+                            || option.money_max() === 0
                         "
                         @blur="showFastNumberFun(option, false)"
                         @focus="showFastNumberFun(option, true)"
                       >
-                        <template #prepend>{{ option.num }}x</template>
+                        <template #prepend>
+                          {{ option.num }}x
+                        </template>
                         <template #suffix>
                           <img
-                            :class="{
-                              'close-img': true,
-                              // 'input-no-data': !betCount,
-                            }"
+                            class="close-img"
                             :src="closeImg"
-                            @click.stop="option.amount = null"
                             alt=""
-                          />
+                            @click.stop="option.amount = null"
+                          >
                         </template>
                       </el-input>
                       <div
                         :style="{
-                          height: option['showFastNumber'] ? '32px' : 0,
-                          'margin-top': option['showFastNumber'] ? '12px' : 0,
+                          'height': option.showFastNumber ? '32px' : 0,
+                          'margin-top': option.showFastNumber ? '12px' : 0,
                         }"
                         class="fast-number"
                       >
                         <div
-                          v-for="(item, index) in [
+                          v-for="item in [
                             option.money_min(),
                             Math.floor(
-                              (option.money_max() - option.money_min()) / 4 +
-                                option.money_min()
+                              (option.money_max() - option.money_min()) / 4
+                                + option.money_min(),
                             ),
                             Math.floor(
-                              (option.money_max() - option.money_min()) / 2 +
-                                option.money_min()
+                              (option.money_max() - option.money_min()) / 2
+                                + option.money_min(),
                             ),
                             option.money_max(),
                           ]"
@@ -105,10 +156,12 @@
             </div>
           </transition>
         </div>
-        <div class="no-data" v-else>
+        <div v-else class="no-data">
           <Empty>
             <template #top>
-              <div class="top-slot">点击相关赛事赔率立即下单</div>
+              <div class="top-slot">
+                点击相关赛事赔率立即下单
+              </div>
             </template>
           </Empty>
         </div>
@@ -124,60 +177,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import ShopItemParlay from "./shop-item-parlay.vue";
-import parlayCartHook from "@/hooks/parlayCartHook";
-import Empty from "@/components/Empty/index.vue";
-import ParlayBetBox from "./parlay-bet-box.vue";
-import { toFixedNumber } from "@/utils";
-
-export default defineComponent({
-  name: "parlay-shop-cart-list",
-  components: { ShopItemParlay, Empty, ParlayBetBox },
-  setup() {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const openImage = new URL("@/assets/icons/spread-01.png", import.meta.url)
-      .href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const closeImage = new URL("@/assets/icons/spread-02.png", import.meta.url)
-      .href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const closeImg = new URL("@/assets/icons/closed.png", import.meta.url).href;
-
-    const {
-      parlayCartList,
-      totalPrice,
-      totalBet,
-      toBet,
-      acceptChange,
-      betOptions,
-      showFastNumberFun,
-      isAllowToBet,
-      showMore,
-      showMoreHandle,
-    } = parlayCartHook();
-    return {
-      parlayCartList,
-      totalPrice,
-      totalBet,
-      toBet,
-      acceptChange,
-      betOptions,
-      openImage,
-      closeImage,
-      showFastNumberFun,
-      isAllowToBet,
-      toFixedNumber,
-      closeImg,
-      showMore,
-      showMoreHandle,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .parlay-shop-cart-list {
   display: flex;

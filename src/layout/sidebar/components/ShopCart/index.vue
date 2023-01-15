@@ -1,3 +1,56 @@
+<script lang="ts">
+import type { Ref } from 'vue'
+import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue'
+import ShopCartHeader from './components/shop-cart-header.vue'
+import SingleShopCartList from './components/single-shop-cart-list.vue'
+import ParlayShopCartList from './components/parlay-shop-cart-list.vue'
+export default {
+  name: 'ShopCart',
+  components: {
+    ShopCartHeader,
+    SingleShopCartList,
+    ParlayShopCartList,
+  },
+  setup() {
+    const carouselRef: Ref<any> = ref(null)
+
+    const betSuccessImage = new URL('@/assets/icons/bet-success.png', import.meta.url).href
+
+    const showSuccess = ref(false)
+
+    const { proxy }: any = getCurrentInstance()
+
+    let successTimer: any = null
+
+    onMounted(() => {
+      proxy.mittBus.on('betSuccessBus', () => {
+        clearTimeout(successTimer)
+        successTimer = null
+        showSuccess.value = true
+        successTimer = setTimeout(() => {
+          showSuccess.value = false
+        }, 3000)
+      })
+    })
+    onUnmounted(() => {
+      proxy.mittBus.off('betSuccessBus')
+    })
+
+    function changeBetType(type: string) {
+      if (carouselRef.value) {
+        carouselRef.value.setActiveItem(type)
+      }
+    }
+    return {
+      carouselRef,
+      changeBetType,
+      betSuccessImage,
+      showSuccess,
+    }
+  },
+}
+</script>
+
 <template>
   <div class="shopping-wrapper">
     <ShopCartHeader @changeBetType="changeBetType" />
@@ -16,65 +69,16 @@
         <ParlayShopCartList />
       </el-carousel-item>
     </el-carousel>
-    <div :class="{ 'bet-success': true, 'show-success': showSuccess }">
+    <div class="bet-success" :class="{ 'show-success': showSuccess }">
       <LazyImage :img-url="betSuccessImage" />
-      <div class="success-text">{{ $t("bet_success") }}</div>
+      <div class="success-text">
+        {{ $t("bet_success") }}
+      </div>
     </div>
   </div>
 </template>
-<script lang="ts">
-import { getCurrentInstance, onMounted, onUnmounted, ref, Ref } from "vue";
-import ShopCartHeader from "./components/shop-cart-header.vue";
-import SingleShopCartList from "./components/single-shop-cart-list.vue";
-import ParlayShopCartList from "./components/parlay-shop-cart-list.vue";
-export default {
-  name: "ShopCart",
-  components: {
-    ShopCartHeader,
-    SingleShopCartList,
-    ParlayShopCartList,
-  },
-  setup() {
-    const carouselRef: Ref<any> = ref(null);
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const betSuccessImage = new URL("@/assets/icons/bet-success.png" ,import.meta.url).href;
-
-    const showSuccess = ref(false);
-
-    const { proxy }: any = getCurrentInstance();
-
-    let successTimer: any = null;
-
-    onMounted(() => {
-      proxy.mittBus.on("betSuccessBus", () => {
-        clearTimeout(successTimer);
-        successTimer = null;
-        showSuccess.value = true;
-        successTimer = setTimeout(() => {
-          showSuccess.value = false;
-        }, 3000);
-      });
-    });
-    onUnmounted(() => {
-      proxy.mittBus.off("betSuccessBus");
-    });
-
-    function changeBetType(type: string) {
-      if (carouselRef.value) {
-        carouselRef.value.setActiveItem(type);
-      }
-    }
-    return {
-      carouselRef,
-      changeBetType,
-      betSuccessImage,
-      showSuccess,
-    };
-  },
-};
-</script>
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style scoped lang="scss">
 .shopping-wrapper {
   display: flex;

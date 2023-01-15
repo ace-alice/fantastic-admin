@@ -1,10 +1,44 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { getBetListStatus, parseTime, toFixedNumber } from '@/utils'
+import CountTo from '@/components/VueCountTo/index.vue'
+import Clipboard from '@/components/Clipboard/index.vue'
+
+export default defineComponent({
+  name: 'SingleBetItem',
+  components: { CountTo, Clipboard },
+  props: {
+    betInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup(props: any) {
+    const copyImage = new URL('@/assets/icons/time-Copy.png', import.meta.url).href
+
+    const statusInfo: any = getBetListStatus(props.betInfo)
+
+    return {
+      statusInfo,
+      toFixedNumber,
+      parseTime,
+      copyImage,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="single-bet-Item">
     <div class="bet-header">
-      <LazyImage :img-url="betInfo['game_type_logo']" />
-      <div class="event-name">{{ betInfo.event_name }}</div>
-      <div class="bet-status" :style="{ color: statusInfo['color'] }">
-        {{ statusInfo["name"] }}
+      <LazyImage :img-url="betInfo.game_type_logo" />
+      <div class="event-name">
+        {{ betInfo.event_name }}
+      </div>
+      <div class="bet-status" :style="{ color: statusInfo.color }">
+        {{ statusInfo.name }}
       </div>
     </div>
     <div class="match-content">
@@ -18,7 +52,7 @@
     <div class="bet-content">
       <div>
         <span>{{ $t("cart_bet_odds") }}</span>
-        <span>x{{ betInfo["odds"] }}</span>
+        <span>x{{ betInfo.odds }}</span>
       </div>
       <div>
         <span>{{ $t("bet_amount") }}</span>
@@ -28,25 +62,23 @@
         <span>{{ $t("v_profit") }}</span>
         <span class="amount">
           <CountTo
+            v-if="betInfo.maybe_amount"
             :start-val="0"
-            :end-val="toFixedNumber(betInfo['maybe_amount'])"
-            v-if="betInfo['maybe_amount']"
+            :end-val="toFixedNumber(betInfo.maybe_amount)"
           />
-          <span v-else></span>
+          <span v-else />
         </span>
       </div>
     </div>
     <div class="currency-content">
       <div>
-        <span
-          >{{ $t("bet_currency") }}:{{
-            betInfo.currency_info?.short_name || ""
-          }}</span
-        >
-        <span v-if="betInfo['create_time_stamp']">{{
+        <span>{{ $t("bet_currency") }}:{{
+          betInfo.currency_info?.short_name || ""
+        }}</span>
+        <span v-if="betInfo.create_time_stamp">{{
           parseTime(
-            Number(betInfo["create_time_stamp"]) * 1000,
-            "{y}-{m}-{d} {h}:{i}:{s}"
+            Number(betInfo.create_time_stamp) * 1000,
+            "{y}-{m}-{d} {h}:{i}:{s}",
           )
         }}</span>
       </div>
@@ -61,39 +93,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { toFixedNumber, parseTime, getBetListStatus } from "@/utils";
-import CountTo from "@/components/VueCountTo/index.vue";
-import Clipboard from "@/components/Clipboard/index.vue";
-
-export default defineComponent({
-  name: "single-bet-Item",
-  components: { CountTo, Clipboard },
-  props: {
-    betInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup(props: any) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const copyImage = new URL("@/assets/icons/time-Copy.png" ,import.meta.url).href;
-
-    const statusInfo:any = getBetListStatus(props.betInfo);
-
-    return {
-      statusInfo,
-      toFixedNumber,
-      parseTime,
-      copyImage,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .single-bet-Item {

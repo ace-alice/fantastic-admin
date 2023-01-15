@@ -1,3 +1,96 @@
+<script lang="ts">
+import type { Ref } from 'vue'
+import {
+  defineComponent,
+  getCurrentInstance,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+} from 'vue'
+import { useI18n } from 'vue-i18n'
+import lazyImage from '@/components/lazyImage/index.vue'
+import useImageResource from '@/hooks/useImageResource'
+import { shopCartStore } from '@/store/shopCart'
+import type { BetType } from '@/interface/shopCart'
+export default defineComponent({
+  name: 'ShopCartHeader',
+  components: { LazyImage: lazyImage },
+  emits: ['changeBetType'],
+  setup(props: any, { emit }) {
+    const i18n = useI18n()
+
+    const { proxy }: any = getCurrentInstance()
+
+    const { clearShopCart } = shopCartStore()
+
+    const currentType: Ref<BetType> = ref('single')
+
+    function changeBetType(type: BetType) {
+      currentType.value = type
+      emit('changeBetType', type)
+    }
+
+    function toClearShopCart() {
+      clearShopCart(currentType.value)
+    }
+
+    const betTypeList: Ref<any[]> = ref([
+      { label: i18n.t('single_bet'), value: 'single' },
+      { label: i18n.t('parlay_game'), value: 'parlay' },
+    ])
+
+    const betTypeOptions = ref([
+      {
+        label: '自动接受最新赔率',
+        value: 1,
+      },
+      {
+        label: '自动接受更好赔率',
+        value: 2,
+      },
+      {
+        label: '不接受任何变化',
+        value: 3,
+      },
+    ])
+
+    const { clearIcon, prevImg } = useImageResource()
+
+    const delivery = ref(false)
+
+    const showSelect = ref(false)
+
+    const formData = reactive({
+      is_filter: 1,
+    })
+
+    onMounted(() => {
+      proxy.mittBus.on('changeBetTypeBus', (betType: BetType) => {
+        changeBetType(betType)
+      })
+    })
+
+    onUnmounted(() => {
+      proxy.mittBus.off('changeBetTypeBus')
+    })
+
+    return {
+      betTypeList,
+      betTypeOptions,
+      clearIcon,
+      prevImg,
+      delivery,
+      showSelect,
+      currentType,
+      changeBetType,
+      formData,
+      toClearShopCart,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="shop-cart-header">
     <div class="top">
@@ -10,11 +103,10 @@
           :key="item.value"
           :class="{ 'active-type': currentType === item.value }"
           @click="changeBetType(item.value)"
-          >{{ item.label }}</span
-        >
+        >{{ item.label }}</span>
       </div>
       <div class="clear" @click.stop="toClearShopCart">
-        <lazy-image :img-url="clearIcon" />
+        <LazyImage :img-url="clearIcon" />
       </div>
     </div>
     <div class="bottom">
@@ -31,12 +123,12 @@
           popper-class="filter-select"
           size="small"
         >
-          <!--suppress JSUnresolvedVariable -->
+          <!-- suppress JSUnresolvedVariable -->
           <el-option
             v-for="item in betTypeOptions"
-            :key="item['value']"
-            :label="item['label']"
-            :value="item['value']"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
         </el-select>
       </div>
@@ -44,100 +136,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import lazyImage from "@/components/lazyImage/index.vue";
-import {
-  defineComponent,
-  getCurrentInstance,
-  onMounted,
-  onUnmounted,
-  reactive,
-  Ref,
-  ref,
-} from "vue";
-import { useI18n } from "vue-i18n";
-import useImageResource from "@/hooks/useImageResource";
-import { shopCartStore } from "@/store/shopCart";
-import { BetType } from "@/interface/shopCart";
-export default defineComponent({
-  name: "shop-cart-header",
-  components: { lazyImage },
-  emits: ["changeBetType"],
-  setup(props: any, { emit }) {
-    const i18n = useI18n();
-
-    const { proxy }: any = getCurrentInstance();
-
-    const { clearShopCart } = shopCartStore();
-
-    const currentType: Ref<BetType> = ref("single");
-
-    function changeBetType(type: BetType) {
-      currentType.value = type;
-      emit("changeBetType", type);
-    }
-
-    function toClearShopCart() {
-      clearShopCart(currentType.value);
-    }
-
-    const betTypeList: Ref<any[]> = ref([
-      { label: i18n.t("single_bet"), value: "single" },
-      { label: i18n.t("parlay_game"), value: "parlay" },
-    ]);
-
-    const betTypeOptions = ref([
-      {
-        label: "自动接受最新赔率",
-        value: 1,
-      },
-      {
-        label: "自动接受更好赔率",
-        value: 2,
-      },
-      {
-        label: "不接受任何变化",
-        value: 3,
-      },
-    ]);
-
-    const { clearIcon, prevImg } = useImageResource();
-
-    const delivery = ref(false);
-
-    const showSelect = ref(false);
-
-    const formData = reactive({
-      is_filter: 1,
-    });
-
-    onMounted(() => {
-      proxy.mittBus.on("changeBetTypeBus", (betType: BetType) => {
-        changeBetType(betType);
-      });
-    });
-
-    onUnmounted(() => {
-      proxy.mittBus.off("changeBetTypeBus");
-    });
-
-    return {
-      betTypeList,
-      betTypeOptions,
-      clearIcon,
-      prevImg,
-      delivery,
-      showSelect,
-      currentType,
-      changeBetType,
-      formData,
-      toClearShopCart,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .shop-cart-header {
   width: 288px;

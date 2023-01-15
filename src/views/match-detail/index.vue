@@ -1,50 +1,15 @@
-<template>
-  <div class="detail-loading" v-if="!init"></div>
-  <div class="match-detail" v-else>
-    <DetailHeader
-      :match-info="matchDetail"
-      @showVideoEmit="showVideoHandle"
-      @showAnimateEmit="showAnimateHandle"
-    />
-    <div class="bottom-box">
-      <LiveBox
-        :matchDetail="matchDetail"
-        v-if="showVideo"
-        @closeVideo="showVideoHandle"
-      />
-      <AnimateBox
-        :matchDetail="matchDetail"
-        v-if="showAnimate"
-        @closeAnimate="showAnimateHandle"
-      />
-      <RoundTabs
-        :round-list="roundList"
-        :tab-index="tabIndex"
-        :gameLang="matchDetail['game_lang']"
-        @changeChartStatus="changeChartStatus"
-      />
-      <PointChart />
-      <DetailContent
-        :match-info="matchDetail"
-        @setTabIndex="setTabIndex"
-        @changeChartStatus="changeChartStatus"
-      />
-    </div>
-    <div class="footer"></div>
-  </div>
-</template>
-
+<!-- eslint-disable vue/v-on-event-hyphenation -->
 <script lang="ts">
-import DetailHeader from "./components/detail-header/index.vue";
-import DetailContent from "./components/detail-content/index.vue";
-import RoundTabs from "./components/round-tabs/index.vue";
-import PointChart from "./components/point-chart/index.vue";
-import LiveBox from "./components/live-box/index.vue";
-import AnimateBox from "./components/animate-box/index.vue";
-import { defineComponent } from "vue";
-import matchDetailHook from "@/hooks/matchDetailHook";
+import { defineComponent } from 'vue'
+import DetailHeader from './components/detail-header/index.vue'
+import DetailContent from './components/detail-content/index.vue'
+import RoundTabs from './components/round-tabs/index.vue'
+import PointChart from './components/point-chart/index.vue'
+import LiveBox from './components/live-box/index.vue'
+import AnimateBox from './components/animate-box/index.vue'
+import matchDetailHook from '@/hooks/matchDetailHook'
 export default defineComponent({
-  name: "ia-match-detail",
+  name: 'IaMatchDetail',
   components: {
     DetailHeader,
     DetailContent,
@@ -66,7 +31,7 @@ export default defineComponent({
       showAnimate,
       showAnimateHandle,
       roundList,
-    } = matchDetailHook();
+    } = matchDetailHook()
 
     return {
       matchDetail,
@@ -80,10 +45,46 @@ export default defineComponent({
       showAnimate,
       showAnimateHandle,
       roundList,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <div v-if="!init" class="detail-loading" />
+  <div v-else class="match-detail">
+    <DetailHeader
+      :match-info="matchDetail"
+      @showVideoEmit="showVideoHandle"
+      @showAnimateEmit="showAnimateHandle"
+    />
+    <div class="bottom-box">
+      <LiveBox
+        v-if="showVideo"
+        :match-detail="matchDetail"
+        @closeVideo="showVideoHandle"
+      />
+      <AnimateBox
+        v-if="showAnimate"
+        :match-detail="matchDetail"
+        @closeAnimate="showAnimateHandle"
+      />
+      <RoundTabs
+        :round-list="roundList"
+        :tab-index="tabIndex"
+        :game-lang="matchDetail.game_lang"
+        @changeChartStatus="changeChartStatus"
+      />
+      <PointChart />
+      <DetailContent
+        :match-info="matchDetail"
+        @setTabIndex="setTabIndex"
+        @changeChartStatus="changeChartStatus"
+      />
+    </div>
+    <div class="footer" />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .detail-loading {

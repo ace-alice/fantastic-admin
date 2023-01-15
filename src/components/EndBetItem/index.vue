@@ -1,26 +1,67 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
+export default defineComponent({
+  name: 'EndBetItem',
+  components: {},
+  props: {
+    matchInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup(props: any) {
+    const router = useRouter()
+
+    function setWinLoseImage(tag: number) {
+      return new URL(`@/assets/icons/status-${tag || 2}.png`, import.meta.url).href
+    }
+
+    function toMatchDetail() {
+      const query: any = {
+        game_id: props.matchInfo.id,
+        category_id: props.matchInfo.category_id,
+      }
+      router.push({
+        name: 'MatchDetail',
+        query,
+      })
+    }
+
+    return { setWinLoseImage, toMatchDetail }
+  },
+})
+</script>
+
 <template>
   <div class="end-bet-item" @click.stop="toMatchDetail">
     <div class="LogoDateBox">
       <LazyImage :img-url="matchInfo.game_logo" />
     </div>
     <div class="VideoAndAnimationBox">
-      <div class="top">{{ matchInfo.event_name }}</div>
+      <div class="top">
+        {{ matchInfo.event_name }}
+      </div>
       <div class="bottom">
         <div>BO{{ matchInfo.bo || 0 }}</div>
       </div>
     </div>
     <div class="team-box">
       <div class="team-logo">
-        <LazyImage :img-url="matchInfo['team_logo_1']" />
+        <LazyImage :img-url="matchInfo.team_logo_1" />
       </div>
-      <div class="desc">{{ matchInfo["team_name_1"] }}</div>
+      <div class="desc">
+        {{ matchInfo.team_name_1 }}
+      </div>
       <LazyImage
         :img-url="
           +matchInfo.is_del === 1
             ? ''
-            : !matchInfo['show_win_lose']
-            ? ''
-            : setWinLoseImage(matchInfo['team_winloss_1'])
+            : !matchInfo.show_win_lose
+              ? ''
+              : setWinLoseImage(matchInfo.team_winloss_1)
         "
       />
     </div>
@@ -28,12 +69,12 @@
       <span v-if="+matchInfo.is_del === 1" class="score-info">{{
         $t("abolished")
       }}</span>
-      <span v-else-if="!matchInfo['show_win_lose']" class="score-info">{{
+      <span v-else-if="!matchInfo.show_win_lose" class="score-info">{{
         $t("ended")
       }}</span>
       <LazyImage
-        v-else-if="matchInfo['team_winloss_3'] >= 0"
-        :img-url="setWinLoseImage(matchInfo['team_winloss_3'])"
+        v-else-if="matchInfo.team_winloss_3 >= 0"
+        :img-url="setWinLoseImage(matchInfo.team_winloss_3)"
       />
       <span v-else class="score-info">
         {{ matchInfo.score_1 }} - {{ matchInfo.score_2 }}
@@ -41,59 +82,26 @@
     </div>
     <div class="team-box team-left">
       <div class="team-logo">
-        <LazyImage :img-url="matchInfo['team_logo_2']" />
+        <LazyImage :img-url="matchInfo.team_logo_2" />
       </div>
-      <div class="desc">{{ matchInfo["team_name_1"] || "IA ESPORT" }}</div>
+      <div class="desc">
+        {{ matchInfo.team_name_1 || "IA ESPORT" }}
+      </div>
       <LazyImage
         :img-url="
           +matchInfo.is_del === 1
             ? ''
-            : !matchInfo['show_win_lose']
-            ? ''
-            : setWinLoseImage(matchInfo['team_winloss_2'])
+            : !matchInfo.show_win_lose
+              ? ''
+              : setWinLoseImage(matchInfo.team_winloss_2)
         "
       />
     </div>
-    <div class="points-count">+{{ matchInfo.points_count }}</div>
+    <div class="points-count">
+      +{{ matchInfo.points_count }}
+    </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
-export default defineComponent({
-  name: "end-bet-item",
-  components: {},
-  props: {
-    matchInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup(props: any) {
-    const router = useRouter();
-
-    function setWinLoseImage(tag: number) {
-      return new URL(`@/assets/icons/status-${tag ? tag : 2}.png` ,import.meta.url).href;
-    }
-
-    function toMatchDetail() {
-      let query: any = {
-        game_id: props.matchInfo.id,
-        category_id: props.matchInfo.category_id,
-      };
-      router.push({
-        name: "MatchDetail",
-        query,
-      });
-    }
-
-    return { setWinLoseImage, toMatchDetail };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .end-bet-item {

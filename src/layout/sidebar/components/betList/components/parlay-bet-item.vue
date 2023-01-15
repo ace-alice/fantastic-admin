@@ -1,13 +1,74 @@
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
+import { getBetListStatus, parseTime } from '@/utils'
+import Clipboard from '@/components/Clipboard/index.vue'
+
+export default defineComponent({
+  name: 'ParlayBetItem',
+  components: { Clipboard },
+  props: {
+    betInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup(props: any) {
+    const openImage = new URL('@/assets/icons/spread-01.png', import.meta.url)
+      .href
+
+    const closeImage = new URL('@/assets/icons/spread-02.png', import.meta.url)
+      .href
+
+    const copyImage = new URL('@/assets/icons/time-Copy.png', import.meta.url)
+      .href
+
+    const winBg = new URL(
+      '@/assets/icons/settlement-win-01.png',
+      import.meta.url,
+    ).href
+
+    const loseBg = new URL(
+      '@/assets/icons/settlement-lose-01.png',
+      import.meta.url,
+    ).href
+    const statusInfo: any = getBetListStatus(props.betInfo)
+
+    const groupHeight = ref(
+      104.2 * (props.betInfo.parlay_info || []).length,
+    )
+
+    const showAll = ref(false)
+
+    return {
+      copyImage,
+      statusInfo,
+      openImage,
+      closeImage,
+      parseTime,
+      getBetListStatus,
+      winBg,
+      loseBg,
+      groupHeight,
+      showAll,
+    }
+  },
+})
+</script>
+
 <template>
   <div
     class="parlay-bet-item"
     :style="{ '--group-height': showAll ? groupHeight : 104.2 }"
   >
     <div class="bet-header">
-      <LazyImage :img-url="betInfo['game_type_logo']" />
-      <div class="event-name">{{ betInfo.desc }}</div>
-      <div class="bet-status" :style="{ color: statusInfo['color'] }">
-        <span> {{ statusInfo["name"] }}</span>
+      <LazyImage :img-url="betInfo.game_type_logo" />
+      <div class="event-name">
+        {{ betInfo.desc }}
+      </div>
+      <div class="bet-status" :style="{ color: statusInfo.color }">
+        <span> {{ statusInfo.name }}</span>
         <LazyImage
           :img-url="showAll ? closeImage : openImage"
           @click="showAll = !showAll"
@@ -16,9 +77,9 @@
     </div>
     <div class="match-content-group">
       <div
+        v-for="info in betInfo.parlay_info || []"
+        :key="info.parlay_id"
         class="match-content"
-        v-for="info in betInfo['parlay_info'] || []"
-        :key="info['parlay_id']"
       >
         <div>
           {{ info.desc }}
@@ -26,11 +87,11 @@
         <div>{{ info.team_name_1 }} - VS - {{ info.team_name_2 }}</div>
         <div>
           <span>{{ $t("cart_bet_odds") }}</span>
-          <span>x{{ info["odds"] }}</span>
+          <span>x{{ info.odds }}</span>
         </div>
         <div
-          class="win-lose"
           v-if="[5, 6, '5', '6'].includes(getBetListStatus(info).code)"
+          class="win-lose"
         >
           <LazyImage
             :img-url="+getBetListStatus(info).code === 5 ? winBg : loseBg"
@@ -44,7 +105,7 @@
     <div class="currency-content">
       <div>
         <span>{{ betInfo.desc }}:</span>
-        <span>x{{ betInfo["odds"] }}</span>
+        <span>x{{ betInfo.odds }}</span>
       </div>
       <div>
         <span>{{ $t("bet_amount") }}:</span>
@@ -52,20 +113,18 @@
       </div>
       <div>
         <span>{{ $t("v_profit") }}:</span>
-        <span v-if="betInfo['maybe_amount']">{{
-          betInfo["maybe_amount"]
+        <span v-if="betInfo.maybe_amount">{{
+          betInfo.maybe_amount
         }}</span>
       </div>
       <div>
-        <span
-          >{{ $t("bet_currency") }}:{{
-            betInfo.currency_info?.short_name || ""
-          }}</span
-        >
-        <span v-if="betInfo['create_time_stamp']">{{
+        <span>{{ $t("bet_currency") }}:{{
+          betInfo.currency_info?.short_name || ""
+        }}</span>
+        <span v-if="betInfo.create_time_stamp">{{
           parseTime(
-            Number(betInfo["create_time_stamp"]) * 1000,
-            "{y}-{m}-{d} {h}:{i}:{s}"
+            Number(betInfo.create_time_stamp) * 1000,
+            "{y}-{m}-{d} {h}:{i}:{s}",
           )
         }}</span>
       </div>
@@ -80,68 +139,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref } from "vue";
-import { getBetListStatus, parseTime } from "@/utils";
-import Clipboard from "@/components/Clipboard/index.vue";
-
-export default defineComponent({
-  name: "parlay-bet-item",
-  components: { Clipboard },
-  props: {
-    betInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup(props: any) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const openImage = new URL("@/assets/icons/spread-01.png", import.meta.url)
-      .href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const closeImage = new URL("@/assets/icons/spread-02.png", import.meta.url)
-      .href;
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const copyImage = new URL("@/assets/icons/time-Copy.png", import.meta.url)
-      .href;
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const winBg = new URL(
-      "@/assets/icons/settlement-win-01.png",
-      import.meta.url
-    ).href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const loseBg = new URL(
-      "@/assets/icons/settlement-lose-01.png",
-      import.meta.url
-    ).href;
-    const statusInfo: any = getBetListStatus(props.betInfo);
-
-    const groupHeight = ref(
-      104.2 * (props.betInfo["parlay_info"] || []).length
-    );
-
-    const showAll = ref(false);
-
-    return {
-      copyImage,
-      statusInfo,
-      openImage,
-      closeImage,
-      parseTime,
-      getBetListStatus,
-      winBg,
-      loseBg,
-      groupHeight,
-      showAll,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .parlay-bet-item {

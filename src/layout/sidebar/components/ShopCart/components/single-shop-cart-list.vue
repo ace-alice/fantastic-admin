@@ -1,50 +1,11 @@
-<template>
-  <div class="single-shop-cart-list">
-    <div class="list-box">
-      <el-scrollbar>
-        <div
-          class="single-shop-cart-list"
-          :style="{ '--width-li': 200 }"
-          v-if="singleCartList.length > 0"
-        >
-          <transition-group name="list" appear>
-            <ShopItemSingle
-              v-for="cart in singleCartList"
-              :key="cart.shop_id"
-              :item-info="cart"
-              :shopAmount="singleBetAmount[`single${cart.shop_id}`]"
-              @changeAmountEmit="setShoppingCarCount"
-            />
-          </transition-group>
-        </div>
-        <div class="no-data" v-else>
-          <Empty>
-            <template #top>
-              <div class="top-slot">点击相关赛事赔率立即下单</div>
-            </template>
-          </Empty>
-        </div>
-      </el-scrollbar>
-    </div>
-    <SingleBetBox
-      :total-bet="totalBet"
-      :total-bonus="totalPrice"
-      :disabled="!isAllowToBet"
-      :warnMessage="warnMessage"
-      @toBet="toBet"
-      @acceptChange="acceptChange"
-    />
-  </div>
-</template>
-
 <script lang="ts">
-import { defineComponent } from "vue";
-import singleCartHook from "@/hooks/singleCartHook";
-import ShopItemSingle from "./shop-item-single.vue";
-import Empty from "@/components/Empty/index.vue";
-import SingleBetBox from "./single-bet-box.vue";
+import { defineComponent } from 'vue'
+import ShopItemSingle from './shop-item-single.vue'
+import SingleBetBox from './single-bet-box.vue'
+import singleCartHook from '@/hooks/singleCartHook'
+import Empty from '@/components/Empty/index.vue'
 export default defineComponent({
-  name: "single-shop-cart-list",
+  name: 'SingleShopCartList',
   components: { ShopItemSingle, Empty, SingleBetBox },
   setup() {
     const {
@@ -57,7 +18,7 @@ export default defineComponent({
       toBet,
       acceptChange,
       warnMessage,
-    } = singleCartHook();
+    } = singleCartHook()
 
     return {
       singleCartList,
@@ -69,10 +30,51 @@ export default defineComponent({
       toBet,
       acceptChange,
       warnMessage,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <div class="single-shop-cart-list">
+    <div class="list-box">
+      <el-scrollbar>
+        <div
+          v-if="singleCartList.length > 0"
+          class="single-shop-cart-list"
+          :style="{ '--width-li': 200 }"
+        >
+          <transition-group name="list" appear>
+            <ShopItemSingle
+              v-for="cart in singleCartList"
+              :key="cart.shop_id"
+              :item-info="cart"
+              :shop-amount="singleBetAmount[`single${cart.shop_id}`]"
+              @changeAmountEmit="setShoppingCarCount"
+            />
+          </transition-group>
+        </div>
+        <div v-else class="no-data">
+          <Empty>
+            <template #top>
+              <div class="top-slot">
+                点击相关赛事赔率立即下单
+              </div>
+            </template>
+          </Empty>
+        </div>
+      </el-scrollbar>
+    </div>
+    <SingleBetBox
+      :total-bet="totalBet"
+      :total-bonus="totalPrice"
+      :disabled="!isAllowToBet"
+      :warn-message="warnMessage"
+      @toBet="toBet"
+      @acceptChange="acceptChange"
+    />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .single-shop-cart-list {

@@ -1,14 +1,3 @@
-<template>
-  <div :class="{ 'animate-box': true, 'clear-margin': isMin }">
-    <div :class="{ 'animate-video': true, 'min-animate': isMin }">
-      <iframe width="100%" height="100%" :src="animateSrc"></iframe>
-      <div class="close-icon" @click="closeAnimate">
-        <LazyImage :img-url="closeImage" />
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import {
   defineComponent,
@@ -16,67 +5,77 @@ import {
   onMounted,
   onUnmounted,
   ref,
-} from "vue";
-import videoAndAnimationHook from "@/hooks/videoAndAnimationHook";
+} from 'vue'
+import videoAndAnimationHook from '@/hooks/videoAndAnimationHook'
 
 export default defineComponent({
-  name: "animate-box",
+  name: 'AnimateBox',
   props: {
     matchDetail: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       },
     },
   },
-  emits: ["closeAnimate"],
+  emits: ['closeAnimate'],
   setup(props, { emit }) {
-    const { proxy } = getCurrentInstance() as any;
+    const { proxy } = getCurrentInstance() as any
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const closeImage = new URL("@/assets/icons/spread-02.png" ,import.meta.url).href;
+    const closeImage = new URL('@/assets/icons/spread-02.png', import.meta.url).href
 
     function closeAnimate() {
-      emit("closeAnimate");
+      emit('closeAnimate')
     }
 
-    const animateSrc = ref(props.matchDetail.has_push_url || "");
+    const animateSrc = ref(props.matchDetail.has_push_url || '')
 
     const { animationList } = videoAndAnimationHook(
       props.matchDetail,
-      "animation"
-    );
+      'animation',
+    )
 
-    const isMin = ref(false);
+    const isMin = ref(false)
 
     onMounted(() => {
       // 当前
-      proxy.mittBus.on("newAnimationPush", (value: string) => {
-        if (animateSrc.value != value) {
-          animateSrc.value = value;
+      proxy.mittBus.on('newAnimationPush', (value: string) => {
+        if (animateSrc.value !== value) {
+          animateSrc.value = value
         }
-      });
+      })
       if (
-        animationList.value.length > 0 &&
-        animationList.value[0].has_push_pc != animateSrc.value
+        animationList.value.length > 0
+        && animationList.value[0].has_push_pc !== animateSrc.value
       ) {
-        animateSrc.value = animationList.value[0].has_push_pc;
+        animateSrc.value = animationList.value[0].has_push_pc
       }
 
-      proxy.mittBus.on("setMiniAnimateBus", (isMinTag: boolean) => {
-        isMin.value = isMinTag;
-      });
-    });
+      proxy.mittBus.on('setMiniAnimateBus', (isMinTag: boolean) => {
+        isMin.value = isMinTag
+      })
+    })
 
     onUnmounted(() => {
-      proxy.mittBus.off("newAnimationPush");
-      proxy.mittBus.off("setMiniAnimateBus");
-    });
+      proxy.mittBus.off('newAnimationPush')
+      proxy.mittBus.off('setMiniAnimateBus')
+    })
 
-    return { closeAnimate, animateSrc, closeImage, isMin };
+    return { closeAnimate, animateSrc, closeImage, isMin }
   },
-});
+})
 </script>
+
+<template>
+  <div class="animate-box" :class="{ 'clear-margin': isMin }">
+    <div class="animate-video" :class="{ 'min-animate': isMin }">
+      <iframe width="100%" height="100%" :src="animateSrc" />
+      <div class="close-icon" @click="closeAnimate">
+        <LazyImage :img-url="closeImage" />
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .clear-margin {

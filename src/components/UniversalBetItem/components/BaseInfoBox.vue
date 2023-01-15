@@ -1,3 +1,32 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'VideoAndAnimationBox',
+  components: {},
+  props: {
+    baseInfo: {
+      type: Object,
+      default: () => {
+        return {
+          bo: 0,
+          eventName: '',
+          hasVideo: false,
+          hasAnimate: false,
+        }
+      },
+    },
+  },
+  setup() {
+    const videoIcon = new URL('@/assets/icons/live.png', import.meta.url).href
+
+    const animateIcon = new URL('@/assets/icons/score.png', import.meta.url).href
+
+    return { videoIcon, animateIcon }
+  },
+})
+</script>
+
 <template>
   <div class="VideoAndAnimationBox">
     <div class="top">
@@ -12,36 +41,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "VideoAndAnimationBox",
-  components: {},
-  props: {
-    baseInfo: {
-      type: Object,
-      default: () => {
-        return {
-          bo: 0,
-          eventName: "",
-          hasVideo: false,
-          hasAnimate: false,
-        };
-      },
-    },
-  },
-  setup() {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const videoIcon = new URL("@/assets/icons/live.png" ,import.meta.url).href;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const animateIcon = new URL("@/assets/icons/score.png" ,import.meta.url).href;
-
-    return { videoIcon, animateIcon };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .VideoAndAnimationBox {

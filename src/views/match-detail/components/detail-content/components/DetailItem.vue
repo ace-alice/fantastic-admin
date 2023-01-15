@@ -1,6 +1,28 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import TeamBox from './TeamBox.vue'
+export default defineComponent({
+  name: 'IaDetailItem',
+  components: { TeamBox },
+  props: {
+    playInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup() {
+    return {}
+  },
+})
+</script>
+
 <template>
   <div class="detail-item">
-    <div class="play-name">{{ playInfo.play_name }}</div>
+    <div class="play-name">
+      {{ playInfo.play_name }}
+    </div>
     <div class="bottom">
       <template v-for="(team, index) in playInfo.team_points" :key="team.id">
         <TeamBox :play-info="playInfo" :index="index" />
@@ -8,26 +30,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import TeamBox from "./TeamBox.vue";
-import { defineComponent } from "vue";
-export default defineComponent({
-  name: "ia-detail-item",
-  components: { TeamBox },
-  props: {
-    playInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup() {
-    return {};
-  },
-});
-</script>
 
 <style scoped lang="scss">
 .detail-item {

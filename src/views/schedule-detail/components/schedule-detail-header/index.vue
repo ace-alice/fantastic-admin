@@ -1,11 +1,57 @@
+<script lang="ts">
+import {
+  defineComponent,
+  getCurrentInstance,
+  inject,
+  onMounted,
+  onUnmounted,
+  ref,
+} from 'vue'
+import useImageResource from '@/hooks/useImageResource'
+import useRouteHook from '@/hooks/useRouteHook'
+import { parseTime } from '@/utils'
+
+export default defineComponent({
+  name: 'ScheduleDetailHeader',
+  components: {},
+  setup() {
+    const { prevImg } = useImageResource()
+    const { routerJump } = useRouteHook()
+    const goBack = () => {
+      routerJump('ScheduleList')
+    }
+
+    const shortHeader = ref(false)
+
+    const eventDetail: any = inject('eventDetail', {})
+
+    const { proxy }: any = getCurrentInstance()
+
+    onMounted(() => {
+      proxy.mittBus.on('shortHeaderBus', (tag: boolean) => {
+        shortHeader.value = tag
+      })
+    })
+
+    onUnmounted(() => {
+      proxy.mittBus.off('shortHeaderBus')
+    })
+
+    return { prevImg, goBack, eventDetail, parseTime, shortHeader }
+  },
+})
+</script>
+
 <template>
-  <div :class="{ 'schedule-detail-header': true, 'short-header': shortHeader }">
+  <div class="schedule-detail-header" :class="{ 'short-header': shortHeader }">
     <LazyImage :img-url="prevImg" class="back-btn" @click.stop="goBack" />
-    <div class="schedule-title-1">{{ $t("competition") }}</div>
+    <div class="schedule-title-1">
+      {{ $t("competition") }}
+    </div>
     <div class="detail-header-box">
       <div class="detail-info">
         <div class="event-title">
-          <LazyImage :img-url="''" />
+          <LazyImage img-url="''" />
           <div>{{ eventDetail.event_name }}</div>
         </div>
         <template v-if="!shortHeader">
@@ -18,65 +64,21 @@
               parseTime(eventDetail.end_time * 1000, "{y}-{m}-{d}")
             }}</span>
           </div>
-          <div>{{ $t("venue") }}: {{ eventDetail["host_location"] }}</div>
-          <div>{{ $t("organizer") }}: {{ eventDetail["host"] }}</div>
+          <div>{{ $t("venue") }}: {{ eventDetail.host_location }}</div>
+          <div>{{ $t("organizer") }}: {{ eventDetail.host }}</div>
           <div>
             {{ $t("competition_system") }}:
-            {{ eventDetail["institution_name"] }}
+            {{ eventDetail.institution_name }}
           </div>
         </template>
       </div>
-      <div class="detail-bonus" v-show="!shortHeader">
+      <div v-show="!shortHeader" class="detail-bonus">
         <div>{{ eventDetail.bonus }}</div>
         <div>{{ $t("tot_bonus") }}</div>
       </div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import {
-  defineComponent,
-  getCurrentInstance,
-  inject,
-  onMounted,
-  onUnmounted,
-  ref,
-} from "vue";
-import useImageResource from "@/hooks/useImageResource";
-import useRouteHook from "@/hooks/useRouteHook";
-import { parseTime } from "@/utils";
-
-export default defineComponent({
-  name: "schedule-detail-header",
-  components: {},
-  setup() {
-    const { prevImg } = useImageResource();
-    const { routerJump } = useRouteHook();
-    const goBack = () => {
-      routerJump("ScheduleList");
-    };
-
-    const shortHeader = ref(false);
-
-    const eventDetail = inject("eventDetail", {});
-
-    const { proxy }: any = getCurrentInstance();
-
-    onMounted(() => {
-      proxy.mittBus.on("shortHeaderBus", (tag: boolean) => {
-        shortHeader.value = tag;
-      });
-    });
-
-    onUnmounted(() => {
-      proxy.mittBus.off("shortHeaderBus");
-    });
-
-    return { prevImg, goBack, eventDetail, parseTime, shortHeader };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .short-header {

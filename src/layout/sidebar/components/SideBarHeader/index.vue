@@ -1,18 +1,111 @@
+<script lang="ts">
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  inject,
+  onMounted,
+  onUnmounted,
+  ref,
+} from 'vue'
+import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
+import { gameInfoStore } from '@/store/gameInfo'
+import { shopCartStore } from '@/store/shopCart'
+import { userInfoStore } from '@/store/userInfo'
+import notLoginMessage from '@/utils/notLoginMessage'
+
+export default defineComponent({
+  name: 'SideBarHeader',
+  components: {},
+  emits: ['change'],
+  setup(props, { emit }) {
+    const isTradition = inject('isTradition', true)
+
+    const currentSideBar = ref(isTradition ? 'GameList' : '')
+
+    const { gameList } = storeToRefs(gameInfoStore())
+
+    const { singleIds, parlayIds } = storeToRefs(shopCartStore())
+
+    const shopNum = computed(() => {
+      return singleIds.value.length + parlayIds.value.length
+    })
+
+    const i18n = useI18n()
+
+    const navList = [
+      {
+        label: i18n.t('game'),
+        code: 'GameList',
+        needLogin: false,
+      },
+      {
+        label: i18n.t('bet_cart'),
+        code: 'ShopCart',
+        needLogin: true,
+      },
+      {
+        label: i18n.t('bet_histoy_list'),
+        code: 'BetList',
+        needLogin: true,
+      },
+    ]
+
+    const { isLogin } = storeToRefs(userInfoStore())
+
+    function changeSideBar(sideBar: any) {
+      if (sideBar.needLogin && !isLogin.value) {
+        return notLoginMessage()
+      }
+      currentSideBar.value = sideBar.code
+      emit('change', sideBar.code)
+    }
+
+    const { proxy }: any = getCurrentInstance()
+
+    onMounted(() => {
+      proxy.mittBus.on('changeCurrentSideBarBus', (sideBarCode: string) => {
+        const sideBar = navList.find((side: any) => {
+          return sideBarCode === side.code
+        })
+        if (!sideBar) {
+          return
+        }
+        changeSideBar(sideBar)
+      })
+    })
+
+    onUnmounted(() => {
+      proxy.mittBus.off('changeCurrentSideBarBus')
+    })
+
+    return {
+      isTradition,
+      navList,
+      changeSideBar,
+      currentSideBar,
+      gameList,
+      shopNum,
+      isLogin,
+    }
+  },
+})
+</script>
+
 <template>
   <div
-    :class="{
-      SideBarHeader: true,
+    class="SideBarHeader" :class="{
       'not-tradition': !isTradition,
     }"
   >
     <div
+      v-for="nav in navList" :key="nav.code"
+      class="nav-item"
       :class="{
-        'nav-item': true,
-        active: nav.code === currentSideBar,
+        'active': nav.code === currentSideBar,
         'no-login': !isLogin && nav.needLogin,
       }"
-      v-for="nav in navList"
-      :key="nav.code"
       @click.stop="changeSideBar(nav)"
     >
       {{ nav.label }}
@@ -23,100 +116,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import {
-  computed,
-  defineComponent,
-  getCurrentInstance,
-  inject,
-  onMounted,
-  onUnmounted,
-  ref,
-} from "vue";
-import { useI18n } from "vue-i18n";
-import { storeToRefs } from "pinia";
-import { gameInfoStore } from "@/store/gameInfo";
-import { shopCartStore } from "@/store/shopCart";
-import { userInfoStore } from "@/store/userInfo";
-import notLoginMessage from "@/utils/notLoginMessage";
-
-export default defineComponent({
-  name: "SideBarHeader",
-  components: {},
-  emits: ["change"],
-  setup(props, { emit }) {
-    const isTradition = inject("isTradition", true);
-
-    const currentSideBar = ref(isTradition ? "GameList" : "");
-
-    const { gameList } = storeToRefs(gameInfoStore());
-
-    const { singleIds, parlayIds } = storeToRefs(shopCartStore());
-
-    const shopNum = computed(() => {
-      return singleIds.value.length + parlayIds.value.length;
-    });
-
-    const i18n = useI18n();
-
-    const navList = [
-      {
-        label: i18n.t("game"),
-        code: "GameList",
-        needLogin: false,
-      },
-      {
-        label: i18n.t("bet_cart"),
-        code: "ShopCart",
-        needLogin: true,
-      },
-      {
-        label: i18n.t("bet_histoy_list"),
-        code: "BetList",
-        needLogin: true,
-      },
-    ];
-
-    const { isLogin } = storeToRefs(userInfoStore());
-
-    function changeSideBar(sideBar: any) {
-      if (sideBar.needLogin && !isLogin.value) {
-        return notLoginMessage();
-      }
-      currentSideBar.value = sideBar.code;
-      emit("change", sideBar.code);
-    }
-
-    const { proxy }: any = getCurrentInstance();
-
-    onMounted(() => {
-      proxy.mittBus.on("changeCurrentSideBarBus", (sideBarCode: string) => {
-        const sideBar = navList.find((side: any) => {
-          return sideBarCode === side.code;
-        });
-        if (!sideBar) return;
-        changeSideBar(sideBar);
-      });
-    });
-
-    onUnmounted(() => {
-      proxy.mittBus.off("changeCurrentSideBarBus");
-    });
-
-    return {
-      isTradition,
-      navList,
-      changeSideBar,
-      currentSideBar,
-      gameList,
-      shopNum,
-      isLogin,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .SideBarHeader {
   height: 36px;

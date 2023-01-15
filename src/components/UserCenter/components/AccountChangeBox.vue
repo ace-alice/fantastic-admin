@@ -1,10 +1,48 @@
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { userInfoStore } from '@/store/userInfo'
+
+export default defineComponent({
+  name: 'AccountChangeBox',
+  components: {},
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup() {
+    const { avatarId } = storeToRefs(userInfoStore())
+    const { changeAvatarId } = userInfoStore()
+
+    const selectAvatarId = ref(avatarId.value)
+
+    function changeAccount() {
+      if (+avatarId.value === +selectAvatarId.value) {
+        return
+      }
+      changeAvatarId(selectAvatarId.value)
+    }
+
+    function getAvatarImage(id: number) {
+      return new URL(`@/assets/avatar/image-${id > 0 && id < 16 ? id : 1}.png`, import.meta.url).href
+    }
+
+    return { changeAccount, getAvatarImage, avatarId, selectAvatarId }
+  },
+})
+</script>
+
 <template>
   <div class="AccountChangeBox tab-box">
-    <div class="box-header"></div>
+    <div class="box-header" />
     <div class="box-main box-body">
       <div class="box-main-cont">
         <div class="box-main-left">
-          <div class="left-title">更换头像</div>
+          <div class="left-title">
+            更换头像
+          </div>
           <LazyImage :img-url="getAvatarImage(selectAvatarId)" />
           <div
             class="left-btn"
@@ -17,10 +55,10 @@
         <div class="box-main-right">
           <div class="avatar-group">
             <div
-              class="avatar-box"
-              :class="{ 'active-avatar': num === +selectAvatarId }"
               v-for="num in 15"
               :key="num"
+              class="avatar-box"
+              :class="{ 'active-avatar': num === +selectAvatarId }"
             >
               <LazyImage
                 :img-url="getAvatarImage(num)"
@@ -31,43 +69,9 @@
         </div>
       </div>
     </div>
-    <div class="box-footer"></div>
+    <div class="box-footer" />
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref } from "vue";
-import { userInfoStore } from "@/store/userInfo";
-import { storeToRefs } from "pinia";
-
-export default defineComponent({
-  name: "AccountChangeBox",
-  components: {},
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup() {
-    const { avatarId } = storeToRefs(userInfoStore());
-    const { changeAvatarId } = userInfoStore();
-
-    const selectAvatarId = ref(avatarId.value);
-
-    function changeAccount() {
-      if (+avatarId.value === +selectAvatarId.value) return;
-      changeAvatarId(selectAvatarId.value);
-    }
-
-    function getAvatarImage(id: number) {
-      return new URL(`@/assets/avatar/image-${id > 0 && id < 16 ? id : 1}.png` ,import.meta.url).href;
-    }
-
-    return { changeAccount, getAvatarImage, avatarId, selectAvatarId };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .show-box {

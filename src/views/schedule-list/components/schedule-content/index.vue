@@ -1,37 +1,20 @@
-<template>
-  <div class="schedule-content" v-if="currentEventList.length > 0">
-    <el-scrollbar ref="scrollbarRef" @scroll="scrollHandle">
-      <div class="event-box">
-        <ScheduleCard
-          v-for="(event, index) in currentEventList"
-          :key="event.id"
-          :eventInfo="event"
-          :index="index"
-        />
-      </div>
-    </el-scrollbar>
-  </div>
-  <EmptyBox type="event" v-else />
-  <ToTopBox @toTop="toTopHandle" v-if="hasToTop" />
-</template>
-
 <script lang="ts">
-import { defineComponent } from "vue";
-import { storeToRefs } from "pinia";
-import { scheduleInfoStore } from "@/store/scheduleInfo";
-import ScheduleCard from "@/views/schedule-list/components/schedule-content/components/ScheduleCard.vue";
-import EmptyBox from "@/components/Empty/index.vue";
-import matchListToTopHook from "@/hooks/matchListToTopHook";
-import ToTopBox from "@/components/ToTopBox/index.vue";
+import { defineComponent } from 'vue'
+import { storeToRefs } from 'pinia'
+import { scheduleInfoStore } from '@/store/scheduleInfo'
+import ScheduleCard from '@/views/schedule-list/components/schedule-content/components/ScheduleCard.vue'
+import EmptyBox from '@/components/Empty/index.vue'
+import matchListToTopHook from '@/hooks/matchListToTopHook'
+import ToTopBox from '@/components/ToTopBox/index.vue'
 
 export default defineComponent({
-  name: "schedule-content",
+  name: 'ScheduleContent',
   components: { ScheduleCard, EmptyBox, ToTopBox },
   setup() {
-    const { currentEventList } = storeToRefs(scheduleInfoStore());
+    const { currentEventList } = storeToRefs(scheduleInfoStore())
 
-    const { toTopHandle, scrollbarRef, scrollHandle, hasToTop } =
-      matchListToTopHook("ScheduleList");
+    const { toTopHandle, scrollbarRef, scrollHandle, hasToTop }
+      = matchListToTopHook('ScheduleList')
 
     return {
       currentEventList,
@@ -39,12 +22,29 @@ export default defineComponent({
       scrollbarRef,
       scrollHandle,
       hasToTop,
-    };
+    }
   },
-});
+})
 </script>
 
-<!--suppress CssInvalidPseudoSelector -->
+<template>
+  <div v-if="currentEventList.length > 0" class="schedule-content">
+    <el-scrollbar ref="scrollbarRef" @scroll="scrollHandle">
+      <div class="event-box">
+        <ScheduleCard
+          v-for="(event, index) in currentEventList"
+          :key="event.id"
+          :event-info="event"
+          :index="index"
+        />
+      </div>
+    </el-scrollbar>
+  </div>
+  <EmptyBox v-else type="event" />
+  <ToTopBox v-if="hasToTop" @toTop="toTopHandle" />
+</template>
+
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .schedule-content {
   width: 100%;

@@ -1,37 +1,40 @@
+<script lang="ts">
+import type { Ref } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+
+export default defineComponent({
+  name: 'NotFind404',
+  components: {},
+  setup() {
+    const i18n = useI18n()
+
+    const route = useRoute()
+
+    const notImage = new URL('@/assets/images/que_404.png', import.meta.url).href
+
+    const errorText: Ref<any> = ref('')
+
+    const error404 = ref(i18n.t('error_info_2'))
+
+    onMounted(() => {
+      errorText.value = route.query.message
+    })
+
+    return { errorText, notImage, error404 }
+  },
+})
+</script>
+
 <template>
   <div class="not-find-404">
     <LazyImage :img-url="notImage" />
-    <div class="text text1">{{ errorText || error404 }}</div>
+    <div class="text text1">
+      {{ errorText || error404 }}
+    </div>
   </div>
 </template>
-
-<script lang="ts">
-import { ref, defineComponent, onMounted, Ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
-
-export default defineComponent({
-  name: "not-find-404",
-  components: {},
-  setup() {
-    const i18n = useI18n();
-
-    const route = useRoute();
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const notImage = new URL("@/assets/images/que_404.png" ,import.meta.url).href;
-
-    const errorText: Ref<any> = ref("");
-
-    const error404 = ref(i18n.t("error_info_2"));
-
-    onMounted(() => {
-      errorText.value = route.query.message;
-    });
-
-    return { errorText, notImage, error404 };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .not-find-404 {

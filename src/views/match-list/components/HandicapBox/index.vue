@@ -1,15 +1,46 @@
+<script lang="ts">
+import { defineComponent, getCurrentInstance } from 'vue'
+import { storeToRefs } from 'pinia'
+import { gameInfoStore } from '@/store/gameInfo'
+
+export default defineComponent({
+  name: 'HandicapBox',
+  components: {},
+  setup() {
+    const { proxy }: any = getCurrentInstance()
+
+    const { handicapList, currentHandicap } = storeToRefs(gameInfoStore())
+
+    const { setHandicapValue } = gameInfoStore()
+
+    function toUserCenter() {
+      proxy.mittBus.emit('openUserCenterBus', 'RulesBox')
+    }
+
+    return {
+      handicapList,
+      currentHandicap,
+      setHandicapValue,
+      toUserCenter,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="HandicapBox">
     <div class="handicap-list">
       <div
-        class="tab-item"
         v-for="handicap in handicapList"
         :key="handicap.code"
+        class="tab-item"
         :class="{ active: currentHandicap === handicap.code }"
         @click="setHandicapValue(String(handicap.code))"
       >
-        <div class="tab-name">{{ handicap.name }}</div>
-        <div class="tab-num" v-if="handicap.code !== 'end'">
+        <div class="tab-name">
+          {{ handicap.name }}
+        </div>
+        <div v-if="handicap.code !== 'end'" class="tab-num">
           {{ handicap.count || 0 }}
         </div>
       </div>
@@ -20,36 +51,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, getCurrentInstance } from "vue";
-import { storeToRefs } from "pinia";
-import { gameInfoStore } from "@/store/gameInfo";
-
-export default defineComponent({
-  name: "HandicapBox",
-  components: {},
-  setup() {
-    const { proxy }: any = getCurrentInstance();
-
-    const { handicapList, currentHandicap } = storeToRefs(gameInfoStore());
-
-    const { setHandicapValue } = gameInfoStore();
-
-    function toUserCenter() {
-      proxy.mittBus.emit("openUserCenterBus", "RulesBox");
-    }
-
-    return {
-      handicapList,
-      currentHandicap,
-      setHandicapValue,
-      toUserCenter,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .HandicapBox {
   height: 56px;

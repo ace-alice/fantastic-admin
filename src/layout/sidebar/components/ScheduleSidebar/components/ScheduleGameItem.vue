@@ -1,8 +1,58 @@
+<script lang="ts">
+import { defineComponent, inject } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useRoute, useRouter } from 'vue-router'
+import { scheduleInfoStore } from '@/store/scheduleInfo'
+
+export default defineComponent({
+  name: 'ScheduleGameItem',
+  components: {},
+  props: {
+    itemInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup(props: any) {
+    const { currentGameId } = storeToRefs(scheduleInfoStore())
+
+    const isTradition = inject('isTradition', true)
+
+    const { changeCurrentGameId } = scheduleInfoStore()
+
+    const hasBanner = ['1', 1, '2', 2, '3', 3, '16', 16, 28, '28', 12, '12']
+
+    const gameBanner = new URL(`@/assets/images/image_${
+      hasBanner.includes(props.itemInfo.id) ? props.itemInfo.id : '1'
+    }.png`, import.meta.url).href
+
+    const route = useRoute()
+
+    const router = useRouter()
+
+    function changeCurrentGameIdHandle(id: number | string) {
+      if (route.name !== 'ScheduleList') {
+        router.push({ name: 'ScheduleList' })
+      }
+      changeCurrentGameId(id)
+    }
+
+    return {
+      currentGameId,
+      gameBanner,
+      isTradition,
+      changeCurrentGameIdHandle,
+    }
+  },
+})
+</script>
+
 <template>
   <div
-    :class="{
-      ScheduleGameItem: true,
-      active: currentGameId === itemInfo.id && isTradition,
+    class="ScheduleGameItem" :class="{
+      'active': currentGameId === itemInfo.id && isTradition,
       'item-mode2': !isTradition,
       'active-mode2': currentGameId === itemInfo.id && !isTradition,
       'tab-isTradition': isTradition,
@@ -11,11 +61,12 @@
   >
     <div class="tab-header">
       <LazyImage :img-url="itemInfo.logo" />
-      <div class="game-name">{{ itemInfo.game_name }}</div>
+      <div class="game-name">
+        {{ itemInfo.game_name }}
+      </div>
     </div>
     <div
-      :class="{
-        'game-banner': true,
+      class="game-banner" :class="{
         'show-banner': currentGameId === itemInfo.id && isTradition,
       }"
     >
@@ -23,58 +74,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, inject } from "vue";
-import { storeToRefs } from "pinia";
-import { scheduleInfoStore } from "@/store/scheduleInfo";
-import { useRoute, useRouter } from "vue-router";
-
-export default defineComponent({
-  name: "ScheduleGameItem",
-  components: {},
-  props: {
-    itemInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup(props: any) {
-    const { currentGameId } = storeToRefs(scheduleInfoStore());
-
-    const isTradition = inject("isTradition", true);
-
-    const { changeCurrentGameId } = scheduleInfoStore();
-
-    const hasBanner = ["1", 1, "2", 2, "3", 3, "16", 16, 28, "28", 12, "12"];
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const gameBanner = new URL(`@/assets/images/image_${
-      hasBanner.includes(props.itemInfo.id) ? props.itemInfo.id : "1"
-    }.png`, import.meta.url).href;
-
-    const route = useRoute();
-
-    const router = useRouter();
-
-    function changeCurrentGameIdHandle(id: number | string) {
-      if (route.name !== "ScheduleList") {
-        router.push({ name: "ScheduleList" });
-      }
-      changeCurrentGameId(id);
-    }
-
-    return {
-      currentGameId,
-      gameBanner,
-      isTradition,
-      changeCurrentGameIdHandle,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .item-mode2 {

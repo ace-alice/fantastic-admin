@@ -1,4 +1,4 @@
-import fs from "node:fs";
+// import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, loadEnv } from "vite";
 import dayjs from "dayjs";
@@ -10,11 +10,7 @@ export default ({ mode, command }) => {
   const env = loadEnv(mode, process.cwd());
   // 全局 scss 资源
   const scssResources = [];
-  fs.readdirSync("src/theme/common").forEach((dirname) => {
-    if (fs.statSync(`src/theme/common/${dirname}`).isFile()) {
-      scssResources.push(`@use "src/theme/common/${dirname}" as *;`);
-    }
-  });
+
   return defineConfig({
     base: "/",
     // 开发服务器选项 https://cn.vitejs.dev/config/#server-options
@@ -22,6 +18,11 @@ export default ({ mode, command }) => {
       open: true,
       port: 9000,
       proxy: {
+        "/proxy": {
+          target: env.VITE_APP_API_BASEURL,
+          changeOrigin: command === "serve" && env.VITE_OPEN_PROXY === "true",
+          rewrite: (path) => path.replace(/\/proxy/, ""),
+        },
         "/api": {
           target: env.VITE_APP_API_BASEURL,
           changeOrigin: true,

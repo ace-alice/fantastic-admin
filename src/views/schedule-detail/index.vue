@@ -1,57 +1,57 @@
-<template>
-  <div class="schedule-detail">
-    <ScheduleDetailHeader />
-    <div class="bottom-box">
-      <ScheduleDetailContent v-if="initData" />
-    </div>
-    <div class="footer"></div>
-  </div>
-</template>
-
 <script lang="ts">
-import { computed, defineComponent, onMounted, provide, ref } from "vue";
-import ScheduleDetailHeader from "./components/schedule-detail-header/index.vue";
-import ScheduleDetailContent from "./components/schedule-detail-content/index.vue";
-import { useRoute } from "vue-router";
-import { getEventDetailFun } from "@/api/store-game-schedule";
+import { computed, defineComponent, onMounted, provide, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import ScheduleDetailHeader from './components/schedule-detail-header/index.vue'
+import ScheduleDetailContent from './components/schedule-detail-content/index.vue'
+import { getEventDetailFun } from '@/api/store-game-schedule'
 export default defineComponent({
-  name: "ScheduleDetail",
+  name: 'ScheduleDetail',
   components: { ScheduleDetailHeader, ScheduleDetailContent },
   setup() {
-    //赛事详情
-    let eventDetail = ref({});
+    // 赛事详情
+    const eventDetail = ref({})
 
-    const route = useRoute();
+    const route = useRoute()
 
-    const initData = ref(false);
+    const initData = ref(false)
 
     // 获取赛事详情
     function getEventDetail() {
       getEventDetailFun(route.query as any)
         .then((res: any) => {
           if (+res.data.code === 1) {
-            eventDetail.value = res.data.data;
+            eventDetail.value = res.data.data
           }
         })
         .finally(() => {
           setTimeout(() => {
-            initData.value = true;
-          }, 10);
-        });
+            initData.value = true
+          }, 10)
+        })
     }
 
     provide(
-      "eventDetail",
-      computed(() => eventDetail.value)
-    );
+      'eventDetail',
+      computed(() => eventDetail.value),
+    )
 
     onMounted(() => {
-      getEventDetail();
-    });
-    return { initData };
+      getEventDetail()
+    })
+    return { initData }
   },
-});
+})
 </script>
+
+<template>
+  <div class="schedule-detail">
+    <ScheduleDetailHeader />
+    <div class="bottom-box">
+      <ScheduleDetailContent v-if="initData" />
+    </div>
+    <div class="footer" />
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .schedule-detail {

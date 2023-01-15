@@ -1,84 +1,71 @@
-<template>
-  <div :class="{ 'live-box': true, 'is-min': isMin }">
-    <div class="live-video" :style="{ '--height': iframeStyle }">
-      <div v-if="!isIframe" ref="dplayer" id="dplayer"></div>
-      <div v-else class="iframe-box" v-html="currentVideoUrl"></div>
-      <div class="close-icon" @click="closeVideo">
-        <LazyImage :img-url="closeImage" />
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
-/* eslint-disable no-useless-escape */
+import type { Ref } from 'vue'
 import {
   defineComponent,
   getCurrentInstance,
   nextTick,
   onMounted,
   onUnmounted,
-  Ref,
   ref,
-} from "vue";
-import Player from "xgplayer";
-import HlsJsPlayer from "xgplayer-hls.js";
-import FlvPlayer from "xgplayer-flv";
-import { base64decode } from "@/utils/base64DecodeChars";
-import { getLocal } from "@/utils/storage";
-import videoAndAnimationHook from "@/hooks/videoAndAnimationHook";
+} from 'vue'
+import Player from 'xgplayer'
+import HlsJsPlayer from 'xgplayer-hls.js'
+import FlvPlayer from 'xgplayer-flv'
+import { base64decode } from '@/utils/base64DecodeChars'
+import { getLocal } from '@/utils/storage'
+import videoAndAnimationHook from '@/hooks/videoAndAnimationHook'
 
 export default defineComponent({
-  name: "live-box",
+  name: 'LiveBox',
   components: {},
   props: {
     matchDetail: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       },
     },
   },
-  emits: ["closeVideo"],
+  emits: ['closeVideo'],
   setup(props, { emit }) {
-    const { proxy } = getCurrentInstance() as any;
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const closeImage = new URL("@/assets/icons/spread-02.png", import.meta.url)
-      .href;
+    const { proxy } = getCurrentInstance() as any
 
-    const isMin = ref(false);
+    const closeImage = new URL('@/assets/icons/spread-02.png', import.meta.url)
+      .href
+
+    const isMin = ref(false)
 
     function closeVideo() {
-      emit("closeVideo");
+      emit('closeVideo')
     }
-    const player: Ref<any> = ref(null);
+    const player: Ref<any> = ref(null)
 
-    const isIframe = ref(false);
+    const isIframe = ref(false)
 
-    const iframeStyle = ref((720 * 720) / 1280);
+    const iframeStyle = ref((720 * 720) / 1280)
 
-    const currentVideoUrl = ref("");
+    const currentVideoUrl = ref('')
 
     function initPlayer(url: string) {
       const commonOption = {
-        el: proxy.$refs["dplayer"],
-        url: url,
+        el: proxy.$refs.dplayer,
+        url,
         isLive: true,
         // 是否自动播放
         autoplay: true,
         // 是否显示视频首帧
         videoInit: true,
         // 封面图
-        poster: "",
+        poster: '',
         // 触发全屏时实现样式横屏全屏
         // rotateFullscreen: true,
         crossOrigin: true,
         // fitVideoSize: 'auto',
-        width: "100%",
-        height: "auto",
+        width: '100%',
+        height: 'auto',
         // controlPlugins: [play, fullscreen, progress, volume, pip, flex],
         // pip: true, // 打开画中画功能
-        lang: getLocal("langConfig")?.id == 1 ? "zh-cn" : "en",
+        lang: getLocal('langConfig')?.id === 1 ? 'zh-cn' : 'en',
         miniplayer: true,
         miniplayerConfig: {
           bottom: 10,
@@ -87,144 +74,152 @@ export default defineComponent({
           height: 370,
           zIndex: 600,
         },
-      };
+      }
 
-      const flvTag = url.indexOf(".flv");
-      const m3u8Tag = url.indexOf(".m3u8");
+      const flvTag = url.indexOf('.flv')
+      const m3u8Tag = url.indexOf('.m3u8')
 
-      if (flvTag != -1) {
-        player.value = new FlvPlayer(Object.assign(commonOption, {}));
-      } else if (m3u8Tag != -1) {
-        player.value = new HlsJsPlayer(Object.assign(commonOption, {}));
-      } else {
-        player.value = new Player(Object.assign(commonOption, {}));
+      if (flvTag !== -1) {
+        player.value = new FlvPlayer(Object.assign(commonOption, {}))
+      }
+      else if (m3u8Tag !== -1) {
+        player.value = new HlsJsPlayer(Object.assign(commonOption, {}))
+      }
+      else {
+        player.value = new Player(Object.assign(commonOption, {}))
       }
     }
 
-    const { videoList } = videoAndAnimationHook(props.matchDetail, "live");
+    const { videoList } = videoAndAnimationHook(props.matchDetail, 'live')
 
-    const isInit = ref(false);
+    const isInit = ref(false)
     onMounted(() => {
-      isInit.value = true;
+      isInit.value = true
       // 当有新视频推送时调用
-      proxy.mittBus.on("newVideoPush", (value: any) => {
+      proxy.mittBus.on('newVideoPush', (value: any) => {
         if (
-          currentVideoUrl.value &&
-          currentVideoUrl.value.indexOf("twitch") !== -1
+          currentVideoUrl.value
+          && currentVideoUrl.value.includes('twitch')
         ) {
-          const startInx = currentVideoUrl.value.indexOf("https");
-          const endInx = currentVideoUrl.value.indexOf("&parent");
-          const host = currentVideoUrl.value.substring(startInx, endInx);
-          const parent = window.location.host;
-          let referrer = "";
+          const startInx = currentVideoUrl.value.indexOf('https')
+          const endInx = currentVideoUrl.value.indexOf('&parent')
+          const host = currentVideoUrl.value.substring(startInx, endInx)
+          const parent = window.location.host
+          let referrer = ''
           if (window.document.referrer) {
-            const startInxR = window.document.referrer.indexOf("//");
-            const len = window.document.referrer.length;
+            const startInxR = window.document.referrer.indexOf('//')
+            const len = window.document.referrer.length
             referrer = window.document.referrer.substring(
               startInxR + 2,
-              len - 1
-            );
-            currentVideoUrl.value = `<iframe src=\"${host}&parent=${parent}&parent=${referrer}\" allowfullscreen ></iframe>`;
-          } else {
-            currentVideoUrl.value = `<iframe src=\"${host}&parent=${parent}\" allowfullscreen ></iframe>`;
+              len - 1,
+            )
+            currentVideoUrl.value = `<iframe src=\"${host}&parent=${parent}&parent=${referrer}\" allowfullscreen ></iframe>`
+          }
+          else {
+            currentVideoUrl.value = `<iframe src=\"${host}&parent=${parent}\" allowfullscreen ></iframe>`
           }
         }
         if (
-          value &&
-          currentVideoUrl.value != value &&
-          value.indexOf("iframe") !== -1
+          value
+          && currentVideoUrl.value !== value
+          && value.includes('iframe')
         ) {
-          currentVideoUrl.value = value;
-          isIframe.value = true;
-          return;
-        } else {
-          isIframe.value = false;
+          currentVideoUrl.value = value
+          isIframe.value = true
+          return
+        }
+        else {
+          isIframe.value = false
         }
         if (
-          value &&
-          currentVideoUrl.value != value &&
-          proxy.$refs["dplayer"] &&
-          isInit.value
+          value
+          && currentVideoUrl.value !== value
+          && proxy.$refs.dplayer
+          && isInit.value
         ) {
           if (player.value) {
-            player.value.pause();
-            player.value.src = value;
-            player.value.play();
+            player.value.pause()
+            player.value.src = value
+            player.value.play()
             // player.value.reload();
-          } else {
-            initPlayer(value);
+          }
+          else {
+            initPlayer(value)
           }
         }
-      });
+      })
 
-      proxy.mittBus.on("setMiniplayerBus", (isMinTag: boolean) => {
+      proxy.mittBus.on('setMiniplayerBus', (isMinTag: boolean) => {
         if (player.value) {
-          isMin.value = isMinTag;
+          isMin.value = isMinTag
           isMinTag
             ? player.value.getMiniplayer()
-            : player.value.exitMiniplayer();
+            : player.value.exitMiniplayer()
         }
-      });
+      })
 
       nextTick(() => {
         if (videoList.value.length > 0) {
-          currentVideoUrl.value = videoList.value[0].url;
-        } else {
+          currentVideoUrl.value = videoList.value[0].url
+        }
+        else {
           currentVideoUrl.value = base64decode(
             props.matchDetail.media_content
               ? props.matchDetail.media_content
-              : "test"
-          );
+              : 'test',
+          )
         }
         if (
-          currentVideoUrl.value &&
-          currentVideoUrl.value.indexOf("twitch") !== -1
+          currentVideoUrl.value
+          && currentVideoUrl.value.includes('twitch')
         ) {
-          const startInx = currentVideoUrl.value.indexOf("https");
-          const endInx = currentVideoUrl.value.indexOf("&parent");
-          const host = currentVideoUrl.value.substring(startInx, endInx);
-          const parent = window.location.host;
-          let referrer = "";
+          const startInx = currentVideoUrl.value.indexOf('https')
+          const endInx = currentVideoUrl.value.indexOf('&parent')
+          const host = currentVideoUrl.value.substring(startInx, endInx)
+          const parent = window.location.host
+          let referrer = ''
           if (window.document.referrer) {
-            const startInxR = window.document.referrer.indexOf("//");
-            const len = window.document.referrer.length;
+            const startInxR = window.document.referrer.indexOf('//')
+            const len = window.document.referrer.length
             referrer = window.document.referrer.substring(
               startInxR + 2,
-              len - 1
-            );
-            currentVideoUrl.value = `<iframe src=\"${host}&parent=${parent}&parent=${referrer}\" allowfullscreen ></iframe>`;
-          } else {
-            currentVideoUrl.value = `<iframe src=\"${host}&parent=${parent}\" allowfullscreen ></iframe>`;
+              len - 1,
+            )
+            currentVideoUrl.value = `<iframe src=\"${host}&parent=${parent}&parent=${referrer}\" allowfullscreen ></iframe>`
+          }
+          else {
+            currentVideoUrl.value = `<iframe src=\"${host}&parent=${parent}\" allowfullscreen ></iframe>`
           }
         }
-        if (currentVideoUrl.value.indexOf("iframe") !== -1) {
-          console.log(currentVideoUrl.value);
-          isIframe.value = true;
-          return;
-        } else {
-          isIframe.value = false;
+        if (currentVideoUrl.value.includes('iframe')) {
+          isIframe.value = true
+          return
+        }
+        else {
+          isIframe.value = false
         }
         if (player.value) {
-          player.value.pause();
-          player.value.destroy();
-          player.value = null;
-          initPlayer(currentVideoUrl.value);
-        } else {
-          initPlayer(currentVideoUrl.value);
+          player.value.pause()
+          player.value.destroy()
+          player.value = null
+          initPlayer(currentVideoUrl.value)
         }
-      });
-    });
+        else {
+          initPlayer(currentVideoUrl.value)
+        }
+      })
+    })
 
     onUnmounted(() => {
-      isInit.value = false;
-      proxy.mittBus.off("newVideoPush");
-      proxy.mittBus.off("setMiniplayerBus");
+      isInit.value = false
+      proxy.mittBus.off('newVideoPush')
+      proxy.mittBus.off('setMiniplayerBus')
       if (player.value) {
-        player.value.pause();
-        player.value.destroy();
-        player.value = null;
+        player.value.pause()
+        player.value.destroy()
+        player.value = null
       }
-    });
+    })
 
     return {
       closeImage,
@@ -234,10 +229,22 @@ export default defineComponent({
       isIframe,
       iframeStyle,
       isMin,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <div class="live-box" :class="{ 'is-min': isMin }">
+    <div class="live-video" :style="{ '--height': iframeStyle }">
+      <div v-if="!isIframe" id="dplayer" ref="dplayer" />
+      <div v-else class="iframe-box" v-html="currentVideoUrl" />
+      <div class="close-icon" @click="closeVideo">
+        <LazyImage :img-url="closeImage" />
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .is-min {

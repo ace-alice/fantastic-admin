@@ -1,7 +1,136 @@
+<script lang="ts">
+import type { PropType, Ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import useImageResource from '@/hooks/useImageResource'
+import { CategoryIdName } from '@/enum'
+import { setItemName, toFixedNumber } from '@/utils'
+import { shopCartStore } from '@/store/shopCart'
+export default {
+  name: 'IaShopItemOne',
+  components: {},
+  props: {
+    itemInfo: {
+      type: Object as PropType<any>,
+      default: () => {
+        return {}
+      },
+    },
+    // shopAmount: {
+    //   type: [Number, undefined, null],
+    //   default: null,
+    // },
+  },
+  emits: ['changeAmountEmit'],
+  setup(props: any, { emit }: any) {
+    const { changeShopCartElement } = shopCartStore()
+    const { lockIcon, closeImg, betTitleImg } = useImageResource()
+    const betCount: Ref<number | undefined> = ref(props.shopAmount)
+    const showFastNumber = ref(false)
+
+    function showFastNumberFun(tag: boolean) {
+      setTimeout(() => {
+        showFastNumber.value = tag
+      }, 50)
+    }
+
+    const fastNumber = ref([
+      props.itemInfo.money_min,
+      Math.floor(
+        (props.itemInfo.money_max - props.itemInfo.money_min) / 4
+          + props.itemInfo.money_min,
+      ),
+      Math.floor(
+        (props.itemInfo.money_max - props.itemInfo.money_min) / 2
+          + props.itemInfo.money_min,
+      ),
+      props.itemInfo.money_max,
+    ])
+
+    const expectedBonus = computed(() => {
+      return toFixedNumber(
+        Number(betCount.value || 0) * Number(props.itemInfo.odd),
+      )
+    })
+
+    const isLock = computed(() => {
+      return (
+        +props.itemInfo.is_del === 1
+        || +props.itemInfo.is_finish === 1
+        || +props.itemInfo.status !== 1
+      )
+    })
+
+    const isOddChange = ref(false)
+
+    let changeTimer: any = null
+
+    watch(
+      () => props.itemInfo.odd,
+      () => {
+        isOddChange.value = true
+        clearTimeout(changeTimer)
+        changeTimer = null
+        changeTimer = setTimeout(() => {
+          isOddChange.value = false
+        }, 3000)
+      },
+    )
+
+    function closeCart() {
+      changeShopCartElement(String(props.itemInfo.shop_id), 'single')
+    }
+
+    function changeAmount(amount: number) {
+      emit('changeAmountEmit', {
+        cartId: props.itemInfo.shop_id,
+        amount,
+      })
+    }
+
+    watch(
+      () => betCount.value,
+      (newVal) => {
+        if ((betCount.value || 0) > Number(props.itemInfo.money_max)) {
+          betCount.value = Number(props.itemInfo.money_max)
+          return
+        }
+        emit('changeAmountEmit', {
+          cartId: props.itemInfo.shop_id,
+          amount: toFixedNumber(newVal),
+        })
+      },
+    )
+
+    watch(
+      () => props.shopAmount,
+      (newVal) => {
+        betCount.value = newVal
+      },
+    )
+
+    return {
+      betTitleImg,
+      closeImg,
+      CategoryIdName,
+      setItemName,
+      betCount,
+      fastNumber,
+      showFastNumber,
+      expectedBonus,
+      lockIcon,
+      isLock,
+      closeCart,
+      isOddChange,
+      changeAmount,
+      showFastNumberFun,
+    }
+  },
+}
+</script>
+
 <template>
   <div
-    :class="{
-      'shop-item': true,
+    class="shop-item" :class="{
       'lock-disabled': isLock,
       'full-disabled': +itemInfo.money_min >= +itemInfo.money_max,
     }"
@@ -9,8 +138,8 @@
     <div class="header">
       <LazyImage :img-url="itemInfo.game_logo" />
       <span
-        class="text"
         v-tooltip="{ width: 150, message: itemInfo.event_name }"
+        class="text"
       >
         {{ itemInfo.event_name }}
       </span>
@@ -26,13 +155,11 @@
           }  ${itemInfo.play_name}  ${itemInfo.desc}`
         }}</span>
         <span class="bet">
-          <LazyImage :img-url="lockIcon" v-show="isLock" />
-          <span v-show="!isLock" :class="{ isOddChange: isOddChange }"
-            >x{{ itemInfo.odd }}</span
-          >
+          <LazyImage v-show="isLock" :img-url="lockIcon" />
+          <span v-show="!isLock" :class="{ isOddChange }">x{{ itemInfo.odd }}</span>
         </span>
       </div>
-      <div class="team-show" v-if="!itemInfo.is_champion">
+      <div v-if="!itemInfo.is_champion" class="team-show">
         <span>{{ itemInfo.team_name_1 }}</span>
         <span> - VS - </span>
         <span>{{ itemInfo.team_name_2 }}</span>
@@ -48,7 +175,7 @@
           :min="Number(itemInfo.money_min)"
           :max="Number(itemInfo.money_max)"
           :placeholder="`${Number(itemInfo.money_min)}-${Number(
-            itemInfo.money_max
+            itemInfo.money_max,
           )}`"
           :disabled="isLock"
           @blur="showFastNumberFun(false)"
@@ -56,17 +183,17 @@
         >
           <template #suffix>
             <img
-              :class="{ 'close-img': true, 'input-no-data': !betCount }"
+              class="close-img" :class="{ 'input-no-data': !betCount }"
               :src="closeImg"
-              @click.stop="betCount = 0"
               alt=""
-            />
+              @click.stop="betCount = 0"
+            >
           </template>
         </el-input>
       </div>
       <div
         :style="{
-          height: showFastNumber ? '32px' : 0,
+          'height': showFastNumber ? '32px' : 0,
           'margin-top': showFastNumber ? '12px' : 0,
         }"
         class="fast-number"
@@ -85,136 +212,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import useImageResource from "@/hooks/useImageResource";
-import { CategoryIdName } from "@/enum";
-import { setItemName, toFixedNumber } from "@/utils";
-import { computed, Ref, ref, watch, PropType } from "vue";
-import { shopCartStore } from "@/store/shopCart";
-export default {
-  name: "ia-shop-item-one",
-  props: {
-    itemInfo: {
-      type: Object as PropType<any>,
-      default: () => {
-        return {};
-      },
-    },
-    // shopAmount: {
-    //   type: [Number, undefined, null],
-    //   default: null,
-    // },
-  },
-  emits: ["changeAmountEmit"],
-  components: {},
-  setup(props: any, { emit }: any) {
-    const { changeShopCartElement } = shopCartStore();
-    const { lockIcon, closeImg, betTitleImg } = useImageResource();
-    const betCount: Ref<number | undefined> = ref(props.shopAmount);
-    const showFastNumber = ref(false);
-
-    function showFastNumberFun(tag: boolean) {
-      setTimeout(() => {
-        showFastNumber.value = tag;
-      }, 50);
-    }
-
-    const fastNumber = ref([
-      props.itemInfo.money_min,
-      Math.floor(
-        (props.itemInfo.money_max - props.itemInfo.money_min) / 4 +
-          props.itemInfo.money_min
-      ),
-      Math.floor(
-        (props.itemInfo.money_max - props.itemInfo.money_min) / 2 +
-          props.itemInfo.money_min
-      ),
-      props.itemInfo.money_max,
-    ]);
-
-    const expectedBonus = computed(() => {
-      return toFixedNumber(
-        Number(betCount.value || 0) * Number(props.itemInfo.odd)
-      );
-    });
-
-    const isLock = computed(() => {
-      return (
-        +props.itemInfo.is_del === 1 ||
-        +props.itemInfo.is_finish === 1 ||
-        +props.itemInfo.status !== 1
-      );
-    });
-
-    const isOddChange = ref(false);
-
-    let changeTimer: any = null;
-
-    watch(
-      () => props.itemInfo.odd,
-      () => {
-        isOddChange.value = true;
-        clearTimeout(changeTimer);
-        changeTimer = null;
-        changeTimer = setTimeout(() => {
-          isOddChange.value = false;
-        }, 3000);
-      }
-    );
-
-    function closeCart() {
-      changeShopCartElement(String(props.itemInfo.shop_id), "single");
-    }
-
-    function changeAmount(amount: number) {
-      emit("changeAmountEmit", {
-        cartId: props.itemInfo.shop_id,
-        amount,
-      });
-    }
-
-    watch(
-      () => betCount.value,
-      (newVal) => {
-        if ((betCount.value || 0) > Number(props.itemInfo.money_max)) {
-          betCount.value = Number(props.itemInfo.money_max);
-          return;
-        }
-        emit("changeAmountEmit", {
-          cartId: props.itemInfo.shop_id,
-          amount: toFixedNumber(newVal),
-        });
-      }
-    );
-
-    watch(
-      () => props.shopAmount,
-      (newVal) => {
-        betCount.value = newVal;
-      }
-    );
-
-    return {
-      betTitleImg,
-      closeImg,
-      CategoryIdName,
-      setItemName,
-      betCount,
-      fastNumber,
-      showFastNumber,
-      expectedBonus,
-      lockIcon,
-      isLock,
-      closeCart,
-      isOddChange,
-      changeAmount,
-      showFastNumberFun,
-    };
-  },
-};
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style scoped lang="scss">
 .shop-item {
   width: 296px;

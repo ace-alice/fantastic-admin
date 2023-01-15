@@ -1,3 +1,102 @@
+<script lang="ts">
+import { defineComponent, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { parseTime } from '@/utils'
+
+export default defineComponent({
+  name: 'TimePickerBox',
+  components: {},
+  props: {
+    startTime: {
+      type: Number,
+      default: null,
+    },
+    endTime: {
+      type: Number,
+      default: null,
+    },
+    partType: {
+      type: String,
+      default: '{y}/{m}/{d}',
+    },
+  },
+  emits: ['change'],
+  setup(props: any, { emit }: any) {
+    const i18n = useI18n()
+
+    const dateImage = new URL('@/assets/icons/clear.png', import.meta.url).href
+
+    const state = ref<any>([props.startTime, props.endTime])
+
+    const test = ref('')
+
+    watch(
+      () => [props.startTime, props.endTime],
+      ([sNewVal, eNewVal]) => {
+        state.value = [sNewVal, eNewVal]
+      },
+    )
+
+    function getOffsetTime(offset: number) {
+      return new Date(
+        parseTime(
+          new Date().getTime() - offset * 24 * 60 * 60 * 1000,
+          '{y}-{m}-{d}',
+        ) as any,
+      ).getTime()
+    }
+
+    const shortTimeArr = [
+      {
+        label: i18n.t('today'),
+        timeValue: {
+          start_time: getOffsetTime(0),
+          end_time: getOffsetTime(0),
+        },
+      },
+      {
+        label: '本周',
+        timeValue: {
+          start_time: getOffsetTime(6),
+          end_time: getOffsetTime(0),
+        },
+      },
+      {
+        label: '本月',
+        timeValue: {
+          start_time: getOffsetTime(29),
+          end_time: getOffsetTime(0),
+        },
+      },
+    ]
+
+    function pickerChange(val: any) {
+      changeTime({ start_time: val[0], end_time: val[1] })
+    }
+
+    function changeTime(newTime: { start_time: number; end_time: number }) {
+      if (
+        props.startTime === newTime.start_time
+        && props.endTime === newTime.end_time
+      ) {
+        return
+      }
+      emit('change', newTime)
+    }
+
+    return {
+      test,
+      parseTime,
+      state,
+      shortTimeArr,
+      changeTime,
+      dateImage,
+      pickerChange,
+    }
+  },
+})
+</script>
+
 <template>
   <div class="time-picker-box">
     <div class="picker-box">
@@ -11,10 +110,10 @@
         :clearable="false"
         :editable="false"
         format="YYYY/MM/DD"
-        @change="pickerChange"
         popper-class="picker-popper-box"
+        @change="pickerChange"
       />
-      <div class="delve"></div>
+      <div class="delve" />
       <LazyImage
         :img-url="dateImage"
         @click.stop="pickerChange([null, null])"
@@ -25,8 +124,8 @@
         <div
           :class="{
             active:
-              short.timeValue.start_time === startTime &&
-              short.timeValue.end_time === endTime,
+              short.timeValue.start_time === startTime
+              && short.timeValue.end_time === endTime,
           }"
           @click.stop="changeTime(short.timeValue)"
         >
@@ -37,107 +136,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, watch } from "vue";
-import { parseTime } from "@/utils";
-import { useI18n } from "vue-i18n";
-
-export default defineComponent({
-  name: "time-picker-box",
-  components: {},
-  props: {
-    startTime: {
-      type: Number,
-      default: null,
-    },
-    endTime: {
-      type: Number,
-      default: null,
-    },
-    partType: {
-      type: String,
-      default: "{y}/{m}/{d}",
-    },
-  },
-  emits: ["change"],
-  setup(props: any, { emit }: any) {
-    const i18n = useI18n();
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const dateImage = new URL("@/assets/icons/clear.png" ,import.meta.url).href;
-
-    const state = ref<any>([props.startTime, props.endTime]);
-
-    const test = ref("");
-
-    watch(
-      () => [props.startTime, props.endTime],
-      ([sNewVal, eNewVal]) => {
-        state.value = [sNewVal, eNewVal];
-      }
-    );
-
-    function getOffsetTime(offset: number) {
-      return new Date(
-        parseTime(
-          new Date().getTime() - offset * 24 * 60 * 60 * 1000,
-          "{y}-{m}-{d}"
-        ) as any
-      ).getTime();
-    }
-
-    const shortTimeArr = [
-      {
-        label: i18n.t("today"),
-        timeValue: {
-          start_time: getOffsetTime(0),
-          end_time: getOffsetTime(0),
-        },
-      },
-      {
-        label: "本周",
-        timeValue: {
-          start_time: getOffsetTime(6),
-          end_time: getOffsetTime(0),
-        },
-      },
-      {
-        label: "本月",
-        timeValue: {
-          start_time: getOffsetTime(29),
-          end_time: getOffsetTime(0),
-        },
-      },
-    ];
-
-    function pickerChange(val: any) {
-      changeTime({ start_time: val[0], end_time: val[1] });
-    }
-
-    function changeTime(newTime: { start_time: number; end_time: number }) {
-      if (
-        props.startTime === newTime.start_time &&
-        props.endTime === newTime.end_time
-      ) {
-        return;
-      }
-      emit("change", newTime);
-    }
-
-    return {
-      test,
-      parseTime,
-      state,
-      shortTimeArr,
-      changeTime,
-      dateImage,
-      pickerChange,
-    };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .time-picker-box {
   display: flex;

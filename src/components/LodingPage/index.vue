@@ -1,12 +1,8 @@
-<template>
-  <div class="index_load_page" v-show="sourceLoad"></div>
-</template>
-
 <script lang="ts">
-import { defineComponent, nextTick, ref } from "vue";
+import { defineComponent, nextTick, ref } from 'vue'
 
 export default defineComponent({
-  name: "globalLoading",
+  name: 'GlobalLoading',
   props: {
     period: {
       type: Number,
@@ -15,51 +11,55 @@ export default defineComponent({
   },
 
   setup(props) {
-    const percent = ref(0);
-    const sourceLoad = ref(true);
-    let timer: any = null;
+    const percent = ref(0)
+    const sourceLoad = ref(true)
+    let timer: any = null
 
     function loading() {
-      sourceLoad.value = true;
+      sourceLoad.value = true
       nextTick(() => {
-        let speed = 12;
+        let speed = 12
         timer = setInterval(() => {
-          percent.value += speed;
+          percent.value += speed
 
-          speed < 1 ? (speed = 1) : (speed = Math.floor(speed / 1.1));
+          speed < 1 ? (speed = 1) : (speed = Math.floor(speed / 1.1))
           if (percent.value > 99) {
-            percent.value = 99;
+            percent.value = 99
           }
-        }, 20);
+        }, 20)
 
         setTimeout(() => {
           if (timer) {
-            percent.value = 100;
-            sourceLoad.value = false;
-            clearInterval(timer);
-            timer = null;
+            percent.value = 100
+            sourceLoad.value = false
+            clearInterval(timer)
+            timer = null
           }
-        }, props.period * 1000);
-      });
+        }, props.period * 1000)
+      })
     }
 
     function done() {
       if (timer) {
-        percent.value = 100;
-        sourceLoad.value = false;
-        clearInterval(timer);
-        timer = null;
+        percent.value = 100
+        sourceLoad.value = false
+        clearInterval(timer)
+        timer = null
       }
     }
 
     function end() {
-      sourceLoad.value = false;
+      sourceLoad.value = false
     }
 
-    return { percent, sourceLoad, loading, done, end };
+    return { percent, sourceLoad, loading, done, end }
   },
-});
+})
 </script>
+
+<template>
+  <div v-show="sourceLoad" class="index_load_page" />
+</template>
 
 <style lang="scss" scoped>
 .index_load_page {

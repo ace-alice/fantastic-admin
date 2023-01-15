@@ -1,27 +1,27 @@
-import { computed, ref } from "vue";
-import { ElScrollbar } from "element-plus";
-import { useRoute } from "vue-router";
+import { computed, ref } from 'vue'
+import type { ElScrollbar } from 'element-plus'
+import { useRoute } from 'vue-router'
 
-export default function matchListToTopHook(routeName = "MatchList") {
-  const currentTop = ref(0);
+export default function matchListToTopHook(routeName = 'MatchList') {
+  const currentTop = ref(0)
 
-  const route = useRoute();
+  const route = useRoute()
 
   const hasToTop = computed(() => {
-    return currentTop.value > 100 && routeName === route.name;
-  });
+    return currentTop.value > 100 && routeName === route.name
+  })
 
   function scrollHandle({ scrollTop }: { scrollTop: number }) {
-    currentTop.value = scrollTop;
+    currentTop.value = scrollTop
   }
 
-  const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>();
+  const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 
   function toTopHandle() {
     if (scrollbarRef.value) {
-      scrollbarRef.value?.setScrollTop(0);
+      scrollbarRef.value?.setScrollTop(0)
     }
   }
 
-  return { hasToTop, scrollHandle, toTopHandle, scrollbarRef };
+  return { hasToTop, scrollHandle, toTopHandle, scrollbarRef }
 }

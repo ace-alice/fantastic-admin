@@ -1,3 +1,83 @@
+<script lang="ts">
+import type { Ref } from 'vue'
+import {
+  defineComponent,
+  getCurrentInstance,
+  nextTick,
+  onMounted,
+  ref,
+} from 'vue'
+import { getNoticeInfo } from '@/api/tools-api'
+
+export default defineComponent({
+  name: 'NoticeItem',
+  components: {},
+  setup() {
+    const scrollbarRef: Ref<any> = ref(null)
+    const noticeListRef: Ref<any> = ref(null)
+    let toScrollWidth: any
+    let currentScrollWidth = 0
+
+    let runTimer: any = null
+
+    function toRun() {
+      if (runTimer) {
+        clearInterval(runTimer)
+        runTimer = null
+      }
+      runTimer = setInterval(() => {
+        run()
+      }, 10)
+    }
+
+    function run() {
+      if (toScrollWidth > 0 && scrollbarRef.value) {
+        currentScrollWidth += 0.3
+        if (currentScrollWidth > toScrollWidth) {
+          currentScrollWidth = 0
+        }
+        scrollbarRef.value.setScrollLeft(currentScrollWidth)
+      }
+    }
+
+    const noticeList: Ref<any[]> = ref([])
+    // 获取公告列表
+    function getNoticeList(): Promise<Array<any>> {
+      return new Promise((resolve) => {
+        getNoticeInfo({ page: 1, limit: 10 }).then(({ data }: any) => {
+          if (+data.code === 1) {
+            resolve(data.data.data)
+          }
+          else {
+            resolve([])
+          }
+        })
+      })
+    }
+
+    const { proxy }: any = getCurrentInstance()
+
+    function toSeeMore() {
+      proxy.mittBus.emit('openUserCenterBus', 'BulletinListBox')
+    }
+
+    onMounted(() => {
+      nextTick(async () => {
+        noticeList.value = await getNoticeList()
+        setTimeout(() => {
+          if (noticeListRef.value) {
+            toScrollWidth
+              = noticeListRef.value.scrollWidth - noticeListRef.value.clientWidth
+          }
+          toRun()
+        }, 10)
+      })
+    })
+    return { noticeList, scrollbarRef, noticeListRef, toSeeMore }
+  },
+})
+</script>
+
 <template>
   <div class="NoticeItem" @click="toSeeMore">
     <div class="tag-title">
@@ -5,7 +85,7 @@
     </div>
     <div class="notice-box">
       <el-scrollbar ref="scrollbarRef">
-        <div class="notice-list" ref="noticeListRef">
+        <div ref="noticeListRef" class="notice-list">
           <div
             v-for="(notice, index) in noticeList"
             :key="index"
@@ -19,86 +99,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import {
-  defineComponent,
-  getCurrentInstance,
-  nextTick,
-  onMounted,
-  ref,
-  Ref,
-} from "vue";
-import { getNoticeInfo } from "@/api/tools-api";
-
-export default defineComponent({
-  name: "NoticeItem",
-  components: {},
-  setup() {
-    const scrollbarRef: Ref<any> = ref(null);
-    const noticeListRef: Ref<any> = ref(null);
-    let toScrollWidth: any;
-    let currentScrollWidth = 0;
-
-    let runTimer: any = null;
-
-    function toRun() {
-      if (runTimer) {
-        clearInterval(runTimer);
-        runTimer = null;
-      }
-      runTimer = setInterval(() => {
-        run();
-      }, 10);
-    }
-
-    function run() {
-      if (toScrollWidth > 0 && scrollbarRef.value) {
-        currentScrollWidth += 0.3;
-        if (currentScrollWidth > toScrollWidth) {
-          currentScrollWidth = 0;
-        }
-        scrollbarRef.value.setScrollLeft(currentScrollWidth);
-      }
-    }
-
-    const noticeList: Ref<any[]> = ref([]);
-    //获取公告列表
-    function getNoticeList(): Promise<Array<any>> {
-      return new Promise((resolve) => {
-        getNoticeInfo({ page: 1, limit: 10 }).then(({ data }: any) => {
-          if (+data.code === 1) {
-            resolve(data.data.data);
-          } else {
-            resolve([]);
-          }
-        });
-      });
-    }
-
-    const { proxy }: any = getCurrentInstance();
-
-    function toSeeMore() {
-      proxy.mittBus.emit("openUserCenterBus", "BulletinListBox");
-    }
-
-    onMounted(() => {
-      nextTick(async () => {
-        noticeList.value = await getNoticeList();
-        setTimeout(() => {
-          if (noticeListRef.value) {
-            toScrollWidth =
-              noticeListRef.value.scrollWidth - noticeListRef.value.clientWidth;
-          }
-          toRun();
-        }, 10);
-      });
-    });
-    return { noticeList, scrollbarRef, noticeListRef, toSeeMore };
-  },
-});
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .NoticeItem {
   flex-grow: 1;

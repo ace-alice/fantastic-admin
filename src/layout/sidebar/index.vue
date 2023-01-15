@@ -1,14 +1,150 @@
+<!-- eslint-disable @typescript-eslint/no-use-before-define -->
+<script lang="ts">
+import {
+  computed,
+  defineAsyncComponent,
+  getCurrentInstance,
+  nextTick,
+  onMounted,
+  provide,
+  ref,
+  watch,
+} from 'vue'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { userInfoStore } from '@/store/userInfo'
+const SideBarHeader = defineAsyncComponent(
+  () => import('./components/SideBarHeader/index.vue'),
+)
+const GameList = defineAsyncComponent(
+  () => import('./components/gameList/index.vue'),
+)
+const ShopCart = defineAsyncComponent(
+  () => import('./components/ShopCart/index.vue'),
+)
+
+const BetList = defineAsyncComponent(
+  () => import('./components/betList/index.vue'),
+)
+const PosterItem = defineAsyncComponent(
+  () => import('./components/PosterItem/index.vue'),
+)
+const LogoItem = defineAsyncComponent(
+  () => import('./components/LogoItem/index.vue'),
+)
+const ScheduleSidebar = defineAsyncComponent(
+  () => import('./components/ScheduleSidebar/index.vue'),
+)
+const NotLoginBox = defineAsyncComponent(
+  () => import('./components/NotLoginBox/index.vue'),
+)
+
+export default {
+
+  name: 'Sidebar',
+  components: {
+    SideBarHeader,
+    GameList,
+    BetList,
+    ShopCart,
+    PosterItem,
+    LogoItem,
+    ScheduleSidebar,
+    NotLoginBox,
+  },
+  setup() {
+    const isTradition = ref(document.body.clientWidth > 1199)
+
+    const leftIcon = new URL('@/assets/icons/prev.png', import.meta.url).href
+
+    const { isLogin } = storeToRefs(userInfoStore())
+
+    provide(
+      'isTradition',
+      computed(() => isTradition.value),
+    )
+
+    const oldSideBar = ref('GameList')
+
+    const currentSideBar = ref('GameList')
+
+    const changeCurrentSideBar = (sideBar: string) => {
+      oldSideBar.value = sideBar
+      if (!isTradition.value || isSchedule.value) {
+        return
+      }
+      currentSideBar.value = sideBar
+    }
+
+    function traditionStatus() {
+      if (isTradition.value && !isSchedule.value) {
+        oldSideBar.value = currentSideBar.value
+      }
+      if (!isSchedule.value) {
+        currentSideBar.value = 'GameList'
+      }
+      isTradition.value = !isTradition.value
+      if (isTradition.value && !isSchedule.value) {
+        setTimeout(() => {
+          currentSideBar.value = oldSideBar.value
+        }, 300)
+      }
+    }
+
+    const route = useRoute()
+
+    const isSchedule = ref(false)
+
+    const { proxy }: any = getCurrentInstance()
+
+    function routerName(newVal: string) {
+      if (['ScheduleList', 'ScheduleDetail'].includes(newVal)) {
+        currentSideBar.value = 'ScheduleSidebar'
+        isSchedule.value = true
+        return
+      }
+      if (['MatchList'].includes(newVal)) {
+        nextTick(() => {
+          proxy.mittBus.emit('changeCurrentSideBarBus', 'GameList')
+        })
+      }
+      isSchedule.value = false
+    }
+
+    watch(
+      () => route.name,
+      (newVal) => {
+        routerName(newVal as string)
+      },
+    )
+
+    onMounted(() => {
+      routerName(route.name as any)
+    })
+
+    return {
+      isTradition,
+      currentSideBar,
+      changeCurrentSideBar,
+      traditionStatus,
+      leftIcon,
+      oldSideBar,
+      isLogin,
+    }
+  },
+}
+</script>
+
 <template>
   <div
-    :class="{
-      sidebar: true,
+    class="sidebar" :class="{
       'not-sidebar-tradition': !isTradition,
     }"
   >
     <LogoItem />
     <SideBarHeader
-      @change="changeCurrentSideBar"
       v-show="currentSideBar !== 'ScheduleSidebar'"
+      @change="changeCurrentSideBar"
     />
     <div class="side-bar-box">
       <div class="main-box">
@@ -40,142 +176,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import {
-  ref,
-  defineAsyncComponent,
-  provide,
-  computed,
-  watch,
-  onMounted,
-  nextTick,
-  getCurrentInstance,
-} from "vue";
-import { useRoute } from "vue-router";
-import { storeToRefs } from "pinia";
-import { userInfoStore } from "@/store/userInfo";
-const SideBarHeader = defineAsyncComponent(
-  () => import("./components/SideBarHeader/index.vue")
-);
-const GameList = defineAsyncComponent(
-  () => import("./components/gameList/index.vue")
-);
-const ShopCart = defineAsyncComponent(
-  () => import("./components/ShopCart/index.vue")
-);
-
-const BetList = defineAsyncComponent(
-  () => import("./components/betList/index.vue")
-);
-const PosterItem = defineAsyncComponent(
-  () => import("./components/PosterItem/index.vue")
-);
-const LogoItem = defineAsyncComponent(
-  () => import("./components/LogoItem/index.vue")
-);
-const ScheduleSidebar = defineAsyncComponent(
-  () => import("./components/ScheduleSidebar/index.vue")
-);
-const NotLoginBox = defineAsyncComponent(
-  () => import("./components/NotLoginBox/index.vue")
-);
-
-export default {
-  // eslint-disable-next-line vue/multi-word-component-names
-  name: "sidebar",
-  components: {
-    SideBarHeader,
-    GameList,
-    BetList,
-    ShopCart,
-    PosterItem,
-    LogoItem,
-    ScheduleSidebar,
-    NotLoginBox,
-  },
-  setup() {
-    const isTradition = ref(document.body.clientWidth > 1199);
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const leftIcon = new URL("@/assets/icons/prev.png" ,import.meta.url).href;
-
-    const { isLogin } = storeToRefs(userInfoStore());
-
-    provide(
-      "isTradition",
-      computed(() => isTradition.value)
-    );
-
-    const oldSideBar = ref("GameList");
-
-    const currentSideBar = ref("GameList");
-
-    const changeCurrentSideBar = (sideBar: string) => {
-      oldSideBar.value = sideBar;
-      if (!isTradition.value || isSchedule.value) return;
-      currentSideBar.value = sideBar;
-    };
-
-    function traditionStatus() {
-      if (isTradition.value && !isSchedule.value) {
-        oldSideBar.value = currentSideBar.value;
-      }
-      if (!isSchedule.value) {
-        currentSideBar.value = "GameList";
-      }
-      isTradition.value = !isTradition.value;
-      if (isTradition.value && !isSchedule.value) {
-        setTimeout(() => {
-          currentSideBar.value = oldSideBar.value;
-        }, 300);
-      }
-    }
-
-    const route = useRoute();
-
-    const isSchedule = ref(false);
-
-    const { proxy }: any = getCurrentInstance();
-
-    function routerName(newVal: string) {
-      if (["ScheduleList", "ScheduleDetail"].includes(newVal)) {
-        currentSideBar.value = "ScheduleSidebar";
-        isSchedule.value = true;
-        return;
-      }
-      if (["MatchList"].includes(newVal)) {
-        nextTick(() => {
-          proxy.mittBus.emit("changeCurrentSideBarBus", "GameList");
-        });
-      }
-      isSchedule.value = false;
-    }
-
-    watch(
-      () => route.name,
-      (newVal) => {
-        routerName(newVal as string);
-      }
-    );
-
-    onMounted(() => {
-      routerName(route.name as any);
-    });
-
-    return {
-      isTradition,
-      currentSideBar,
-      changeCurrentSideBar,
-      traditionStatus,
-      leftIcon,
-      oldSideBar,
-      isLogin,
-    };
-  },
-};
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style lang="scss" scoped>
 .not-sidebar-tradition {
   width: 88px !important;

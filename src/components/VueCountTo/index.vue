@@ -1,18 +1,12 @@
-<template>
-  <span>
-    {{ displayValue }}
-  </span>
-</template>
-
 <script lang="ts">
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import {
-  requestAnimationFrame,
   cancelAnimationFrame,
-} from "./requestAnimationFrame";
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
+  requestAnimationFrame,
+} from './requestAnimationFrame'
 
 export default {
-  name: "VueCountTo",
+  name: 'VueCountTo',
   props: {
     startVal: {
       type: Number,
@@ -39,28 +33,28 @@ export default {
       required: false,
       default: 2,
       validator(value: number) {
-        return value >= 0;
+        return value >= 0
       },
     },
     decimal: {
       type: String,
       required: false,
-      default: ".",
+      default: '.',
     },
     separator: {
       type: String,
       required: false,
-      default: ",",
+      default: ',',
     },
     prefix: {
       type: String,
       required: false,
-      default: "",
+      default: '',
     },
     suffix: {
       type: String,
       required: false,
-      default: "",
+      default: '',
     },
     useEasing: {
       type: Boolean,
@@ -70,31 +64,31 @@ export default {
     easingFn: {
       type: Function,
       default(t: number, b: number, c: number, d: number) {
-        return (c * (-Math.pow(2, (-10 * t) / d) + 1) * 1024) / 1023 + b;
+        return (c * (-(2 ** ((-10 * t) / d)) + 1) * 1024) / 1023 + b
       },
     },
   },
-  emits: ["callback", "mountedCallback"],
+  emits: ['callback', 'mountedCallback'],
   setup(props: any, { emit }: any) {
     function isNumber(val: any) {
-      return !isNaN(parseFloat(val));
+      return !isNaN(parseFloat(val))
     }
     function formatNumber(num: any) {
-      num = num.toFixed(props.decimals);
-      num += "";
-      const x = num.split(".");
-      let x1 = x[0];
-      const x2 = x.length > 1 ? props.decimal + x[1] : "";
-      const rgx = /(\d+)(\d{3})/;
+      num = num.toFixed(props.decimals)
+      num += ''
+      const x = num.split('.')
+      let x1 = x[0]
+      const x2 = x.length > 1 ? props.decimal + x[1] : ''
+      const rgx = /(\d+)(\d{3})/
       if (props.separator && !isNumber(props.separator)) {
         while (rgx.test(x1)) {
-          x1 = x1.replace(rgx, "$1" + props.separator + "$2");
+          x1 = x1.replace(rgx, `$1${props.separator}$2`)
         }
       }
-      return props.prefix + x1 + x2 + props.suffix;
+      return props.prefix + x1 + x2 + props.suffix
     }
 
-    const displayValue = ref(formatNumber(props.startVal));
+    const displayValue = ref(formatNumber(props.startVal))
 
     const state: any = {
       localStartVal: props.startVal,
@@ -105,130 +99,143 @@ export default {
       timestamp: null,
       remaining: null,
       rAF: null,
-    };
+    }
 
     function start() {
-      state.localStartVal = props.startVal;
-      state.startTime = null;
-      state.localDuration = props.duration;
-      state.paused = false;
-      state.rAF = requestAnimationFrame(count);
+      state.localStartVal = props.startVal
+      state.startTime = null
+      state.localDuration = props.duration
+      state.paused = false
+      state.rAF = requestAnimationFrame(count)
     }
 
     const countDown = computed(() => {
-      return props.startVal > props.endVal;
-    });
+      return props.startVal > props.endVal
+    })
 
     function count(timestamp: number) {
-      if (!state.startTime) state.startTime = timestamp;
-      state.timestamp = timestamp;
-      const progress = timestamp - state.startTime;
-      state.remaining = state.localDuration - progress;
+      if (!state.startTime) {
+        state.startTime = timestamp
+      }
+      state.timestamp = timestamp
+      const progress = timestamp - state.startTime
+      state.remaining = state.localDuration - progress
 
       if (props.useEasing) {
         if (countDown.value) {
-          state.printVal =
-            state.localStartVal -
-            props.easingFn(
+          state.printVal
+            = state.localStartVal
+            - props.easingFn(
               progress,
               0,
               state.localStartVal - props.endVal,
-              state.localDuration
-            );
-        } else {
+              state.localDuration,
+            )
+        }
+        else {
           state.printVal = props.easingFn(
             progress,
             state.localStartVal,
             props.endVal - state.localStartVal,
-            state.localDuration
-          );
+            state.localDuration,
+          )
         }
-      } else {
+      }
+      else {
         if (countDown.value) {
-          state.printVal =
-            state.localStartVal -
-            (state.localStartVal - props.endVal) *
-              (progress / state.localDuration);
-        } else {
-          state.printVal =
-            state.localStartVal +
-            (props.endVal - state.localStartVal) *
-              (progress / state.localDuration);
+          state.printVal
+            = state.localStartVal
+            - (state.localStartVal - props.endVal)
+              * (progress / state.localDuration)
+        }
+        else {
+          state.printVal
+            = state.localStartVal
+            + (props.endVal - state.localStartVal)
+              * (progress / state.localDuration)
         }
       }
       if (countDown.value) {
-        state.printVal =
-          state.printVal < props.endVal ? props.endVal : state.printVal;
-      } else {
-        state.printVal =
-          state.printVal > props.endVal ? props.endVal : state.printVal;
+        state.printVal
+          = state.printVal < props.endVal ? props.endVal : state.printVal
+      }
+      else {
+        state.printVal
+          = state.printVal > props.endVal ? props.endVal : state.printVal
       }
 
-      displayValue.value = formatNumber(state.printVal);
+      displayValue.value = formatNumber(state.printVal)
       if (progress < state.localDuration) {
-        state.rAF = requestAnimationFrame(count);
-      } else {
-        emit("callback");
+        state.rAF = requestAnimationFrame(count)
+      }
+      else {
+        emit('callback')
       }
     }
 
     function pause() {
-      cancelAnimationFrame(state.rAF);
+      cancelAnimationFrame(state.rAF)
     }
     function resume() {
-      state.startTime = null;
-      state.localDuration = +state.remaining;
-      state.localStartVal = +state.printVal;
-      requestAnimationFrame(count);
+      state.startTime = null
+      state.localDuration = +state.remaining
+      state.localStartVal = +state.printVal
+      requestAnimationFrame(count)
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function pauseResume() {
       if (state.paused) {
-        resume();
-        state.paused = false;
-      } else {
-        pause();
-        state.paused = true;
+        resume()
+        state.paused = false
+      }
+      else {
+        pause()
+        state.paused = true
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     function reset() {
-      state.startTime = null;
-      cancelAnimationFrame(state.rAF);
-      displayValue.value = formatNumber(state.startVal);
+      state.startTime = null
+      cancelAnimationFrame(state.rAF)
+      displayValue.value = formatNumber(state.startVal)
     }
 
     watch(
       () => props.startVal,
       () => {
         if (props.autoplay) {
-          start();
+          start()
         }
-      }
-    );
+      },
+    )
 
     watch(
       () => props.endVal,
       () => {
         if (props.autoplay) {
-          start();
+          start()
         }
-      }
-    );
+      },
+    )
 
     onMounted(() => {
       if (props.autoplay) {
-        start();
+        start()
       }
-      emit("mountedCallback");
-    });
+      emit('mountedCallback')
+    })
 
     onUnmounted(() => {
-      cancelAnimationFrame(state.rAF);
-    });
+      cancelAnimationFrame(state.rAF)
+    })
 
-    return { displayValue };
+    return { displayValue }
   },
-};
+}
 </script>
+
+<template>
+  <span>
+    {{ displayValue }}
+  </span>
+</template>

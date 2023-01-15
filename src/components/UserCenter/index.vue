@@ -1,11 +1,67 @@
+<script lang="ts">
+import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { userInfoStore } from '@/store/userInfo'
+import CenterHeader from '@/components/UserCenter/components/CenterHeader.vue'
+import RulesBox from '@/components/UserCenter/components/RulesBox.vue'
+import BetHistoryBox from '@/components/UserCenter/components/BetHistoryBox.vue'
+import BulletinListBox from '@/components/UserCenter/components/BulletinListBox.vue'
+import AccountChangeBox from '@/components/UserCenter/components/AccountChangeBox.vue'
+export default {
+  name: 'IaUserCenter',
+  components: {
+    CenterHeader,
+    RulesBox,
+    BetHistoryBox,
+    BulletinListBox,
+    AccountChangeBox,
+  },
+  setup() {
+    const { proxy }: any = getCurrentInstance()
+
+    const showCommon = ref(false)
+
+    const closeImage = new URL('@/assets/icons/closed.png', import.meta.url).href
+
+    const { isLogin } = storeToRefs(userInfoStore())
+
+    const currentComponentName = ref('BetHistoryBox')
+
+    function changeComponentName(cName: string) {
+      currentComponentName.value = cName
+    }
+
+    onMounted(() => {
+      proxy.mittBus.on('openUserCenterBus', (cName: string) => {
+        if (isLogin.value) {
+          currentComponentName.value = cName
+          showCommon.value = true
+        }
+      })
+    })
+
+    onUnmounted(() => {
+      proxy.mittBus.off('openUserCenterBus')
+    })
+
+    return {
+      showCommon,
+      closeImage,
+      currentComponentName,
+      changeComponentName,
+    }
+  },
+}
+</script>
+
 <template>
   <div
-    :class="{ 'common-layout': true, 'show-common': showCommon }"
+    class="common-layout" :class="{ 'show-common': showCommon }"
     @click.stop="showCommon = false"
   >
     <div class="common-box" @click.stop>
       <CenterHeader
-        :boxName="currentComponentName"
+        :box-name="currentComponentName"
         @change="changeComponentName"
       />
       <component :is="currentComponentName" :key="currentComponentName" />
@@ -18,64 +74,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import { getCurrentInstance, onMounted, onUnmounted, ref } from "vue";
-import { storeToRefs } from "pinia";
-import { userInfoStore } from "@/store/userInfo";
-import CenterHeader from "@/components/UserCenter/components/CenterHeader.vue";
-import RulesBox from "@/components/UserCenter/components/RulesBox.vue";
-import BetHistoryBox from "@/components/UserCenter/components/BetHistoryBox.vue";
-import BulletinListBox from "@/components/UserCenter/components/BulletinListBox.vue";
-import AccountChangeBox from "@/components/UserCenter/components/AccountChangeBox.vue";
-export default {
-  name: "ia-user-center",
-  components: {
-    CenterHeader,
-    RulesBox,
-    BetHistoryBox,
-    BulletinListBox,
-    AccountChangeBox,
-  },
-  setup() {
-    const { proxy }: any = getCurrentInstance();
-
-    const showCommon = ref(false);
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const closeImage = new URL("@/assets/icons/closed.png" ,import.meta.url).href;
-
-    const { isLogin } = storeToRefs(userInfoStore());
-
-    const currentComponentName = ref("BetHistoryBox");
-
-    function changeComponentName(cName: string) {
-      currentComponentName.value = cName;
-    }
-
-    onMounted(() => {
-      proxy.mittBus.on("openUserCenterBus", (cName: string) => {
-        if (isLogin.value) {
-          currentComponentName.value = cName;
-          showCommon.value = true;
-        }
-      });
-    });
-
-    onUnmounted(() => {
-      proxy.mittBus.off("openUserCenterBus");
-    });
-
-    return {
-      showCommon,
-      closeImage,
-      currentComponentName,
-      changeComponentName,
-    };
-  },
-};
-</script>
-
-<!--suppress CssInvalidPseudoSelector -->
+<!-- suppress CssInvalidPseudoSelector -->
 <style scoped lang="scss">
 .common-layout {
   position: fixed;

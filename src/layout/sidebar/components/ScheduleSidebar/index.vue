@@ -1,32 +1,32 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { storeToRefs } from 'pinia'
+import { scheduleInfoStore } from '@/store/scheduleInfo'
+import ScheduleGameItem from '@/layout/sidebar/components/ScheduleSidebar/components/ScheduleGameItem.vue'
+
+export default defineComponent({
+  name: 'ScheduleSidebar',
+  components: { ScheduleGameItem },
+  setup() {
+    const { gameScheduleList } = storeToRefs(scheduleInfoStore())
+
+    return { gameScheduleList }
+  },
+})
+</script>
+
 <template>
   <div class="schedule-sidebar">
     <el-scrollbar>
       <ScheduleGameItem
         v-for="(item, index) in gameScheduleList"
-        :item-info="item"
         :key="item.id"
-        :style="{ '--margin-top': 48 + index * 5 + 'px' }"
+        :item-info="item"
+        :style="{ '--margin-top': `${48 + index * 5}px` }"
       />
     </el-scrollbar>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { storeToRefs } from "pinia";
-import { scheduleInfoStore } from "@/store/scheduleInfo";
-import ScheduleGameItem from "@/layout/sidebar/components/ScheduleSidebar/components/ScheduleGameItem.vue";
-
-export default defineComponent({
-  name: "schedule-sidebar",
-  components: { ScheduleGameItem },
-  setup() {
-    const { gameScheduleList } = storeToRefs(scheduleInfoStore());
-
-    return { gameScheduleList };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .schedule-sidebar {

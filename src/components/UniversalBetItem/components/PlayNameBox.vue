@@ -1,21 +1,59 @@
+<script lang="ts">
+import { computed, defineAsyncComponent, defineComponent } from 'vue'
+import { setItemName } from '@/utils'
+const ThirdTeamBox = defineAsyncComponent(() => import('./ThirdTeamBox.vue'))
+
+export default defineComponent({
+  name: 'PlayNameBox',
+  components: { ThirdTeamBox },
+  props: {
+    itemInfo: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  setup(props) {
+    const hasPlayInfo = computed(() => {
+      return (
+        !(Array.isArray(props.itemInfo.recommend_play))
+        && props.itemInfo.recommend_play.id
+      )
+    })
+
+    const hasTeam3 = computed(() => {
+      return (
+        hasPlayInfo.value
+        && props.itemInfo.recommend_play.team_points
+        && props.itemInfo.recommend_play.team_points[2]
+      )
+    })
+    return { hasPlayInfo, hasTeam3, setItemName }
+  },
+})
+</script>
+
 <template>
   <div class="PlayNameBox">
-    <ThirdTeamBox v-if="hasTeam3" :index="2" :itemInfo="itemInfo" />
+    <ThirdTeamBox v-if="hasTeam3" :index="2" :item-info="itemInfo" />
     <template v-else>
-      <div class="score">{{ itemInfo.score_1 }} - {{ itemInfo.score_2 }}</div>
-      <div class="play-name" v-if="hasTeam3 && hasPlayInfo">
+      <div class="score">
+        {{ itemInfo.score_1 }} - {{ itemInfo.score_2 }}
+      </div>
+      <div v-if="hasTeam3 && hasPlayInfo" class="play-name">
         {{ itemInfo.recommend_play.name }}
       </div>
-      <div class="play-name" v-if="!hasTeam3 && hasPlayInfo">
+      <div v-if="!hasTeam3 && hasPlayInfo" class="play-name">
         <span
           v-tooltip="{
             width: 53,
             message: `${
               +itemInfo.recommend_play.match !== 0
                 ? setItemName(
-                    +itemInfo.recommend_play.match,
-                    itemInfo.game_lang
-                  )
+                  +itemInfo.recommend_play.match,
+                  itemInfo.game_lang,
+                )
                 : ''
             } ${itemInfo.recommend_play.name}`,
           }"
@@ -23,48 +61,11 @@
           <span v-if="+itemInfo.recommend_play.match !== 0">{{
             setItemName(+itemInfo.recommend_play.match, itemInfo.game_lang)
           }}</span>
-          {{ itemInfo.recommend_play.name }}</span
-        >
+          {{ itemInfo.recommend_play.name }}</span>
       </div>
     </template>
   </div>
 </template>
-
-<script lang="ts">
-import { computed, defineAsyncComponent, defineComponent } from "vue";
-import { setItemName } from "@/utils";
-const ThirdTeamBox = defineAsyncComponent(() => import("./ThirdTeamBox.vue"));
-
-export default defineComponent({
-  name: "PlayNameBox",
-  components: { ThirdTeamBox },
-  props: {
-    itemInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-  },
-  setup(props) {
-    const hasPlayInfo = computed(() => {
-      return (
-        !(props.itemInfo.recommend_play instanceof Array) &&
-        props.itemInfo.recommend_play.id
-      );
-    });
-
-    const hasTeam3 = computed(() => {
-      return (
-        hasPlayInfo.value &&
-        props.itemInfo.recommend_play.team_points &&
-        props.itemInfo.recommend_play.team_points[2]
-      );
-    });
-    return { hasPlayInfo, hasTeam3, setItemName };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .PlayNameBox {

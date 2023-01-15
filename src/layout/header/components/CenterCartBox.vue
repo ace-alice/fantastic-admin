@@ -1,7 +1,82 @@
+<script lang="ts">
+import { computed, defineComponent, getCurrentInstance, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
+import CountTo from '@/components/VueCountTo/index.vue'
+import { userInfoStore } from '@/store/userInfo'
+
+export default defineComponent({
+  name: 'CenterCartBox',
+  components: { CountTo },
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup() {
+    const i18n = useI18n()
+
+    const { balanceInfo, currentCurrencyInfo, avatarId } = storeToRefs(
+      userInfoStore(),
+    )
+
+    const avatarImg = computed(() => {
+      return new URL(`@/assets/avatar/image-${
+        +avatarId.value > 0 && +avatarId.value < 16 ? avatarId.value : 1
+      }.png`, import.meta.url).href
+    })
+
+    const startVal = ref(0)
+
+    watch(
+      () => balanceInfo.value.amount,
+      (newVal, oldVal) => {
+        startVal.value = (oldVal as any) || 0
+      },
+    )
+
+    const tabs = [
+      {
+        label: '更换头像',
+        code: 'AccountChangeBox',
+      },
+      {
+        label: i18n.t('bet_records'),
+        code: 'BetHistoryBox',
+      },
+      // {
+      //   label: "账变记录",
+      //   code: "AccountChangeBox",
+      // },
+      {
+        label: i18n.t('the_announcement'),
+        code: 'BulletinListBox',
+      },
+    ]
+
+    const { proxy }: any = getCurrentInstance()
+
+    function toOpenCenter(code: string) {
+      proxy.mittBus.emit('openUserCenterBus', code)
+    }
+
+    return {
+      balanceInfo,
+      avatarImg,
+      tabs,
+      toOpenCenter,
+      startVal,
+      currentCurrencyInfo,
+    }
+  },
+})
+</script>
+
 <template>
-  <div :class="{ CenterCartBox: true, 'hidden-box': !show }">
+  <div class="CenterCartBox" :class="{ 'hidden-box': !show }">
     <div class="user-info">
-      <LazyImage :img-url="avatarImg"></LazyImage>
+      <LazyImage :img-url="avatarImg" />
       <div class="amount-name">
         <div>
           {{
@@ -15,8 +90,8 @@
             {{ currentCurrencyInfo?.symbol || "" }}
           </span>
           <CountTo
-            :startVal="Number(startVal)"
-            :endVal="Number(balanceInfo.amount)"
+            :start-val="Number(startVal)"
+            :end-val="Number(balanceInfo.amount)"
             :duration="1000"
           />
         </div>
@@ -24,9 +99,9 @@
     </div>
     <div class="router-list">
       <div
-        class="router-tab"
         v-for="tab in tabs"
         :key="tab.code"
+        class="router-tab"
         @click.stop="toOpenCenter(tab.code)"
       >
         {{ tab.label }}
@@ -34,82 +109,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { computed, defineComponent, getCurrentInstance, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import CountTo from "@/components/VueCountTo/index.vue";
-import { storeToRefs } from "pinia";
-import { userInfoStore } from "@/store/userInfo";
-
-export default defineComponent({
-  name: "CenterCartBox",
-  components: { CountTo },
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup() {
-    const i18n = useI18n();
-
-    const { balanceInfo, currentCurrencyInfo, avatarId } = storeToRefs(
-      userInfoStore()
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const avatarImg = computed(() => {
-      return new URL(`@/assets/avatar/image-${
-        +avatarId.value > 0 && +avatarId.value < 16 ? avatarId.value : 1
-      }.png`, import.meta.url).href;
-    });
-
-    const startVal = ref(0);
-
-    watch(
-      () => balanceInfo.value.amount,
-      (newVal, oldVal) => {
-        startVal.value = (oldVal as any) || 0;
-      }
-    );
-
-    const tabs = [
-      {
-        label: "更换头像",
-        code: "AccountChangeBox",
-      },
-      {
-        label: i18n.t("bet_records"),
-        code: "BetHistoryBox",
-      },
-      // {
-      //   label: "账变记录",
-      //   code: "AccountChangeBox",
-      // },
-      {
-        label: i18n.t("the_announcement"),
-        code: "BulletinListBox",
-      },
-    ];
-
-    const { proxy }: any = getCurrentInstance();
-
-    function toOpenCenter(code: string) {
-      proxy.mittBus.emit("openUserCenterBus", code);
-    }
-
-    return {
-      balanceInfo,
-      avatarImg,
-      tabs,
-      toOpenCenter,
-      startVal,
-      currentCurrencyInfo,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .CenterCartBox {

@@ -1,44 +1,23 @@
-<template>
-  <div class="schedule-header">
-    <LazyImage :img-url="prevImg" class="back-btn" @click.stop="goBack" />
-    <div class="schedule-title-1">{{ $t("schedule") }}</div>
-    <div class="zone-tabs">
-      <div
-        :class="{
-          'zone-tab': true,
-          'active-tab': currentZoneId === event['zone_id'],
-        }"
-        v-for="event in currentZoneList"
-        :key="event['zone_id']"
-        @click.stop="changeCurrentZoneId(event['zone_id'])"
-      >
-        <div class="zone-tag">{{ event["zone_name"] }}</div>
-        <!--        <div>{{ event["zone_name"] }}</div>-->
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
-import { defineComponent } from "vue";
-import useImageResource from "@/hooks/useImageResource";
-import useRouteHook from "@/hooks/useRouteHook";
-import { storeToRefs } from "pinia";
-import { scheduleInfoStore } from "@/store/scheduleInfo";
+import { defineComponent } from 'vue'
+import { storeToRefs } from 'pinia'
+import useImageResource from '@/hooks/useImageResource'
+import useRouteHook from '@/hooks/useRouteHook'
+import { scheduleInfoStore } from '@/store/scheduleInfo'
 
 export default defineComponent({
-  name: "schedule-header",
+  name: 'ScheduleHeader',
   components: {},
   setup() {
-    const { prevImg } = useImageResource();
-    const { routerJump } = useRouteHook();
+    const { prevImg } = useImageResource()
+    const { routerJump } = useRouteHook()
 
-    const { currentZoneList, currentZoneId } = storeToRefs(scheduleInfoStore());
-    const { changeCurrentZoneId } = scheduleInfoStore();
+    const { currentZoneList, currentZoneId } = storeToRefs(scheduleInfoStore())
+    const { changeCurrentZoneId } = scheduleInfoStore()
 
     const goBack = () => {
-      routerJump("MatchList");
-    };
+      routerJump('MatchList')
+    }
 
     return {
       prevImg,
@@ -46,10 +25,34 @@ export default defineComponent({
       currentZoneList,
       currentZoneId,
       changeCurrentZoneId,
-    };
+    }
   },
-});
+})
 </script>
+
+<template>
+  <div class="schedule-header">
+    <LazyImage :img-url="prevImg" class="back-btn" @click.stop="goBack" />
+    <div class="schedule-title-1">
+      {{ $t("schedule") }}
+    </div>
+    <div class="zone-tabs">
+      <div
+        v-for="event in currentZoneList" :key="event.zone_id"
+        class="zone-tab"
+        :class="{
+          'active-tab': currentZoneId === event.zone_id,
+        }"
+        @click.stop="changeCurrentZoneId(event.zone_id)"
+      >
+        <div class="zone-tag">
+          {{ event.zone_name }}
+        </div>
+        <!--        <div>{{ event["zone_name"] }}</div> -->
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .schedule-header {
