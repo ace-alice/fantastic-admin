@@ -15,16 +15,16 @@ export default {
         return {}
       },
     },
-    // shopAmount: {
-    //   type: [Number, undefined, null],
-    //   default: null,
-    // },
+    shopAmount: {
+      type: Object as PropType<any>,
+      default: null,
+    },
   },
   emits: ['changeAmountEmit'],
   setup(props: any, { emit }: any) {
     const { changeShopCartElement } = shopCartStore()
     const { lockIcon, closeImg, betTitleImg } = useImageResource()
-    const betCount: Ref<number | undefined> = ref(props.shopAmount)
+    const betCount: Ref<any> = ref(Number(props.shopAmount) || null)
     const showFastNumber = ref(false)
 
     function showFastNumberFun(tag: boolean) {
@@ -136,7 +136,7 @@ export default {
     }"
   >
     <div class="header">
-      <LazyImage :img-url="itemInfo.game_logo" />
+      <LazyImage :img-url="itemInfo.game_logo || ''" />
       <span
         v-tooltip="{ width: 150, message: itemInfo.event_name }"
         class="text"

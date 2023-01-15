@@ -96,11 +96,11 @@ export default {
     <LazyImage :img-url="prevImg" class="back-btn" @click.stop="goBack" />
     <div class="bo-event-name">
       <div>
-        <LazyImage :img-url="matchInfo.game_logo" />
+        <LazyImage :img-url="matchInfo.game_type_logo" />
         <div>{{ matchInfo.event_name || "IA ESPORT" }}</div>
       </div>
       <div>
-        <div>BO{{ matchInfo.bo }}</div>
+        <div>BO{{ matchInfo.matches }}</div>
         <LiveIcon v-show="+matchInfo.category_id === 3" />
       </div>
     </div>

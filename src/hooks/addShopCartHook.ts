@@ -140,7 +140,7 @@ export default function addShopCartHook() {
     else {
       const getInfoFun
         = betType === 'parlay' ? getParlayOddInfoList : getSingleOddInfoList
-      getInfoFun({ point_id: teamPoint.id })
+      getInfoFun({ game_id: playInfo.game_id, play_id: playInfo.id, point_id: teamPoint.id })
         .then((res: any) => {
           if (+res.data.code === 1) {
             const tempElement = createShopCartElement(
