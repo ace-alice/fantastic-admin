@@ -8,18 +8,7 @@ import { shopCartStore } from '@/store/shopCart'
 export default {
   name: 'IaShopItemOne',
   components: {},
-  props: {
-    itemInfo: {
-      type: Object as PropType<any>,
-      default: () => {
-        return {}
-      },
-    },
-    shopAmount: {
-      type: Object as PropType<any>,
-      default: null,
-    },
-  },
+  props: ['itemInfo', 'shopAmount'],
   emits: ['changeAmountEmit'],
   setup(props: any, { emit }: any) {
     const { changeShopCartElement } = shopCartStore()
@@ -36,13 +25,13 @@ export default {
     const fastNumber = ref([
       props.itemInfo.money_min,
       Math.floor(
-        (props.itemInfo.money_max - props.itemInfo.money_min) / 4
-          + props.itemInfo.money_min,
-      ),
+        ((props.itemInfo.money_max - props.itemInfo.money_min) / 4
+          + props.itemInfo.money_min) / 10,
+      ) * 10,
       Math.floor(
-        (props.itemInfo.money_max - props.itemInfo.money_min) / 2
-          + props.itemInfo.money_min,
-      ),
+        ((props.itemInfo.money_max - props.itemInfo.money_min) / 2
+          + props.itemInfo.money_min) / 10,
+      ) * 10,
       props.itemInfo.money_max,
     ])
 

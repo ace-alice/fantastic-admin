@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { storeToRefs } from 'pinia'
+import ScheduleCard from './components/ScheduleCard.vue'
 import { scheduleInfoStore } from '@/store/scheduleInfo'
-import ScheduleCard from '@/views/schedule-list/components/schedule-content/components/ScheduleCard.vue'
 import EmptyBox from '@/components/Empty/index.vue'
 import matchListToTopHook from '@/hooks/matchListToTopHook'
 import ToTopBox from '@/components/ToTopBox/index.vue'

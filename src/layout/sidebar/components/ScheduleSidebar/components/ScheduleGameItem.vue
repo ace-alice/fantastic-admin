@@ -3,6 +3,7 @@ import { defineComponent, inject } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { scheduleInfoStore } from '@/store/scheduleInfo'
+import useImageResource from '@/hooks/useImageResource'
 
 export default defineComponent({
   name: 'ScheduleGameItem',
@@ -24,9 +25,11 @@ export default defineComponent({
 
     const hasBanner = ['1', 1, '2', 2, '3', 3, '16', 16, 28, '28', 12, '12']
 
-    const gameBanner = new URL(`@/assets/images/image_${
+    const imageResource: any = useImageResource()
+
+    const gameBanner = imageResource[`scheduleGameBg_${
       hasBanner.includes(props.itemInfo.id) ? props.itemInfo.id : '1'
-    }.png`, import.meta.url).href
+    }`]
 
     const route = useRoute()
 

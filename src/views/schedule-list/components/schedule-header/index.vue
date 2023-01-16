@@ -78,6 +78,7 @@ export default defineComponent({
     }
     .zone-tab {
       cursor: url("@/assets/icons/home_mouse.png"), auto;
+      margin-right: 40px;
       .zone-tag {
         height: 24px;
         padding: 0 24px;
@@ -88,9 +89,6 @@ export default defineComponent({
         color: #ffffff;
         font-weight: 500;
       }
-    }
-    & + .zone-tab {
-      margin-left: 40px;
     }
   }
   .back-btn {

@@ -46,6 +46,18 @@ import yxlm_02 from '@/assets/banner/yxlm_02.png'
 import yxlm_03 from '@/assets/banner/yxlm_03.png'
 import yxlm_04 from '@/assets/banner/yxlm_04.png'
 
+import scheduleGameBg_1 from '@/assets/images/image_1.png'
+import scheduleGameBg_2 from '@/assets/images/image_2.png'
+import scheduleGameBg_3 from '@/assets/images/image_3.png'
+import scheduleGameBg_12 from '@/assets/images/image_12.png'
+import scheduleGameBg_16 from '@/assets/images/image_16.png'
+import scheduleGameBg_28 from '@/assets/images/image_28.png'
+
+import scheduleCardBg_1 from '@/assets/images/card-1.png'
+import scheduleCardBg_2 from '@/assets/images/card-2.png'
+import scheduleCardBg_3 from '@/assets/images/card-3.png'
+import scheduleCardBg_16 from '@/assets/images/card-16.png'
+
 export default function useImageResource() {
   return {
     liveIcon,
@@ -90,5 +102,15 @@ export default function useImageResource() {
     yxlm_02,
     yxlm_03,
     yxlm_04,
+    scheduleGameBg_1,
+    scheduleGameBg_3,
+    scheduleGameBg_12,
+    scheduleGameBg_16,
+    scheduleGameBg_28,
+    scheduleGameBg_2,
+    scheduleCardBg_1,
+    scheduleCardBg_2,
+    scheduleCardBg_3,
+    scheduleCardBg_16,
   }
 }

@@ -70,7 +70,7 @@ export default defineComponent({
   <div class="universal-bet-item" @click.stop="toMatchDetail">
     <UnLogoDateBox
       :data-info="{
-        logo: matchInfo.game_logo,
+        logo: matchInfo.game_type_logo,
         startTime: matchInfo.game_start_time,
         isLive: +matchInfo.category_id === 3,
       }"

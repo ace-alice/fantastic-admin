@@ -9,16 +9,16 @@ import {
   ref,
 } from 'vue'
 import type { ElScrollbar } from 'element-plus'
-const TeamBox = defineAsyncComponent(
+const ScheduleTeamBox = defineAsyncComponent(
   () => import('./components/team-box/index.vue'),
 )
-const MatchInfoBox = defineAsyncComponent(
+const ScheduleMatchInfoBox = defineAsyncComponent(
   () => import('./components/match-info-box/index.vue'),
 )
 
 export default defineComponent({
   name: 'ScheduleDetailContent',
-  components: { TeamBox, MatchInfoBox },
+  components: { ScheduleTeamBox, ScheduleMatchInfoBox },
   setup() {
     const detailContentRef: Ref<InstanceType<typeof ElScrollbar> | null>
       = ref(null)
@@ -56,8 +56,8 @@ export default defineComponent({
 
 <template>
   <div class="schedule-detail-content">
-    <TeamBox @setFlag="setFlag" />
-    <MatchInfoBox @setFlag="setFlag" />
+    <ScheduleTeamBox @setFlag="setFlag" />
+    <ScheduleMatchInfoBox @setFlag="setFlag" />
   </div>
 </template>
 

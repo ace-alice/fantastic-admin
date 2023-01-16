@@ -62,7 +62,7 @@ export default defineComponent({
     }"
   >
     <div class="champion-header">
-      <LazyImage :img-url="matchInfo.game_logo" />
+      <LazyImage :img-url="matchInfo.game_type_logo" />
       <div class="event-name">
         {{ matchInfo.event_name || "IA ESPORT" }}
       </div>

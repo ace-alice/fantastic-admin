@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import { countdownHook } from '@/hooks/countdownHook'
 import { globalApiConfigStore } from '@/store/globalApiConfig'
 import { parseTime } from '@/utils'
+import useImageResource from '@/hooks/useImageResource'
 
 export default defineComponent({
   name: 'ScheduleCard',
@@ -30,11 +31,14 @@ export default defineComponent({
 
     const starImage = new URL('@/assets/icons/lv_start.png', import.meta.url).href
 
-    const gameBanner = new URL(`@/assets/images/card-${
+    const imageResource: any = useImageResource()
+
+    const gameBanner = imageResource[`scheduleCardBg_${
       hasBanner.includes(props.eventInfo.game_type_id)
         ? props.eventInfo.game_type_id
         : '1'
-    }.png`, import.meta.url).href
+    }`]
+
     // 倒计时
     const { countdown } = countdownHook(props.eventInfo.start_time, 24)
 

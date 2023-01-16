@@ -132,13 +132,13 @@ export default defineComponent({
                           v-for="item in [
                             option.money_min(),
                             Math.floor(
-                              (option.money_max() - option.money_min()) / 4
-                                + option.money_min(),
-                            ),
+                              ((option.money_max() - option.money_min()) / 4
+                                + option.money_min()) / 10,
+                            ) * 10,
                             Math.floor(
-                              (option.money_max() - option.money_min()) / 2
-                                + option.money_min(),
-                            ),
+                              ((option.money_max() - option.money_min()) / 2
+                                + option.money_min()) / 10,
+                            ) * 10,
                             option.money_max(),
                           ]"
                           :key="item"
