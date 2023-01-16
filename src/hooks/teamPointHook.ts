@@ -20,7 +20,7 @@ export default function teamPointHook(
       && matchInfo.recommend_play.id
     ) {
       return Object.assign(matchInfo.recommend_play, {
-        game_logo: matchInfo.game_logo,
+        game_logo: matchInfo.game_type_logo,
         team_name_1: matchInfo.team_name_1,
         team_name_2: matchInfo.team_name_2,
         category_id: matchInfo.category_id,
